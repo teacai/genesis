@@ -82,22 +82,33 @@ Small, focused SaaS applications solving one specific problem for a niche audien
 Products that use LLMs/AI APIs (OpenAI, Anthropic, open-source models) to solve specific problems. NOT generic "chat with AI" apps — specialized tools for specific use cases.
 
 ### Revenue Potential
-- **Monthly:** $1,000 - $100,000+
-- **Time to first revenue:** 2-6 weeks
+- **Monthly:** $2,000 - $77,000+ (top performers)
+- **Time to first revenue:** 2-8 weeks to launch, 2-6 months to monetize
 - **Revenue model:** Usage-based pricing, subscriptions, or per-seat licensing
+- **Market reality:** ~4,500 new AI wrappers expected in 2026 (~375/mo). Growth decelerating to ~30%/yr as market matures.
+- **Unit economics:** First-year CAC $150-$300/customer, LTV $200-$400. After year one: CAC drops to $80-$150, LTV rises to $600-$1,200.
+
+### Success Examples
+- **PhotoAI** — $77k MRR
+- **Chatbase** — $70k MRR
+- **InteriorAI** — $53k MRR
+- **PDFai** — ~$30k MRR
+- **TypingMindApp** — $33k MRR, solo dev
 
 ### Competition Analysis
-- **Level:** HIGH for generic tools, LOW-MEDIUM for specialized vertical AI
+- **Level:** VERY HIGH for generic wrappers, MEDIUM for deep verticals
 - **Key competitors:** Thousands of wrappers, but most are shallow
 - **Moat potential:** Low for simple wrappers, high for domain-specific fine-tuned solutions with proprietary data
+- **Critical danger:** When OpenAI/Anthropic/Google launch a new native feature, dozens of wrapper businesses become obsolete overnight
 
 ### Underserved Niches
-1. **AI for legal document analysis** — contract review, clause extraction, risk flagging
-2. **AI code review bots** — specialized for specific frameworks/languages, deployed as GitHub Apps
-3. **AI-powered data extraction** — converting unstructured documents (invoices, receipts, medical records) to structured data
-4. **AI writing for regulated industries** — healthcare, finance, insurance (where compliance matters)
-5. **AI agents for specific workflows** — not general agents, but "AI that does your bookkeeping" or "AI that manages your rental properties"
+1. **HIPAA-compliant healthcare AI** — meeting notes, patient documentation
+2. **AI for legal document analysis** — deposition summaries, compliance monitoring, contract review
+3. **Construction digital twins for SMBs** — construction errors cost $1.6T annually globally
+4. **AI-powered data extraction** — converting unstructured documents (invoices, receipts, medical records) to structured data
+5. **AI agents for specific workflows** — "AI that does your bookkeeping" or "AI that manages your rental properties"
 6. **AI-enhanced developer tools** — automated PR descriptions, commit messages, documentation generation from code
+7. **AI writing for regulated industries** — healthcare, finance, insurance (where compliance matters)
 
 ### Steps to Execute
 1. Pick a vertical where AI adds 10x value (not 2x)
@@ -165,13 +176,16 @@ Building tools, APIs, or services that other developers pay for. This leverages 
 Chrome/Firefox extensions that solve specific problems, monetized through freemium, one-time purchases, or subscriptions.
 
 ### Revenue Potential
-- **Monthly:** $200 - $20,000+
-- **Time to first revenue:** 2-4 weeks
-- **Revenue model:** Freemium + subscription ($3-15/mo), one-time purchase ($5-29)
+- **Monthly:** $1,000 - $50,000+ (top performers much higher)
+- **Time to first revenue:** 2-8 weeks
+- **Revenue model:** Freemium + subscription ($10-30/mo), one-time purchase ($5-29)
+- **Valuation benchmark:** $5k/mo net profit x 40-60x multiplier = ~$250k exit valuation
+- **Tools:** ExtensionPay handles licensing/payments across Chrome, Firefox, Edge, Opera, Brave
 
 ### Competition Analysis
-- **Level:** Medium (lots of extensions, but many are abandoned/low quality)
+- **Level:** Medium (most extensions make $0 due to poor monetization, not competition)
 - **Moat potential:** Low-Medium (easy to copy, but user base creates inertia)
+- **Key insight:** 70-80% profit margins are typical for successful extensions
 
 ### Profitable Extension Types
 1. **Productivity/workflow extensions** — tab managers, bookmark organizers, session savers
@@ -183,6 +197,9 @@ Chrome/Firefox extensions that solve specific problems, monetized through freemi
 7. **Privacy/security tools** — tracker blockers, password generators, cookie managers
 
 ### Success Examples
+- **Gmass** — Gmail campaign extension, ~$130k/month with ~10k subscribers
+- **Closet Tools** — Poshmark automation, ~$42k/month at $30/mo per user
+- **Rick Blyth's portfolio** — ~$10k/month across multiple extensions, $500k+ total, 70-80% margins
 - **Wappalyzer** — technology detection, sold for millions
 - **Refined GitHub** — GitHub UI enhancements
 - **Momentum** — new tab dashboard, millions of users
@@ -232,7 +249,9 @@ Selling pre-built templates, starter kits, and themes on marketplaces or your ow
 - **ShipFast (Marc Lou)** — $40k first month, peaked $133k/mo, $2M+ total across portfolio, 91% margins, zero employees. Oct 2025: $66k/mo total (ShipFast $16.8k + CodeFast $20.7k + DataFast $16.3k)
 - **Tailwind UI** — $6M+ revenue from Tailwind component library
 - **Jonathan Wilke** — $12k/mo selling boilerplate code from agency experience
-- **Notion template creators** — top sellers making $10-50k/mo on Gumroad
+- **Thomas Frank** — $1M+ from just two Notion templates
+- **Easlo** — $239k in one year, $1M total from Notion templates
+- **Notion template creators** — top sellers making $10-50k/mo on Gumroad (Notion has 50M+ users)
 - **MakerKit, SaaS Pegasus, Gravity** — sustained multi-year businesses
 
 ### Steps to Execute
@@ -302,9 +321,11 @@ Creating educational content — courses, tutorials, newsletters, YouTube — ar
 Turning consulting expertise into productized services with fixed scope and pricing. Not hourly billing — packaged offerings.
 
 ### Revenue Potential
-- **Monthly:** $2,000 - $30,000+
-- **Time to first revenue:** 1-2 weeks
+- **Monthly:** $5,000 - $30,000+
+- **Time to first revenue:** 1-4 weeks (with network), 2-3 months (cold start)
 - **Revenue model:** Fixed-price packages, retainers
+- **Rate landscape 2025:** Freelance IT consultants $50-$150/hr, mid-size firms $150-$250/hr, top-tier agencies $250-$500+/hr, automation/RPA specialists $65-$130/hr ($90k-$200k+ annual)
+- **Key trend:** AI-driven boutique consultancies winning market share from McKinsey/BCG/Deloitte. AI lets you deliver insights in hours instead of weeks.
 
 ### Competition Analysis
 - **Level:** Medium (many freelancers, few productized well)
@@ -384,13 +405,17 @@ Building open-source software with a commercial layer — either hosted/managed 
 Small, focused mobile apps for specific use cases. Not the next Instagram — targeted utility apps.
 
 ### Revenue Potential
-- **Monthly:** $100 - $10,000+
-- **Time to first revenue:** 2-4 weeks (if using React Native/Flutter)
-- **Revenue model:** One-time purchase ($1-$10), subscription ($1-$10/mo), ads
+- **Monthly:** $500 - $20,000+
+- **Market size:** Global mobile app market projected to exceed $330B by 2026. US market expected to surpass $250B.
+- **Time to first revenue:** 2-4 months to launch, 3-6 months to meaningful revenue
+- **Revenue model:** Subscriptions (generate 60% of utility app revenue), IAP, ads
+- **Key stats:** 98% of revenue comes from free-to-download apps. Quarterly/annual plans cut churn by 40% vs monthly. Solo indie devs make up 42% of iOS developer community.
+- **Success stories:** Plinq (women's safety app) — 10k+ users in 3 months, $456k ARR, built with no-code. Plann (social media planning) — $1M revenue in 2 years, solo non-technical founder.
 
 ### Competition Analysis
-- **Level:** Very High (millions of apps), but niches exist
+- **Level:** Very High in general, Medium in niches
 - **Moat potential:** Low (easy to replicate)
+- **Strategy:** Start iOS-first (higher spend per user) for subscription models. Low-code tools projected to account for 75% of new app development by 2026.
 
 ### Still-Working Niches
 1. **Habit/routine trackers** — specific to a niche (fitness, meditation, reading)
@@ -422,19 +447,25 @@ Small, focused mobile apps for specific use cases. Not the next Instagram — ta
 Building custom automations, integrations, and workflow tools. Either as products (Zapier-like) or as done-for-you services.
 
 ### Revenue Potential
-- **Monthly:** $500 - $15,000+
-- **Time to first revenue:** 1-4 weeks
-- **Revenue model:** Per-automation pricing, monthly retainers, SaaS subscriptions
+- **Monthly:** $1,000 - $30,000+ (templates/freelance: $1k-$10k; consulting/productized: $5k-$30k)
+- **Time to first revenue:** 2-4 weeks (freelance), 1-3 months (templates/products)
+- **Revenue model:** Per-automation pricing, monthly retainers, SaaS subscriptions, template sales
+- **Key trend:** AI-powered automation is perhaps the biggest opportunity of 2026 — most companies are lost on how to apply AI to their processes. Demand outstripping supply of skilled automation builders.
+- **Real-world data:** One solo dev made ~$4,200 over 4 months selling n8n workflows (inconsistent: $800 one month, $2,100 another).
 
 ### Competition Analysis
-- **Level:** Medium (Zapier exists, but custom needs are endless)
+- **Level:** Low-Medium (demand outstripping supply)
 - **Moat potential:** Medium (complexity of integrations creates switching costs)
+- **Platforms:** n8n (free self-hosted, $20/mo cloud), Make (visual, best for complex multi-step), Activepieces (open-source, AI-first), Stepper ($19/mo flat)
 
 ### Profitable Approaches
 1. **Pre-built integrations for niche tools** — connect tools that Zapier doesn't support
 2. **Done-for-you automation** — set up complex workflows for businesses ($500-$5k per project)
 3. **Custom API integrations** — connect internal systems ($2k-$10k per project)
 4. **Automation-as-a-service** — manage and maintain automations ($500-$2k/mo retainer)
+5. **High-ticket consulting** — Zapier-to-n8n migration packages ($5k-$15k per engagement)
+6. **Automation arbitrage** — don't sell the workflow, sell the result (lead lists, market research reports via daily subscription)
+7. **Micro-SaaS wrapping** — wrap n8n workflows in a simple UI (Bubble/Softr) as subscription tools
 5. **Data pipeline services** — ETL pipelines for small businesses
 6. **Slack/Discord bot services** — custom bots for specific workflows
 
@@ -850,30 +881,31 @@ Building command-line tools or developer utilities with a paid license model.
 ## Priority Matrix
 
 ### Quick Wins (Start This Week)
-| Idea | Est. Monthly | Time to Revenue | Effort |
-|------|-------------|-----------------|--------|
-| Templates/Boilerplates (#5, #18) | $1k-$20k | 1-2 weeks | Low |
-| Browser Extension (#4) | $200-$20k | 2-4 weeks | Low |
-| Technical Writing (#19) | $2k-$15k | 1-2 weeks | Low |
-| Freelance Productization (#7) | $2k-$30k | 1-2 weeks | Medium |
+| Idea | Est. Monthly | Time to Revenue | Effort | Margins |
+|------|-------------|-----------------|--------|---------|
+| Templates/Boilerplates (#5, #18) | $2k-$20k | 1-2 weeks | Low | 91% |
+| Browser Extension (#4) | $1k-$50k | 2-8 weeks | Low | 70-80% |
+| Technical Writing (#19) | $3k-$15k | 1-4 weeks | Low | High |
+| Freelance Productization (#7) | $5k-$30k | 1-4 weeks | Medium | High |
 
 ### Medium-Term Plays (1-3 Months)
-| Idea | Est. Monthly | Time to Revenue | Effort |
-|------|-------------|-----------------|--------|
-| Micro-SaaS (#1) | $500-$50k | 1-3 months | Medium |
-| AI Tools (#2) | $1k-$100k | 2-6 weeks | Medium |
-| Developer APIs (#3) | $500-$50k | 1-3 months | Medium |
-| WP/Shopify Plugins (#11) | $500-$30k | 2-6 weeks | Medium |
-| Automation Services (#10) | $500-$15k | 1-4 weeks | Medium |
+| Idea | Est. Monthly | Time to Revenue | Effort | Margins |
+|------|-------------|-----------------|--------|---------|
+| Micro-SaaS (#1) | $1k-$50k | 1-3 months | Medium | 70%+ |
+| AI Tools (#2) | $2k-$77k | 2-6 months | Medium | Variable |
+| Developer APIs (#3) | $1k-$50k | 1-3 months | Medium | High |
+| WP/Shopify Plugins (#11) | $1k-$100k | 3-12 months | Medium | High |
+| Automation Services (#10) | $1k-$30k | 2-4 weeks | Medium | High |
+| Email Products (#13) | $500-$20k | ~66 days | Medium | Very High |
 
 ### Long-Term Bets (3-12 Months)
-| Idea | Est. Monthly | Time to Revenue | Effort |
-|------|-------------|-----------------|--------|
-| Open Source + Commercial (#8) | $0-$100k | 3-12 months | High |
-| Marketplace (#16) | $0-$50k | 2-6 months | High |
-| Content/Courses (#6) | $500-$50k | 3-6 months | High |
-| Data Products (#12) | $500-$20k | 2-4 weeks | Medium |
-| White-Label (#15) | $2k-$30k | 1-3 months | High |
+| Idea | Est. Monthly | Time to Revenue | Effort | Margins |
+|------|-------------|-----------------|--------|---------|
+| Open Source + Commercial (#8) | $100-$20k+ | 6-18 months | High | Variable |
+| Marketplace (#16) | $0-$50k | 2-6 months | High | High |
+| Content/Courses (#6) | $500-$50k | 3-12 months | High | Very High |
+| Data Products (#12) | $2k-$50k | 1-4 months | Medium | High |
+| White-Label (#15) | $5k-$50k | 3-6 months | High | 40-60% |
 
 ---
 
@@ -906,6 +938,29 @@ Building command-line tools or developer utilities with a paid license model.
 5. **Developer tools market doubling** — $6.4B to $15.7B by 2031. CLIs as agent-native interfaces is the big shift.
 6. **White-label is underrated** — $50B market, 40-60% margins, but requires patience (1+ year to optimize).
 7. **WordPress still massive** — 518M+ sites, top plugins making $100k+/mo, but only 1% of plugins get 10k+ installs.
+8. **Browser extensions are undervalued** — Gmass $130k/mo, Closet Tools $42k/mo, 70-80% profit margins typical.
+9. **Automation demand outstripping supply** — most companies still rely on manual processes; AI-powered automation is the biggest immediate opportunity.
+10. **Distribution > Product** — the overarching pattern: go vertical, go niche, ship fast, charge more than you think, and marketing matters more than the product itself.
+
+---
+
+## Sources & References
+
+- [Lovable: Micro SaaS Ideas for Solopreneurs 2026](https://lovable.dev/guides/micro-saas-ideas-for-solopreneurs-2026)
+- [AI Journ: AI Wrappers Market Opportunity](https://aijourn.com/how-ai-wrappers-are-creating-multi-million-dollar-businesses/)
+- [ExtensionPay: Chrome Extensions Revenue Examples](https://extensionpay.com/articles/browser-extensions-make-money)
+- [Rick Blyth: Revenue from Chrome Extensions](https://www.rickblyth.com/blog/how-much-money-i-made-developing-chrome-extensions)
+- [Starter Story: Marc Lou ShipFast](https://www.starterstory.com/marc-lou-shipfast)
+- [High Signal: Best SaaS Boilerplates](https://www.highsignal.io/best-saas-boilerplates-for-founders/)
+- [beehiiv: State of Newsletters 2026](https://www.beehiiv.com/blog/the-state-of-newsletters-2026)
+- [MktClarity: WordPress Plugin Profitable 2025](https://mktclarity.com/blogs/news/wordpress-plugin-profitable)
+- [Flippa: Top Plugins Making Millions](https://flippa.com/blog/top-10-plugins-and-extensions/)
+- [Mordor Intelligence: Software Dev Tools Market](https://www.mordorintelligence.com/industry-reports/software-development-tools-market)
+- [Verified Market Research: Bug Bounty Platforms](https://www.verifiedmarketresearch.com/product/bug-bounty-platforms-market/)
+- [ConnectPOS: White Label Software 2026](https://www.connectpos.com/white-label-software-companies/)
+- [Monda AI: Data Marketplaces Guide](https://www.monda.ai/blog/best-data-marketplaces-guide)
+- [Ritz7: n8n Monetization Strategies](https://ritz7.com/blog/monetize-n8n-automation-skills)
+- [Kajabi: Selling Notion Templates](https://www.kajabi.com/blog/can-you-make-money-selling-notion-templates)
 
 ## Tracking
 
