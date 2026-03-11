@@ -68,6 +68,15 @@ Small, focused SaaS applications solving one specific problem for a niche audien
 5. Get 10 paying customers before adding features
 6. Iterate based on customer feedback
 
+### Low-Competition Niches to Explore
+1. **Pet grooming/boarding management** — scheduling, client records, pet medical history tracking for independent groomers and small boarding facilities. Most still use paper or generic tools.
+2. **Freelance translator project management** — quote generation, glossary management, deadline tracking, CAT tool integration. Existing tools are enterprise-priced.
+3. **HOA (Homeowners Association) management** — violation tracking, dues collection, meeting minutes, resident communication. Current solutions are clunky and overpriced for small HOAs.
+4. **Mobile mechanic dispatch & invoicing** — route optimization, parts inventory, on-site payment processing for mechanics who come to the customer. No dominant player exists.
+5. **Cemetery/memorial park management** — plot mapping, record digitization, genealogy integration, maintenance scheduling. Extremely underserved market with long-term customers.
+6. **Craft brewery compliance tracker** — TTB reporting, recipe scaling, excise tax calculation, distribution tracking. Regulatory complexity creates sticky customers.
+7. **Music teacher studio management** — lesson scheduling, practice assignment tracking, recital planning, parent communication, payment processing for independent music instructors.
+
 ### Key Risks
 - Building something nobody wants (validate before building)
 - Underpricing (charge more than you think)
@@ -124,6 +133,15 @@ Products that use LLMs/AI APIs (OpenAI, Anthropic, open-source models) to solve 
 - Race to the bottom on pricing
 - AI hallucination causing trust issues in critical domains
 
+### Low-Competition Niches to Explore
+1. **AI-powered veterinary radiology assistant** — analyze X-rays/ultrasounds, flag abnormalities, generate preliminary reports for rural/small-practice vets who lack specialist access.
+2. **AI meeting-to-permit application converter** — for construction/planning: takes meeting minutes and auto-fills permit applications, zoning variance requests, and compliance documents.
+3. **AI genealogy document reader** — OCR + LLM to transcribe and interpret old handwritten records (census, immigration, church records) for genealogy researchers. Niche but passionate market.
+4. **AI-powered agricultural pest identifier** — farmers photograph crop issues, AI identifies pest/disease, recommends treatment with local supplier pricing. Underserved in developing markets.
+5. **AI insurance claim narrative generator** — takes adjuster notes, photos, and damage estimates and generates compliant claim narratives for independent adjusters. High-value, low-competition.
+6. **AI church sermon preparation tool** — research biblical references, generate sermon outlines, create bulletin content, suggest hymn pairings. 300k+ churches in the US alone.
+7. **AI-powered strata/condo inspection report generator** — takes photos and notes from building inspections, generates formatted reports with deficiency tracking for property managers.
+
 ### Key Strategy
 **Don't compete on AI capability — compete on workflow integration and domain expertise.** The AI is a commodity; the value is in understanding the user's problem deeply.
 
@@ -162,6 +180,15 @@ Building tools, APIs, or services that other developers pay for. This leverages 
 3. Offer a generous free tier to drive adoption
 4. Monetize through usage-based pricing
 5. Market through developer communities, blog posts, and Show HN
+
+### Low-Competition Niches to Explore
+1. **QR code analytics API** — generate QR codes with built-in scan tracking, geolocation, device analytics, and A/B testing. Current free generators offer zero analytics.
+2. **Document redaction API** — auto-detect and redact PII (SSNs, addresses, names) from PDFs/images for legal, healthcare, and government use cases. Compliance-driven demand.
+3. **Calendar availability API** — a simple API that checks availability across multiple calendar providers and returns open slots. Useful for scheduling tool builders.
+4. **Podcast transcript + chapter marker API** — upload audio, get timestamped transcripts with auto-generated chapter markers and show notes. Podcast tooling is fragmented.
+5. **Font detection/analysis API** — upload an image, identify fonts used, get CSS-ready font stacks and Google Fonts alternatives. Designers and agencies would pay for this.
+6. **Address standardization API for emerging markets** — normalize addresses in countries with non-standard formatting (Latin America, Southeast Asia, Africa). Google's API is weak here.
+7. **Color palette extraction + accessibility scoring API** — extract colors from images/URLs and score for WCAG compliance, suggest accessible alternatives. Combines two unmet needs.
 
 ### Key Risks
 - Free alternatives from big players (AWS, Cloudflare)
@@ -213,6 +240,15 @@ Chrome/Firefox extensions that solve specific problems, monetized through freemi
 5. Add premium features after hitting 1,000+ free users
 6. Cross-publish to Firefox, Edge
 
+### Low-Competition Niches to Explore
+1. **Court docket monitor extension** — auto-check PACER/state court dockets for case updates, notify attorneys of new filings. Lawyers currently check manually or pay expensive services.
+2. **Etsy seller analytics extension** — track competitor pricing, listing performance, tag optimization, and trend analysis for Etsy shop owners. Amazon has tons of tools; Etsy has almost none.
+3. **Academic citation formatter** — highlight text on any webpage, one-click generate properly formatted citations (APA, MLA, Chicago, IEEE). Existing tools are bloated or inaccurate.
+4. **Government contract opportunity highlighter** — scan SAM.gov, state procurement sites, and auto-highlight contracts matching user-defined criteria. Small contractors miss opportunities.
+5. **Real estate listing comparison overlay** — when viewing Zillow/Redfin/Realtor.com, overlay data from other sites, tax records, school ratings, and crime stats in a unified sidebar.
+6. **Accessibility auditor for content creators** — real-time WCAG scoring as you write in WordPress, Medium, Substack, or Ghost. Highlights issues and suggests fixes inline.
+7. **Invoice data extractor** — right-click any invoice PDF in the browser, extract line items, totals, dates, and vendor info into CSV/accounting software format. Freelancers and small businesses.
+
 ### Key Risks
 - Chrome Web Store policy changes
 - Review/approval delays
@@ -262,6 +298,15 @@ Selling pre-built templates, starter kits, and themes on marketplaces or your ow
 5. Market through Twitter/X, dev communities, YouTube tutorials
 6. Offer lifetime deals initially for social proof, then switch to subscription
 
+### Low-Competition Niches to Explore
+1. **Astro + Stripe + Auth.js starter kit** — Astro is growing fast but has far fewer boilerplates than Next.js. First-mover advantage in the Astro SaaS starter market.
+2. **HIPAA-compliant telehealth template** — Next.js/React template with BAA-ready infrastructure, encrypted video, patient intake forms, and EHR-lite features. Healthcare devs need compliant starting points.
+3. **Multi-vendor marketplace template** — Shopify/WooCommerce multi-vendor setup with commission management, vendor dashboards, and payout automation. Complex to build from scratch.
+4. **Notion-style workspace template for Svelte** — SvelteKit has a passionate community but almost no premium templates. Collaborative workspace/wiki template would stand out.
+5. **AI chatbot landing page + onboarding kit** — pre-built landing page with interactive demo, waitlist, onboarding flow, and usage dashboard specifically for AI product launches.
+6. **Non-profit donation platform template** — donation forms, recurring giving, donor CRM, tax receipt generation, campaign pages. Non-profits pay agencies $5k+ for this.
+7. **Property management dashboard template** — tenant portal, maintenance requests, rent collection, lease tracking. Landlords with 5-50 units are underserved by enterprise PM software.
+
 ### Key Risks
 - Race to the bottom on pricing
 - Constant updates required to stay current
@@ -307,6 +352,14 @@ Creating educational content — courses, tutorials, newsletters, YouTube — ar
 4. Create a paid product (course or newsletter)
 5. Grow through consistency, not virality
 
+### Low-Competition Niches to Explore
+1. **Infrastructure cost optimization for startups** — tutorials and courses on cutting AWS/GCP bills by 50-80%. Founders hemorrhage money on cloud but few content creators address this practically.
+2. **AI engineering for non-ML developers** — practical course on building with LLM APIs, RAG, fine-tuning, prompt engineering for backend/frontend devs transitioning into AI. Huge demand, few structured programs.
+3. **Legacy code modernization** — course on migrating jQuery/PHP/Java monoliths to modern stacks. Thousands of companies need this but it's rarely taught outside enterprise consulting.
+4. **Database performance for application developers** — most devs write terrible SQL. A course focused on query optimization, indexing strategies, and schema design for app devs (not DBAs) fills a gap.
+5. **Regulatory tech for developers** — how to build software that meets HIPAA, SOC2, PCI-DSS, GDPR. Compliance is opaque; a developer-friendly breakdown would command premium pricing.
+6. **Freelance developer business operations** — not "how to code" but contracts, invoicing, tax strategy, client management, pricing. Technical content for the business side of solo development.
+
 ### Key Risks
 - Long time to build audience
 - Content treadmill (always need to produce)
@@ -347,6 +400,14 @@ Turning consulting expertise into productized services with fixed scope and pric
 4. Find first clients through your network, LinkedIn, Twitter
 5. Systematize delivery with templates and checklists
 6. Scale by hiring subcontractors for parts of the work
+
+### Low-Competition Niches to Explore
+1. **Shopify-to-headless migration package** — fixed-price ($5k-$15k) migration from Shopify Liquid to headless (Hydrogen/Next.js) with performance guarantees. E-commerce agencies charge $50k+.
+2. **WCAG accessibility audit & remediation** — audit websites for ADA/WCAG compliance and fix issues for a flat fee ($2k-$8k). Lawsuit risk drives urgency; most agencies overcharge.
+3. **AI-readiness assessment for SMBs** — evaluate a company's data, workflows, and tech stack, deliver a roadmap for AI integration ($3k-$10k). Businesses want AI but don't know where to start.
+4. **Email deliverability rescue service** — diagnose and fix email deliverability issues (SPF, DKIM, DMARC, IP reputation, content scoring) for a flat fee ($1k-$3k). Businesses losing revenue to spam folders.
+5. **Startup tech due diligence** — pre-investment code review and architecture assessment for angel investors and small VCs ($2k-$5k per report). Investors need technical eyes but can't justify full-time CTOs.
+6. **WordPress-to-static-site migration** — migrate content-heavy WordPress sites to Astro/Next.js/Hugo with CMS integration ($3k-$8k). Faster, cheaper hosting, better security.
 
 ### Key Risks
 - Trading time for money (cap on scale without delegation)
@@ -391,6 +452,14 @@ Building open-source software with a commercial layer — either hosted/managed 
 4. Once adoption grows, introduce a commercial offering
 5. Target enterprises for the commercial tier
 
+### Low-Competition Niches to Explore
+1. **Self-hosted AI gateway** — open-source proxy that routes LLM requests across providers (OpenAI, Anthropic, local models) with cost tracking, rate limiting, and fallback. LiteLLM exists but is complex.
+2. **Open-source compliance evidence collector** — auto-gather SOC2/ISO27001 evidence from GitHub, AWS, Slack, etc. Existing tools (Vanta, Drata) charge $10k+/yr. Open-source core + hosted premium.
+3. **Self-hosted website monitoring** — lightweight uptime + performance monitoring. Existing OSS options (Uptime Kuma) lack advanced alerting and status page customization.
+4. **Open-source invoice/billing for freelancers** — beautiful, self-hosted invoicing with time tracking, recurring invoices, and multi-currency. InvoiceNinja exists but UX is dated.
+5. **Open-source feature request board** — Canny alternative with voting, roadmap, and changelog. Self-hosted free, managed hosting paid. Fider exists but is minimally maintained.
+6. **Self-hosted link-in-bio platform** — open-source Linktree alternative with analytics, custom domains, and A/B testing. Creators want ownership; no polished OSS option exists.
+
 ### Key Risks
 - Long time to any revenue
 - Community management overhead
@@ -432,6 +501,14 @@ Small, focused mobile apps for specific use cases. Not the next Instagram — ta
 4. Optimize listing for ASO (App Store Optimization)
 5. Get initial reviews through friends/community
 6. Iterate based on reviews and crash reports
+
+### Low-Competition Niches to Explore
+1. **Contractor daily log app** — construction workers/contractors log hours, materials used, weather conditions, photos, and safety incidents. Generates reports for clients and compliance. Most apps target big firms.
+2. **Pet medication reminder + vet records app** — track multiple pets' medications, vaccinations, vet visits, dietary needs. Existing pet apps focus on social features, not health management.
+3. **Freelancer tax expense tracker** — specifically for gig workers/freelancers, auto-categorize expenses by Schedule C categories, estimate quarterly taxes, generate tax-ready reports. Generic finance apps don't do this.
+4. **Plant care scheduler with local weather integration** — personalized watering/care reminders adjusted for local weather, plant identification, disease diagnosis from photos. Gardening apps exist but lack smart scheduling.
+5. **Small landlord property inspection app** — photo-documented move-in/move-out inspections with timestamped evidence, comparison reports, and tenant sharing. Current tools target large property managers.
+6. **Youth sports team management** — practice scheduling, player attendance, skill progression tracking, parent communication, carpool coordination. Existing apps are either too simple or enterprise-focused.
 
 ### Key Risks
 - App Store rejection/policy changes
@@ -476,6 +553,14 @@ Building custom automations, integrations, and workflow tools. Either as product
 4. Productize common automations into templates
 5. Build recurring revenue through maintenance retainers
 
+### Low-Competition Niches to Explore
+1. **Real estate agent CRM-to-MLS automation** — auto-sync listings, client communications, and showing feedback between CRM (Follow Up Boss, KVCore) and MLS systems. Agents do this manually.
+2. **Dental practice insurance verification automation** — auto-verify patient insurance eligibility before appointments, flag coverage gaps, estimate out-of-pocket costs. Currently a manual phone-call process.
+3. **Non-profit grant reporting automation** — pull data from accounting software, program databases, and surveys to auto-generate funder-required reports. Grant compliance is a massive time sink.
+4. **Restaurant multi-platform order aggregation** — unify orders from DoorDash, UberEats, Grubhub, and direct orders into a single dashboard with inventory sync. Existing solutions are expensive.
+5. **Etsy/Amazon handmade seller workflow automation** — auto-generate shipping labels, update inventory across platforms, trigger review requests, and create bookkeeping entries when orders come in.
+6. **Podcast production pipeline automation** — from recording upload to transcription, show notes generation, audiogram creation, social media scheduling, and distribution to all platforms in one workflow.
+
 ### Key Risks
 - Platform dependency on Zapier/Make
 - Each project is somewhat custom (hard to scale)
@@ -515,6 +600,14 @@ Building and selling plugins/apps for popular CMS and e-commerce platforms. Word
 3. Offer a free version to build user base
 4. Upsell premium features
 5. Get reviews early — they're the #1 growth driver
+
+### Low-Competition Niches to Explore
+1. **WooCommerce wholesale/B2B pricing plugin** — role-based pricing, tiered discounts, minimum order quantities, and net-30/60 payment terms. Existing plugins are buggy or outdated.
+2. **Shopify local delivery zone manager** — draw delivery zones on a map, set zone-specific delivery fees and time slots, route optimization for shop owners doing their own delivery.
+3. **WordPress membership site for trade associations** — member directory, dues management, CE credit tracking, event registration. Trade associations (plumbers, electricians, realtors) need this.
+4. **Shopify product customizer for print shops** — let customers upload artwork, position designs on products, preview mockups, and approve proofs before ordering. Print shops need this desperately.
+5. **WordPress job board for niche industries** — specialized job boards for healthcare, construction, or maritime. Generic job board plugins exist but lack industry-specific fields and compliance.
+6. **Shopify subscription box management** — manage build-a-box subscriptions with swap/skip/pause, curation preferences, and churn prediction. Existing apps are either too simple or too expensive.
 
 ### Key Risks
 - WordPress/Shopify platform changes
@@ -556,6 +649,14 @@ Curating, enriching, or generating valuable data and selling access via APIs or 
 4. Build a simple API with documentation
 5. Sell access through RapidAPI, own site, or direct sales
 
+### Low-Competition Niches to Explore
+1. **Building permit data API** — aggregated, normalized building permit data across US municipalities. Contractors, material suppliers, and real estate investors would pay for this. Currently scattered across thousands of local government sites.
+2. **Food truck location/schedule API** — real-time and historical location data for food trucks across major cities. Event planners, office managers, and food apps need this. No centralized source exists.
+3. **Local event aggregation API** — normalized event data from Eventbrite, Meetup, Facebook, library calendars, and city rec departments into a single feed by geography. App developers need clean local event data.
+4. **Freelancer rate benchmarking API** — aggregated anonymized rate data by skill, experience level, geography, and project type. Platforms and freelancers both need this; Glassdoor doesn't cover freelance well.
+5. **Small business tech stack directory** — what software small businesses in specific industries actually use (plumber CRMs, bakery POS systems, etc.). Marketing teams targeting SMBs would pay for this.
+6. **Agricultural commodity price API for small farmers** — localized commodity prices, input costs (seed, fertilizer, fuel), and weather correlation data. USDA data exists but is hard to consume programmatically.
+
 ### Key Risks
 - Legal issues with data scraping
 - Data freshness maintenance burden
@@ -595,6 +696,14 @@ Monetizing email through paid newsletters, email courses, or email-based tools.
 4. Introduce paid tier or sponsorships
 5. Cross-promote through social media and guest posts
 
+### Low-Competition Niches to Explore
+1. **Weekly government contract digest** — curated list of small business-eligible government contracts by industry (IT, construction, consulting) with plain-English summaries of requirements. Contractors miss opportunities buried in SAM.gov.
+2. **Indie game developer business newsletter** — not game design but the business side: funding, publisher deals, Steam algorithm changes, pricing strategies, marketing tactics. Underserved creator audience.
+3. **Technical SEO changelog newsletter** — track and explain every Google algorithm update, Core Web Vital change, and search feature rollout with actionable developer guidance. SEO newsletters exist but aren't developer-focused.
+4. **Solo consultant tax strategy email course** — 10-email drip course on entity selection, quarterly estimates, deduction optimization, retirement accounts for independent consultants. Accountants don't teach this proactively.
+5. **AI paper-to-practice weekly digest** — take the week's most impactful AI research papers and translate them into practical implementation guides with code snippets. Researchers publish; practitioners need translation.
+6. **Remote team async communication course** — email course teaching engineering managers how to run effective async-first teams: documentation culture, decision logs, async standups, timezone management.
+
 ### Key Risks
 - Audience growth is slow
 - Content fatigue/burnout
@@ -633,6 +742,14 @@ Earning money by finding and reporting security vulnerabilities in software.
 3. Start with smaller programs with fewer researchers
 4. Specialize in one area (API security, auth bypass, SSRF)
 5. Build reputation on platforms to get invited to private programs
+
+### Low-Competition Niches to Explore
+1. **WordPress plugin security auditing** — specialize exclusively in auditing WordPress plugins for vulnerabilities. Thousands of plugins have never been audited; developers pay for pre-release security reviews.
+2. **Smart contract auditing for DeFi forks** — many DeFi projects fork existing protocols with modifications. Audit the delta between the fork and the original. Lower effort than full audits, still high-value.
+3. **GraphQL API security testing** — most bug bounty hunters focus on REST APIs. GraphQL has unique attack surfaces (introspection, batching, nested queries) that are underexplored.
+4. **Mobile app API reverse engineering** — focus exclusively on mobile app backends. Decompile apps, find hidden API endpoints, test for broken auth and data exposure. Less crowded than web testing.
+5. **CI/CD pipeline security assessment** — audit GitHub Actions, GitLab CI, Jenkins pipelines for secret exposure, dependency confusion, and supply chain vulnerabilities. Newer attack surface with fewer specialists.
+6. **IoT device firmware analysis** — extract and analyze firmware from consumer IoT devices (cameras, routers, smart home). Hardware hacking barrier keeps competition low; bounties can be high.
 
 ### Key Risks
 - Highly variable income (feast or famine)
@@ -674,6 +791,14 @@ Building software that agencies, consultants, or businesses rebrand and sell as 
 4. Price per end-client (so agency revenue grows = your revenue grows)
 5. Provide white-glove onboarding for first 5 agencies
 
+### Low-Competition Niches to Explore
+1. **White-label AI chatbot for insurance agencies** — trained on policy documents, answers customer coverage questions, generates quotes, routes complex inquiries. Insurance agents resell to their clients.
+2. **White-label tenant screening portal** — background checks, credit reports, income verification, and rental history packaged for property management companies to offer under their brand.
+3. **White-label fitness assessment platform** — for personal trainer studios and gym franchises: client intake, body composition tracking, workout programming, progress photos, branded mobile app.
+4. **White-label church management system** — attendance tracking, giving management, volunteer scheduling, small group coordination. Church IT consultants resell to congregations.
+5. **White-label review management dashboard** — aggregate Google/Yelp/Facebook reviews, AI-generate responses, track sentiment trends. Marketing agencies resell to local businesses.
+6. **White-label learning management system for trade schools** — course delivery, skills assessment, certification tracking, employer placement reporting. Education consultants resell to vocational programs.
+
 ### Key Risks
 - Long sales cycles with agencies
 - Custom feature requests from each agency
@@ -710,6 +835,14 @@ Building a two-sided marketplace connecting buyers and sellers in a niche.
 3. Manually match first 20-50 transactions
 4. Build automated matching and payment only after validating demand
 5. Focus on trust and quality (reviews, verification)
+
+### Low-Competition Niches to Explore
+1. **Voice actor marketplace** — connect voice actors with podcast producers, e-learning companies, and game studios. Fiverr is too generic; Voices.com is expensive. Focus on fast turnaround and easy audition management.
+2. **Niche stock photography for specific industries** — curated, authentic photos for dentists, plumbers, restaurants, etc. Generic stock photos look fake; industry-specific imagery commands premium pricing.
+3. **Technical co-founder matching platform** — match non-technical founders with technical co-founders based on skills, equity expectations, timezone, and commitment level. AngelList is too broad for this.
+4. **3D printing service marketplace** — connect people who need custom 3D prints with local printer owners. Include quoting, material selection, and quality ratings. Fragmented market with no dominant player.
+5. **Expert witness marketplace** — connect attorneys with technical expert witnesses (engineers, doctors, accountants) for litigation. Current process is word-of-mouth and expensive referral networks.
+6. **Micro-internship marketplace for bootcamp grads** — short-term (1-4 week) paid projects connecting companies with junior developers. Bridges the gap between bootcamp and first job.
 
 ### Key Risks
 - Chicken-and-egg problem is very real
@@ -751,6 +884,14 @@ Promoting developer tools and services through content, earning commissions on r
 4. Focus on SEO for "best X for Y" and "X vs Y" queries
 5. Build an email list for repeated promotion
 
+### Low-Competition Niches to Explore
+1. **AI coding tool comparisons** — in-depth, regularly updated comparisons of GitHub Copilot, Cursor, Claude Code, Cody, etc. with real benchmarks. Developers actively search for these; few sites do rigorous testing.
+2. **Self-hosted software reviews** — review and compare self-hosted alternatives (Plausible, Umami, n8n, Appwrite, etc.) for privacy-conscious developers. Growing audience, underserved by mainstream review sites.
+3. **DevOps tool stack guides by company size** — "best CI/CD for 5-person teams" vs "best monitoring for 50-person teams." Context-specific recommendations convert better than generic "top 10" lists.
+4. **Headless CMS comparison hub** — detailed comparisons of Strapi, Sanity, Contentful, Payload, etc. with framework-specific integration guides. CMS selection is a high-intent search with good affiliate potential.
+5. **No-code/low-code platform reviews for developers** — honest developer perspective on Bubble, Webflow, Retool, etc. Developers trust other developers, not marketing content.
+6. **Database selection guides** — "Postgres vs PlanetScale vs Supabase vs Turso for [specific use case]." Database choice is a high-stakes, high-search-volume decision with strong affiliate revenue potential.
+
 ### Key Risks
 - Requires audience to work
 - Google SEO changes can kill traffic overnight
@@ -787,6 +928,14 @@ Selling production-ready starter kits that help developers ship faster.
 4. Price at $99+ (don't undersell)
 5. Market through Twitter, ProductHunt, dev communities
 6. Offer updates for 12 months, then yearly renewal for continued updates
+
+### Low-Competition Niches to Explore
+1. **AI agent framework starter kit** — pre-built multi-agent system with tool use, memory, planning, and human-in-the-loop using LangGraph/CrewAI/Anthropic Agent SDK. Hottest dev trend with few quality starters.
+2. **Self-hosted analytics + A/B testing kit** — Plausible-style analytics with built-in A/B testing, feature flags, and event tracking. Privacy-focused, GDPR-compliant out of the box.
+3. **Multi-tenant B2B SaaS starter** — proper tenant isolation, per-tenant billing, admin dashboard, role-based access, and tenant onboarding flow. Most starters are single-tenant.
+4. **Browser extension + companion web app starter** — extension syncs data to a web dashboard with auth, billing, and data visualization. Building both together from scratch is painful.
+5. **Voice/telephony app starter kit** — Twilio/Vonage integration with call routing, IVR, recording, transcription, and AI-powered voice agents. Telephony is complex; a starter kit saves weeks.
+6. **Marketplace starter kit** — two-sided marketplace with Stripe Connect, escrow payments, dispute resolution, reviews, and search. Marketplace-specific payment flows are notoriously hard to implement.
 
 ### Key Risks
 - Need to keep up with framework updates
@@ -833,6 +982,14 @@ Freelance technical writing for documentation, blog posts, and developer marketi
 4. Build a portfolio site
 5. Aim for 2-3 retainer clients for stable income
 
+### Low-Competition Niches to Explore
+1. **AI agent SDK documentation** — writing docs for the emerging wave of AI agent frameworks (LangGraph, CrewAI, Anthropic Agent SDK). New field means few experienced writers; companies need help.
+2. **Migration guides for framework transitions** — detailed technical guides for migrating between frameworks (React Router to TanStack Router, Express to Hono, Prisma to Drizzle). High search intent, underproduced content.
+3. **Compliance-as-documentation** — write SOC2/HIPAA/GDPR technical documentation for startups approaching audits. Combines technical writing with compliance knowledge for premium rates ($5k-$15k per engagement).
+4. **Developer changelog writing service** — professional, user-friendly release notes and changelogs for SaaS companies. Most changelogs are terrible; good ones reduce support tickets and improve retention.
+5. **API documentation auditing** — review existing API docs for completeness, accuracy, and developer experience, then deliver a prioritized improvement plan. Poor docs lose customers; companies know this but lack expertise.
+6. **Open-source project documentation sprints** — fixed-price packages to bring undocumented OSS projects up to a professional standard. Funded OSS projects have budget but lack writing talent.
+
 ### Key Risks
 - Income caps without scaling to an agency
 - Client dependency
@@ -869,6 +1026,14 @@ Building command-line tools or developer utilities with a paid license model.
 3. Distribute via Homebrew, npm, pip
 4. Market through dev communities and Show HN
 5. Offer team licenses for higher revenue per customer
+
+### Low-Competition Niches to Explore
+1. **Monorepo dependency visualizer** — CLI tool that maps and visualizes dependencies across packages in a monorepo, detects circular deps, and suggests splitting strategies. Nx/Turborepo are build tools, not analysis tools.
+2. **Database schema diff & migration reviewer** — compare two database schemas, generate human-readable diff reports, and flag risky migrations (data loss, long locks). Existing tools are enterprise or DB-specific.
+3. **Environment variable manager CLI** — sync, validate, and document .env files across teams and environments. Compare local vs staging vs production, detect missing vars, generate .env.example automatically.
+4. **Git hooks manager with team sharing** — define, test, and share git hooks across a team via config file. Husky is JS-only; a polyglot solution with a hook marketplace would differentiate.
+5. **API endpoint changelog generator** — track changes to your API across deployments, auto-generate changelogs, and detect breaking changes before they ship. Integrates with OpenAPI specs.
+6. **Log-to-dashboard CLI** — pipe any log output through a CLI that parses structured/unstructured logs and serves a local web dashboard with filtering, search, and alerting. Lighter than ELK, smarter than `tail -f`.
 
 ### Key Risks
 - Developers expect free tools
