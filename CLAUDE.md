@@ -35,9 +35,11 @@
 Small, focused SaaS applications solving one specific problem for a niche audience. Think "Basecamp for dog groomers" not "the next Salesforce."
 
 ### Revenue Potential
-- **Monthly:** $500 - $50,000+ (median successful micro-SaaS: $1k-10k MRR)
-- **Time to first revenue:** 1-3 months
-- **Revenue model:** Monthly subscriptions ($9-$99/mo per user)
+- **Monthly:** $500 - $50,000+ (median successful micro-SaaS: $1k-10k MRR; 70% generate under $1k/mo)
+- **Market size:** Micro-SaaS projected to grow from $15.7B (2024) to $59.6B by 2030 (~30% annual growth)
+- **Time to first revenue:** 1-3 months (12-18 months to meaningful revenue)
+- **Revenue model:** Monthly subscriptions ($9-$99/mo per user), 70%+ profit margins typical
+- **Reality check:** Only 1-2% reach $50k+/mo — most founders spend under $1k before first revenue
 
 ### Competition Analysis
 - **Level:** Medium-High (space is popular but niches are infinite)
@@ -51,11 +53,12 @@ Small, focused SaaS applications solving one specific problem for a niche audien
 4. **AI-enhanced workflow tools** — not "another ChatGPT wrapper" but AI integrated into specific workflows (e.g., AI that reads construction blueprints and generates material lists)
 
 ### Success Examples
+- **Carrd** — one-page website builder, $1M+/year, solo dev
+- **Hypefury** — Twitter scheduler, $70k MRR, MVP built in 6 weeks
+- **PODTurbo** — print-on-demand tool, $25k MRR, solo founder
+- **Bannerbear** — automated image/video generation API, ~$10k MRR, solo founder
 - **Plausible Analytics** — privacy-focused Google Analytics alternative, ~$100k+ MRR
-- **Carrd** — simple one-page website builder, $1M+ ARR built by one person
-- **Bannerbear** — automated image/video generation API, solo founder
 - **ScreenshotOne** — screenshot API, solo dev, $5k+ MRR
-- **Panelbear** — website analytics (acquired by Cronitor)
 
 ### Steps to Execute
 1. Identify 5 niches where you have personal insight or connections
@@ -121,13 +124,16 @@ Products that use LLMs/AI APIs (OpenAI, Anthropic, open-source models) to solve 
 Building tools, APIs, or services that other developers pay for. This leverages your deepest skill — understanding what developers need.
 
 ### Revenue Potential
-- **Monthly:** $500 - $50,000+
+- **Monthly:** $1,000 - $50,000+
+- **Market size:** Developer tools market growing from $6.41B (2025) to $7.44B (2026), projected $15.72B by 2031
 - **Time to first revenue:** 1-3 months
-- **Revenue model:** API calls (pay-per-use), tiered subscriptions
+- **Revenue model:** API calls (pay-per-use), tiered subscriptions, team seats ($25-$150/mo)
+- **Key trend:** CLIs are emerging as "agent-native interfaces" — AI-augmented dev tools are the dominant growth area. GitHub Copilot hit $400M revenue in 2025 (248% YoY). Claude Code reached $1B annualized run rate within 6 months.
 
 ### Competition Analysis
 - **Level:** Medium (developers are willing to pay for good tools)
 - **Moat potential:** High if you build around a hard technical problem
+- **Reality check:** Solo devs succeed with niche utilities ($1k-$10k/mo), not competing with VC-backed tools
 
 ### Profitable Categories
 1. **Screenshot/PDF generation APIs** — always in demand (ScreenshotOne, PDFShift model)
@@ -204,9 +210,10 @@ Chrome/Firefox extensions that solve specific problems, monetized through freemi
 Selling pre-built templates, starter kits, and themes on marketplaces or your own site.
 
 ### Revenue Potential
-- **Monthly:** $500 - $20,000+
+- **Monthly:** $2,000 - $20,000+ (Marc Lou peaked at $133k/mo, now ~$16.8k/mo from ShipFast alone)
 - **Time to first revenue:** 1-2 weeks
-- **Revenue model:** One-time sales ($19-$199), bundles, license tiers
+- **Revenue model:** One-time sales ($49-$299), bundles, license tiers. 91% profit margins proven.
+- **Next.js boilerplates hold 45% market share** in the starter kit space
 
 ### Competition Analysis
 - **Level:** High on marketplaces, Medium for niche/specialized templates
@@ -222,10 +229,11 @@ Selling pre-built templates, starter kits, and themes on marketplaces or your ow
 7. **Admin dashboard templates** — React/Vue admin panels
 
 ### Success Examples
-- **ShipFast** — Next.js SaaS boilerplate, reportedly $200k+ revenue
+- **ShipFast (Marc Lou)** — $40k first month, peaked $133k/mo, $2M+ total across portfolio, 91% margins, zero employees. Oct 2025: $66k/mo total (ShipFast $16.8k + CodeFast $20.7k + DataFast $16.3k)
 - **Tailwind UI** — $6M+ revenue from Tailwind component library
+- **Jonathan Wilke** — $12k/mo selling boilerplate code from agency experience
 - **Notion template creators** — top sellers making $10-50k/mo on Gumroad
-- **Gravity** — SaaS boilerplate, strong sales
+- **MakerKit, SaaS Pegasus, Gravity** — sustained multi-year businesses
 
 ### Steps to Execute
 1. Choose a platform/framework you know deeply
@@ -448,12 +456,15 @@ Building custom automations, integrations, and workflow tools. Either as product
 ## [x] IDEA 11: WordPress/Shopify Plugins
 
 ### What It Is
-Building and selling plugins/apps for popular CMS and e-commerce platforms.
+Building and selling plugins/apps for popular CMS and e-commerce platforms. WordPress powers 43.6% of all websites (518M+ active sites).
 
 ### Revenue Potential
-- **Monthly:** $500 - $30,000+
-- **Time to first revenue:** 2-6 weeks
-- **Revenue model:** One-time ($29-$199), annual license ($49-$199/yr), freemium
+- **Monthly:** $1,000 - $100,000+ (power-law distribution)
+- **Time to first revenue:** 3-12 months
+- **Revenue model:** Annual licenses with renewals (most common), freemium, one-time ($29-$199)
+- **Real examples:** Barn2 Plugins (husband-wife team): $100k+/mo across 16 products. Easy Digital Downloads: $191k/mo. LifterLMS: $750k/yr via freemium. WP Rocket: $1M+/yr as premium-only. Gravity Forms: $5.4M annually.
+- **Typical indie math:** 10,000 active users x 2% conversion x $100/year = $20k/year. Only 1% of plugins on WordPress.org have 10k+ installs.
+- **Budget:** $5k-$25k for initial development and marketing. Shopify takes 15% commission after $1M threshold.
 
 ### Competition Analysis
 - **Level:** High for generic plugins, Medium for specialized niches
@@ -488,13 +499,16 @@ Building and selling plugins/apps for popular CMS and e-commerce platforms.
 Curating, enriching, or generating valuable data and selling access via APIs or downloads.
 
 ### Revenue Potential
-- **Monthly:** $500 - $20,000+
-- **Time to first revenue:** 2-4 weeks
-- **Revenue model:** API subscriptions, bulk data sales, tiered access
+- **Monthly:** $2,000 - $50,000+
+- **Market size:** Global data monetization market valued at $8.34B (2025), projected $18.8B by 2033
+- **Time to first revenue:** 1-4 months
+- **Revenue model:** Subscription tiers (most common), usage-based pricing, one-time dataset purchases
+- **Key trend:** "Data as a Product" (DaaP) — datasets with clear owners, SLAs, and user experiences
 
 ### Competition Analysis
-- **Level:** Low-Medium (data is unique, hard to replicate)
+- **Level:** Medium (fragmented, niche-dependent)
 - **Moat potential:** High (proprietary data is a strong moat)
+- **Distribution:** RapidAPI, Datarade, AWS Data Exchange
 
 ### Profitable Data Product Ideas
 1. **Company/business data APIs** — enriched company information for sales teams
@@ -525,13 +539,16 @@ Curating, enriching, or generating valuable data and selling access via APIs or 
 Monetizing email through paid newsletters, email courses, or email-based tools.
 
 ### Revenue Potential
-- **Monthly:** $300 - $20,000+
-- **Time to first revenue:** 1-3 months
+- **Monthly:** $500 - $20,000+
+- **Time to first revenue:** 66 days median (beehiiv 2025 data)
 - **Revenue model:** Subscriptions ($5-$15/mo), sponsorships ($50-$500/issue), course sales
+- **Market data:** Paid newsletter subscriptions on beehiiv generated $19M in 2025 (up 138% from $8M in 2024). Publishers sent 28B emails reaching 255M+ unique readers. Average ROI: $44 per $1 spent.
+- **Revenue math:** 5-10% of free subscribers convert to paid at avg $11/mo. 5,000 free subs = 250-500 paid = $2,750-$5,500/mo.
 
 ### Competition Analysis
-- **Level:** High for general topics, Medium for specialized dev niches
+- **Level:** Medium for specialized dev niches (growing but expertise differentiates)
 - **Moat potential:** Medium (audience relationship is the moat)
+- **Platforms:** beehiiv (zero commission on paid subs), ConvertKit (50% affiliate recurring 12mo), Substack (takes 10%)
 
 ### Profitable Approaches
 1. **Curated dev news** — weekly roundups of specific tech stacks (Rust, Go, AI/ML)
@@ -561,9 +578,12 @@ Monetizing email through paid newsletters, email courses, or email-based tools.
 Earning money by finding and reporting security vulnerabilities in software.
 
 ### Revenue Potential
-- **Monthly:** $500 - $20,000+ (highly variable)
-- **Time to first revenue:** 1-4 weeks (if skilled)
-- **Revenue model:** Per-bug bounties ($100 - $100,000+)
+- **Monthly:** $1,000 - $15,000+ (highly variable, power-law distribution)
+- **Market size:** Bug bounty platforms valued at $1.19B (2024), projected $3.98B by 2032 (16.3% CAGR)
+- **Time to first revenue:** 1-6 months (steep learning curve)
+- **Revenue model:** Per-bug bounties. Avg ~$1,000/bug, ~16 hours/bug = ~$62.50/hr
+- **Major payouts 2025:** Microsoft paid $17M, Google paid $12M. Apple offers up to $2M for critical vulns, Samsung up to $1M.
+- **Income reality:** Glassdoor avg $92k-$116k/yr full-time. ZipRecruiter avg $44k/yr including part-timers. Earnings are power-law: majority earns little, minority earns a lot.
 
 ### Competition Analysis
 - **Level:** High (lots of researchers), but skill creates differentiation
@@ -597,9 +617,12 @@ Earning money by finding and reporting security vulnerabilities in software.
 Building software that agencies, consultants, or businesses rebrand and sell as their own.
 
 ### Revenue Potential
-- **Monthly:** $2,000 - $30,000+
-- **Time to first revenue:** 1-3 months
+- **Monthly:** $5,000 - $50,000+
+- **Market size:** White-label software market projected to reach $50B by 2026
+- **Time to first revenue:** 3-6 months (1+ year to optimize)
 - **Revenue model:** Per-client licensing ($50-$500/mo per white-label client)
+- **Key stats:** White-label platforms generate avg $789k/year, 40-60% profit margins. Fintech white-label solutions growing 25%+ annually.
+- **Two paths:** Build your own (higher margin) or resell existing (GoHighLevel $97-$497/mo, YourGPT, SocialPilot — lower effort)
 
 ### Competition Analysis
 - **Level:** Low-Medium (requires specific builds for specific markets)
@@ -671,20 +694,24 @@ Building a two-sided marketplace connecting buyers and sellers in a niche.
 Promoting developer tools and services through content, earning commissions on referrals.
 
 ### Revenue Potential
-- **Monthly:** $200 - $10,000+
+- **Monthly:** $500 - $10,000+ (passive once established)
+- **Market size:** Global affiliate marketing exceeds $37B (2025), 81% of brands run programs
 - **Time to first revenue:** 1-3 months
-- **Revenue model:** Commission per sale (10-50%), recurring commissions
+- **Revenue model:** SaaS affiliate programs pay 20-70% commissions, often recurring
+- **Key stats:** Avg conversion rate 1-2% (top affiliates 5-10%). Affiliate-referred customers deliver 12:1 ROAS. 80% of affiliate marketers now use AI tools for content/SEO.
 
 ### Competition Analysis
 - **Level:** Medium-High
 - **Moat potential:** Low (anyone can do it)
 
 ### High-Commission Programs
-1. **Cloud hosting** — DigitalOcean, Vultr, AWS (up to $200 per referral)
-2. **Dev tools** — JetBrains, GitHub, Vercel (10-30% recurring)
-3. **Online courses** — Udemy, Coursera (15-45% per sale)
-4. **SaaS tools** — productivity tools, design tools (20-40% recurring)
-5. **Domain/hosting** — Namecheap, Cloudflare (up to $100 per referral)
+1. **Kit (ConvertKit)** — 50% recurring for 12 months
+2. **HubSpot** — 30% recurring for 12 months
+3. **Shopify** — ~$58 per referral
+4. **Fiverr** — 25-70% CPA depending on service
+5. **Cloud hosting** — Cloudways, Kinsta: $50-$200+ per referral
+6. **Dev tools** — JetBrains, GitHub, Vercel (10-30% recurring)
+7. **Domain/hosting** — Namecheap, Cloudflare (up to $100 per referral)
 
 ### Steps to Execute
 1. Create a blog or YouTube channel focused on developer content
@@ -744,9 +771,12 @@ Selling production-ready starter kits that help developers ship faster.
 Freelance technical writing for documentation, blog posts, and developer marketing.
 
 ### Revenue Potential
-- **Monthly:** $2,000 - $15,000+
-- **Time to first revenue:** 1-2 weeks
-- **Revenue model:** Per-article ($200-$1,000), retainers ($2k-$8k/mo)
+- **Monthly:** $3,000 - $15,000+
+- **Time to first revenue:** 1-4 weeks
+- **Revenue model:** Per-article ($200-$1,500), retainers ($2k-$8k/mo)
+- **Rate ranges:** Entry-level $25-$35/hr, mid-level ~$39/hr, expert/specialized $50-$150/hr
+- **Demand growing 10-11% by 2026** — fastest niches: AI, cybersecurity, cloud, fintech
+- **Business case:** Comprehensive documentation decreases support tickets by 30%
 
 ### Competition Analysis
 - **Level:** Medium (good technical writers are scarce)
@@ -866,6 +896,16 @@ Building command-line tools or developer utilities with a paid license model.
 4. **Explore white-label or marketplace** opportunities with proven demand
 
 ---
+
+## Key Market Insights (2025-2026 Research)
+
+1. **AI is the meta-trend** — AI-powered products across ALL categories are where growth is concentrated. AI-powered CLI tools, AI training datasets, AI security bug bounties, AI-integrated SaaS boilerplates.
+2. **Micro-SaaS market growing 30%/yr** — from $15.7B to $59.6B by 2030, but 70% of businesses generate under $1k/mo.
+3. **Newsletters are booming** — beehiiv paid subs up 138% YoY, 66-day median to first revenue.
+4. **Boilerplates are proven** — Marc Lou's 91% margins are the benchmark. The value is as much in marketing as the product.
+5. **Developer tools market doubling** — $6.4B to $15.7B by 2031. CLIs as agent-native interfaces is the big shift.
+6. **White-label is underrated** — $50B market, 40-60% margins, but requires patience (1+ year to optimize).
+7. **WordPress still massive** — 518M+ sites, top plugins making $100k+/mo, but only 1% of plugins get 10k+ installs.
 
 ## Tracking
 
