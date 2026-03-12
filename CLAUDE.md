@@ -617,6 +617,12 @@ Building and selling plugins/apps for popular CMS and e-commerce platforms. Word
 
 ---
 
+---
+
+---
+
+---
+
 ## [x] IDEA 12: Data Products & Specialized APIs
 
 ### What It Is

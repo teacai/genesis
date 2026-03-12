@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Authenticator QR Code Decoder</title>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+  }
+  h1 { font-size: 1.5rem; font-weight: 600; margin-bottom: 6px; color: #fff; }
+  .subtitle { color: #888; font-size: 0.85rem; margin-bottom: 24px; }
+
+  /* Tabs */
+  .tab-bar {
+    display: flex; width: 100%; max-width: 480px;
+    background: #1a1a1a; border-radius: 12px; padding: 4px;
+    margin-bottom: 16px; border: 1px solid #333;
+  }
+  .tab-btn {
+    flex: 1; padding: 10px; border: none; border-radius: 9px;
+    background: transparent; color: #888; font-size: 0.85rem;
+    font-weight: 500; cursor: pointer; transition: all 0.2s;
+  }
+  .tab-btn.active { background: #3b82f6; color: #fff; }
+  .tab-btn:not(.active):hover { color: #ccc; }
+  .tab-panel { display: none; width: 100%; max-width: 480px; }
+  .tab-panel.active { display: block; }
+
+  /* Camera */
+  .camera-container {
+    position: relative; width: 100%; border-radius: 16px;
+    overflow: hidden; background: #1a1a1a; border: 1px solid #333;
+  }
+  video, canvas { display: block; width: 100%; }
+  #canvas { display: none; }
+  .overlay {
+    position: absolute; inset: 0; display: flex;
+    align-items: center; justify-content: center; pointer-events: none;
+  }
+  .scan-frame {
+    width: 200px; height: 200px;
+    border: 2px solid rgba(99, 184, 255, 0.6); border-radius: 12px;
+    box-shadow: 0 0 0 4000px rgba(0,0,0,0.4);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .scan-frame.detected { border-color: #4ade80; animation: none; }
+  @keyframes pulse {
+    0%, 100% { border-color: rgba(99, 184, 255, 0.4); }
+    50% { border-color: rgba(99, 184, 255, 0.9); }
+  }
+
+  /* Drop zone */
+  .drop-zone {
+    border: 2px dashed #444; border-radius: 16px; padding: 48px 24px;
+    text-align: center; cursor: pointer; transition: all 0.2s; background: #1a1a1a;
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: #3b82f6; background: rgba(59, 130, 246, 0.05);
+  }
+  .drop-zone-icon { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+  .drop-zone-title { font-size: 0.95rem; color: #ccc; margin-bottom: 6px; }
+  .drop-zone-hint { font-size: 0.8rem; color: #666; }
+  .drop-zone input[type="file"] { display: none; }
+
+  /* Image preview strip */
+  .image-previews { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .image-preview-item {
+    position: relative; width: 80px; height: 80px;
+    border-radius: 8px; overflow: hidden; border: 1px solid #333;
+  }
+  .image-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+  .image-preview-item .badge {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    font-size: 0.6rem; text-align: center; padding: 2px; font-weight: 600;
+  }
+  .badge-found { background: rgba(74, 222, 128, 0.9); color: #000; }
+  .badge-none { background: rgba(239, 68, 68, 0.9); color: #fff; }
+  .badge-scanning { background: rgba(59, 130, 246, 0.9); color: #fff; }
+
+  /* Shared controls */
+  .controls {
+    width: 100%; max-width: 480px; margin-top: 16px; display: flex; gap: 10px;
+  }
+  button {
+    flex: 1; padding: 12px 20px; border: none; border-radius: 10px;
+    font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: background 0.2s;
+  }
+  #startBtn { background: #3b82f6; color: #fff; }
+  #startBtn:hover { background: #2563eb; }
+  #startBtn:disabled { background: #333; color: #666; cursor: not-allowed; }
+  #resetBtn { background: #2a2a2a; color: #ccc; border: 1px solid #444; }
+  #resetBtn:hover { background: #333; }
+  .status {
+    width: 100%; max-width: 480px; text-align: center;
+    margin-top: 12px; font-size: 0.85rem; color: #888; min-height: 20px;
+  }
+  .results { width: 100%; max-width: 480px; margin-top: 20px; }
+
+  /* Result cards */
+  .result-card {
+    background: #1a1a1a; border: 1px solid #333; border-radius: 12px;
+    padding: 20px; margin-bottom: 12px; animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .result-card h3 {
+    font-size: 1rem; color: #4ade80; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .result-card .source-tag {
+    font-size: 0.65rem; background: #2a2a2a; color: #888;
+    padding: 2px 8px; border-radius: 4px; font-weight: 400; margin-left: auto;
+  }
+  .migration-header {
+    font-size: 0.85rem; color: #a78bfa; margin-bottom: 16px;
+    padding-bottom: 10px; border-bottom: 1px solid #2a2a2a;
+  }
+  .migration-header span { color: #666; font-size: 0.75rem; }
+  .account-separator {
+    margin: 14px 0; border: none; border-top: 1px dashed #333;
+  }
+  .account-label {
+    font-size: 0.8rem; color: #a78bfa; margin-bottom: 8px; font-weight: 500;
+  }
+  .field {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 8px 0; border-bottom: 1px solid #222;
+  }
+  .field:last-child { border-bottom: none; }
+  .field-label {
+    font-size: 0.8rem; color: #888; text-transform: uppercase;
+    letter-spacing: 0.05em; flex-shrink: 0; margin-right: 16px;
+  }
+  .field-value {
+    font-size: 0.9rem; color: #fff;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    word-break: break-all; text-align: right; cursor: pointer; position: relative;
+  }
+  .field-value:hover { color: #3b82f6; }
+  .field-value::after {
+    content: ' \01F4CB'; font-size: 0.7rem; opacity: 0; transition: opacity 0.2s;
+  }
+  .field-value:hover::after { opacity: 1; }
+  .copied-toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #4ade80; color: #000; padding: 8px 20px; border-radius: 8px;
+    font-size: 0.85rem; font-weight: 500; opacity: 0; transition: opacity 0.3s;
+    pointer-events: none; z-index: 100;
+  }
+  .copied-toast.show { opacity: 1; }
+  .raw-uri {
+    margin-top: 12px; padding: 12px; background: #111; border-radius: 8px;
+    font-size: 0.75rem; color: #666; word-break: break-all;
+    font-family: 'SF Mono', 'Fira Code', monospace; cursor: pointer;
+  }
+  .raw-uri:hover { color: #888; }
+  .warning {
+    margin-top: 20px; padding: 12px 16px;
+    background: rgba(234, 179, 8, 0.1); border: 1px solid rgba(234, 179, 8, 0.3);
+    border-radius: 10px; font-size: 0.8rem; color: #eab308;
+    max-width: 480px; width: 100%; line-height: 1.5;
+  }
+  .paste-hint { margin-top: 10px; font-size: 0.8rem; color: #555; text-align: center; }
+  kbd {
+    background: #2a2a2a; border: 1px solid #444; border-radius: 4px;
+    padding: 1px 6px; font-family: inherit; font-size: 0.75rem; color: #aaa;
+  }
+</style>
+</head>
+<body>
+
+<h1>Authenticator QR Decoder</h1>
+<p class="subtitle">Decode TOTP/HOTP secrets from QR codes (standard + Google migration)</p>
+
+<!-- Tabs -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('camera')">Camera</button>
+  <button class="tab-btn" onclick="switchTab('image')">Load Image</button>
+</div>
+
+<!-- Camera Tab -->
+<div class="tab-panel active" id="tab-camera">
+  <div class="camera-container">
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="canvas"></canvas>
+    <div class="overlay">
+      <div class="scan-frame" id="scanFrame"></div>
+    </div>
+  </div>
+  <div class="controls">
+    <button id="startBtn" onclick="toggleCamera()">Start Camera</button>
+  </div>
+</div>
+
+<!-- Image Tab -->
+<div class="tab-panel" id="tab-image">
+  <div class="drop-zone" id="dropZone">
+    <span class="drop-zone-icon">\uD83D\uDDBC\uFE0F</span>
+    <div class="drop-zone-title">Drop screenshots here or click to browse</div>
+    <div class="drop-zone-hint">Supports PNG, JPG, BMP, WebP — multiple files OK</div>
+    <input type="file" id="fileInput" accept="image/*" multiple>
+  </div>
+  <p class="paste-hint">You can also paste from clipboard with <kbd>Ctrl</kbd>+<kbd>V</kbd> / <kbd>Cmd</kbd>+<kbd>V</kbd></p>
+  <div class="image-previews" id="imagePreviews"></div>
+</div>
+
+<div class="controls">
+  <button id="resetBtn" onclick="resetResults()">Clear Results</button>
+</div>
+
+<div class="status" id="status"></div>
+<div class="results" id="results"></div>
+
+<div class="warning">
+  \u26A0\uFE0F Security notice — TOTP secrets are sensitive. This tool runs entirely in your browser; no data is sent to any server. Close this page when done.
+</div>
+
+<div class="copied-toast" id="toast">Copied to clipboard</div>
+<canvas id="imgCanvas" style="display:none"></canvas>
+
+<script>
+// ================================================================
+// Google Authenticator Protobuf Decoder
+// Schema: otpauth-migration://offline?data=<base64 protobuf>
+//
+// message MigrationPayload {
+//   repeated OtpParameters otp_parameters = 1;
+//   int32 version = 2;
+//   int32 batch_size = 3;
+//   int32 batch_index = 4;
+//   int32 batch_id = 5;
+// }
+// message OtpParameters {
+//   bytes secret = 1;
+//   string name = 2;
+//   string issuer = 3;
+//   Algorithm algorithm = 4;  // 0=unspecified,1=SHA1,2=SHA256,3=SHA512,4=MD5
+//   DigitCount digits = 5;    // 0=unspecified,1=SIX,2=EIGHT
+//   OtpType type = 6;         // 0=unspecified,1=HOTP,2=TOTP
+//   int64 counter = 7;
+// }
+// ================================================================
+
+const ALGORITHM_MAP = { 0: 'SHA1', 1: 'SHA1', 2: 'SHA256', 3: 'SHA512', 4: 'MD5' };
+const DIGITS_MAP = { 0: '6', 1: '6', 2: '8' };
+const TYPE_MAP = { 0: 'TOTP', 1: 'HOTP', 2: 'TOTP' };
+
+class ProtobufReader {
+  constructor(buffer) {
+    this.view = new DataView(buffer);
+    this.offset = 0;
+    this.length = buffer.byteLength;
+    this.buffer = buffer;
+  }
+
+  done() { return this.offset >= this.length; }
+
+  readVarint() {
+    let result = 0, shift = 0;
+    while (this.offset < this.length) {
+      const byte = this.view.getUint8(this.offset++);
+      result |= (byte & 0x7F) << shift;
+      if ((byte & 0x80) === 0) return result >>> 0;
+      shift += 7;
+      if (shift > 35) throw new Error('Varint too long');
+    }
+    throw new Error('Unexpected end of data');
+  }
+
+  readBytes() {
+    const len = this.readVarint();
+    if (this.offset + len > this.length) throw new Error('Length exceeds buffer');
+    const bytes = this.buffer.slice(this.offset, this.offset + len);
+    this.offset += len;
+    return bytes;
+  }
+
+  readString() {
+    const bytes = this.readBytes();
+    return new TextDecoder().decode(bytes);
+  }
+
+  readTag() {
+    if (this.done()) return null;
+    const varint = this.readVarint();
+    return { fieldNumber: varint >>> 3, wireType: varint & 0x7 };
+  }
+
+  skipField(wireType) {
+    switch (wireType) {
+      case 0: this.readVarint(); break;  // varint
+      case 1: this.offset += 8; break;   // 64-bit
+      case 2: { const len = this.readVarint(); this.offset += len; } break; // length-delimited
+      case 5: this.offset += 4; break;   // 32-bit
+      default: throw new Error('Unknown wire type: ' + wireType);
+    }
+  }
+}
+
+function bytesToBase32(buffer) {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  const bytes = new Uint8Array(buffer);
+  let bits = '';
+  for (const b of bytes) bits += b.toString(2).padStart(8, '0');
+  let result = '';
+  for (let i = 0; i < bits.length; i += 5) {
+    const chunk = bits.substr(i, 5);
+    if (chunk.length < 5) {
+      result += alphabet[parseInt(chunk.padEnd(5, '0'), 2)];
+    } else {
+      result += alphabet[parseInt(chunk, 2)];
+    }
+  }
+  // Pad to multiple of 8
+  while (result.length % 8 !== 0) result += '=';
+  return result;
+}
+
+function bytesToHex(buffer) {
+  return Array.from(new Uint8Array(buffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+    .toUpperCase();
+}
+
+function parseOtpParameters(buffer) {
+  const reader = new ProtobufReader(buffer);
+  const entry = {
+    secret: null, secretBase32: '', secretHex: '',
+    name: '', issuer: '', algorithm: 'SHA1',
+    digits: '6', type: 'TOTP', counter: 0,
+  };
+
+  while (!reader.done()) {
+    const tag = reader.readTag();
+    if (!tag) break;
+    switch (tag.fieldNumber) {
+      case 1: // secret (bytes)
+        if (tag.wireType === 2) {
+          entry.secret = reader.readBytes();
+          entry.secretBase32 = bytesToBase32(entry.secret);
+          entry.secretHex = bytesToHex(entry.secret);
+        } else reader.skipField(tag.wireType);
+        break;
+      case 2: // name (string)
+        if (tag.wireType === 2) entry.name = reader.readString();
+        else reader.skipField(tag.wireType);
+        break;
+      case 3: // issuer (string)
+        if (tag.wireType === 2) entry.issuer = reader.readString();
+        else reader.skipField(tag.wireType);
+        break;
+      case 4: // algorithm (enum/varint)
+        if (tag.wireType === 0) {
+          const val = reader.readVarint();
+          entry.algorithm = ALGORITHM_MAP[val] || 'SHA1';
+        } else reader.skipField(tag.wireType);
+        break;
+      case 5: // digits (enum/varint)
+        if (tag.wireType === 0) {
+          const val = reader.readVarint();
+          entry.digits = DIGITS_MAP[val] || '6';
+        } else reader.skipField(tag.wireType);
+        break;
+      case 6: // type (enum/varint)
+        if (tag.wireType === 0) {
+          const val = reader.readVarint();
+          entry.type = TYPE_MAP[val] || 'TOTP';
+        } else reader.skipField(tag.wireType);
+        break;
+      case 7: // counter (varint)
+        if (tag.wireType === 0) entry.counter = reader.readVarint();
+        else reader.skipField(tag.wireType);
+        break;
+      default:
+        reader.skipField(tag.wireType);
+    }
+  }
+
+  // Parse name for issuer:account format
+  let account = entry.name;
+  if (entry.name.includes(':')) {
+    const parts = entry.name.split(':');
+    if (!entry.issuer) entry.issuer = parts[0].trim();
+    account = parts.slice(1).join(':').trim();
+  }
+  entry.account = account;
+
+  return entry;
+}
+
+function parseMigrationPayload(buffer) {
+  const reader = new ProtobufReader(buffer);
+  const payload = { otpParameters: [], version: 0, batchSize: 0, batchIndex: 0, batchId: 0 };
+
+  while (!reader.done()) {
+    const tag = reader.readTag();
+    if (!tag) break;
+    switch (tag.fieldNumber) {
+      case 1: // otp_parameters (repeated, length-delimited)
+        if (tag.wireType === 2) {
+          const entryBuf = reader.readBytes();
+          payload.otpParameters.push(parseOtpParameters(entryBuf));
+        } else reader.skipField(tag.wireType);
+        break;
+      case 2: if (tag.wireType === 0) payload.version = reader.readVarint(); else reader.skipField(tag.wireType); break;
+      case 3: if (tag.wireType === 0) payload.batchSize = reader.readVarint(); else reader.skipField(tag.wireType); break;
+      case 4: if (tag.wireType === 0) payload.batchIndex = reader.readVarint(); else reader.skipField(tag.wireType); break;
+      case 5: if (tag.wireType === 0) payload.batchId = reader.readVarint(); else reader.skipField(tag.wireType); break;
+      default: reader.skipField(tag.wireType);
+    }
+  }
+  return payload;
+}
+
+function decodeMigrationURI(uri) {
+  try {
+    const url = new URL(uri);
+    const dataParam = url.searchParams.get('data');
+    if (!dataParam) throw new Error('No data parameter in migration URI');
+
+    // Base64 decode
+    const binaryString = atob(dataParam);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) bytes[i] = binaryString.charCodeAt(i);
+
+    return parseMigrationPayload(bytes.buffer);
+  } catch (e) {
+    return { error: e.message, otpParameters: [] };
+  }
+}
+
+// ================================================================
+// Main app
+// ================================================================
+
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d', { willReadFrequently: true });
+const imgCanvas = document.getElementById('imgCanvas');
+const imgCtx = imgCanvas.getContext('2d', { willReadFrequently: true });
+const statusEl = document.getElementById('status');
+const resultsEl = document.getElementById('results');
+const startBtn = document.getElementById('startBtn');
+const scanFrame = document.getElementById('scanFrame');
+const toast = document.getElementById('toast');
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const imagePreviews = document.getElementById('imagePreviews');
+
+let stream = null;
+let scanning = false;
+let animFrame = null;
+let decoded = new Set();
+
+// ===== Tab switching =====
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+    btn.classList.toggle('active', (tab === 'camera' && i === 0) || (tab === 'image' && i === 1));
+  });
+  document.getElementById('tab-camera').classList.toggle('active', tab === 'camera');
+  document.getElementById('tab-image').classList.toggle('active', tab === 'image');
+  if (tab === 'image' && scanning) stopCamera();
+}
+
+function setStatus(msg) { statusEl.textContent = msg; }
+
+// ===== Camera =====
+async function toggleCamera() {
+  if (scanning) stopCamera();
+  else await startCamera();
+}
+
+async function startCamera() {
+  try {
+    setStatus('Requesting camera access...');
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+    });
+    video.srcObject = stream;
+    await video.play();
+    scanning = true;
+    startBtn.textContent = 'Stop Camera';
+    setStatus('Scanning... hold a QR code in the frame');
+    scanFrame.classList.remove('detected');
+    requestAnimationFrame(tick);
+  } catch (err) {
+    setStatus('Camera error: ' + err.message);
+  }
+}
+
+function stopCamera() {
+  scanning = false;
+  if (animFrame) cancelAnimationFrame(animFrame);
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  video.srcObject = null;
+  startBtn.textContent = 'Start Camera';
+  setStatus('Camera stopped');
+}
+
+function tick() {
+  if (!scanning) return;
+  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const code = jsQR(imageData.data, imageData.width, imageData.height, {
+      inversionAttempts: 'dontInvert'
+    });
+    if (code && code.data) handleQR(code.data, 'camera');
+  }
+  animFrame = requestAnimationFrame(tick);
+}
+
+// ===== Image loading =====
+dropZone.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files.length) processFiles(e.target.files);
+  fileInput.value = '';
+});
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault(); dropZone.classList.remove('dragover');
+  if (e.dataTransfer.files.length) processFiles(e.dataTransfer.files);
+});
+document.addEventListener('paste', (e) => {
+  const items = e.clipboardData?.items;
+  if (!items) return;
+  const imageFiles = [];
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const file = item.getAsFile();
+      if (file) imageFiles.push(file);
+    }
+  }
+  if (imageFiles.length) { switchTab('image'); processFiles(imageFiles); }
+});
+
+function processFiles(files) {
+  for (const file of files) {
+    if (!file.type.startsWith('image/')) continue;
+    processImageFile(file);
+  }
+}
+
+function processImageFile(file) {
+  const reader = new FileReader();
+  const previewItem = addPreviewThumb(file.name);
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      previewItem.querySelector('img').src = e.target.result;
+      const results = scanImageMultiScale(img);
+      if (results.length > 0) {
+        previewItem.querySelector('.badge').textContent = `${results.length} found`;
+        previewItem.querySelector('.badge').className = 'badge badge-found';
+        let totalAccounts = 0;
+        results.forEach(data => { totalAccounts += handleQR(data, 'image'); });
+        setStatus(`Found ${totalAccounts} account(s) from ${results.length} QR code(s) in "${file.name}"`);
+      } else {
+        previewItem.querySelector('.badge').textContent = 'No QR';
+        previewItem.querySelector('.badge').className = 'badge badge-none';
+        setStatus(`No QR code found in "${file.name}". Try a clearer screenshot.`);
+      }
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function scanImageMultiScale(img) {
+  const found = new Set();
+  const scales = [1];
+  if (img.width > 1500 || img.height > 1500) scales.push(0.5, 0.75);
+  if (img.width < 300 || img.height < 300) scales.push(2, 3);
+  scales.push(1.5, 0.33);
+
+  for (const scale of scales) {
+    const w = Math.round(img.width * scale);
+    const h = Math.round(img.height * scale);
+    imgCanvas.width = w;
+    imgCanvas.height = h;
+    imgCtx.drawImage(img, 0, 0, w, h);
+    const imageData = imgCtx.getImageData(0, 0, w, h);
+    for (const inversion of ['dontInvert', 'attemptBoth']) {
+      const code = jsQR(imageData.data, w, h, { inversionAttempts: inversion });
+      if (code && code.data && !found.has(code.data)) found.add(code.data);
+    }
+    if (found.size > 0) break;
+  }
+  return Array.from(found);
+}
+
+function addPreviewThumb(name) {
+  const item = document.createElement('div');
+  item.className = 'image-preview-item';
+  item.title = name;
+  item.innerHTML = `<img src="" alt="${escapeHTML(name)}"><div class="badge badge-scanning">Scanning</div>`;
+  imagePreviews.prepend(item);
+  return item;
+}
+
+// ===== QR handling =====
+function handleQR(data, source) {
+  if (decoded.has(data)) return 0;
+  decoded.add(data);
+
+  if (source === 'camera') {
+    scanFrame.classList.add('detected');
+    setTimeout(() => scanFrame.classList.remove('detected'), 1500);
+  }
+
+  // Google Authenticator migration format (protobuf)
+  if (data.startsWith('otpauth-migration://')) {
+    const payload = decodeMigrationURI(data);
+    if (payload.error) {
+      renderRawResult(data, 'Migration decode error: ' + payload.error, source);
+      return 0;
+    }
+    renderMigrationResult(payload, data, source);
+    if (source === 'camera') setStatus(`Decoded ${payload.otpParameters.length} account(s) from Google Authenticator export!`);
+    return payload.otpParameters.length;
+  }
+
+  // Standard otpauth:// format
+  if (data.startsWith('otpauth://')) {
+    const parsed = parseOTPAuth(data);
+    renderResult(parsed, data, source);
+    if (source === 'camera') setStatus('QR code decoded! Scan another or stop the camera.');
+    return 1;
+  }
+
+  // Unknown format
+  renderRawResult(data, null, source);
+  if (source === 'camera') setStatus('Non-authenticator QR detected.');
+  return 0;
+}
+
+function parseOTPAuth(uri) {
+  try {
+    const url = new URL(uri);
+    const type = url.hostname;
+    const labelRaw = decodeURIComponent(url.pathname.slice(1));
+    const params = url.searchParams;
+    let issuer = params.get('issuer') || '';
+    let account = labelRaw;
+    if (labelRaw.includes(':')) {
+      const parts = labelRaw.split(':');
+      if (!issuer) issuer = parts[0].trim();
+      account = parts.slice(1).join(':').trim();
+    }
+    return {
+      type: type.toUpperCase(), issuer, account,
+      secret: params.get('secret') || '(not found)',
+      algorithm: (params.get('algorithm') || 'SHA1').toUpperCase(),
+      digits: params.get('digits') || '6',
+      period: type === 'totp' ? (params.get('period') || '30') : null,
+      counter: type === 'hotp' ? (params.get('counter') || '0') : null,
+    };
+  } catch (e) {
+    return { error: 'Failed to parse URI: ' + e.message };
+  }
+}
+
+// ===== Rendering =====
+
+function renderMigrationResult(payload, rawUri, source) {
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  const sourceLabel = source === 'camera' ? 'Camera' : 'Image';
+  const count = payload.otpParameters.length;
+
+  let html = `<h3>\u2705 Google Authenticator Export<span class="source-tag">${sourceLabel}</span></h3>`;
+  html += `<div class="migration-header">${count} account${count !== 1 ? 's' : ''} decoded`;
+  if (payload.batchSize > 0) html += ` <span>(batch ${payload.batchIndex + 1} of ${payload.batchSize})</span>`;
+  html += `</div>`;
+
+  payload.otpParameters.forEach((entry, i) => {
+    if (i > 0) html += '<hr class="account-separator">';
+    const title = entry.issuer || entry.account || 'Unknown Account';
+    html += `<div class="account-label">${i + 1}. ${escapeHTML(title)}</div>`;
+
+    const fields = [
+      ['Type', entry.type],
+      ['Issuer', entry.issuer || '\u2014'],
+      ['Account', entry.account || '\u2014'],
+      ['Secret (Base32)', entry.secretBase32],
+      ['Algorithm', entry.algorithm],
+      ['Digits', entry.digits],
+    ];
+    if (entry.type === 'TOTP') fields.push(['Period', '30s']);
+    if (entry.type === 'HOTP') fields.push(['Counter', String(entry.counter)]);
+    if (entry.secretHex) fields.push(['Secret (Hex)', entry.secretHex]);
+
+    for (const [label, value] of fields) {
+      html += `<div class="field">
+        <span class="field-label">${label}</span>
+        <span class="field-value" onclick="copyText('${escapeAttr(value)}')">${escapeHTML(value)}</span>
+      </div>`;
+    }
+  });
+
+  html += `<div class="raw-uri" onclick="copyText(this.textContent)" title="Click to copy full URI">${escapeHTML(rawUri)}</div>`;
+  card.innerHTML = html;
+  resultsEl.prepend(card);
+}
+
+function renderResult(parsed, rawUri, source) {
+  if (parsed.error) { renderRawResult(rawUri, parsed.error, source); return; }
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  const title = parsed.issuer || parsed.account || 'Unknown Account';
+  const sourceLabel = source === 'camera' ? 'Camera' : 'Image';
+  let fieldsHTML = '';
+  const fields = [
+    ['Type', parsed.type],
+    ['Issuer', parsed.issuer || '\u2014'],
+    ['Account', parsed.account || '\u2014'],
+    ['Secret', parsed.secret],
+    ['Algorithm', parsed.algorithm],
+    ['Digits', parsed.digits],
+  ];
+  if (parsed.period) fields.push(['Period', parsed.period + 's']);
+  if (parsed.counter !== null) fields.push(['Counter', parsed.counter]);
+  try { fields.push(['Secret (Hex)', base32ToHex(parsed.secret)]); } catch (e) {}
+
+  for (const [label, value] of fields) {
+    fieldsHTML += `<div class="field">
+      <span class="field-label">${label}</span>
+      <span class="field-value" onclick="copyText('${escapeAttr(value)}')">${escapeHTML(value)}</span>
+    </div>`;
+  }
+  card.innerHTML = `
+    <h3>\u2705 ${escapeHTML(title)}<span class="source-tag">${sourceLabel}</span></h3>
+    ${fieldsHTML}
+    <div class="raw-uri" onclick="copyText(this.textContent)" title="Click to copy full URI">${escapeHTML(rawUri)}</div>`;
+  resultsEl.prepend(card);
+}
+
+function renderRawResult(data, note, source) {
+  const card = document.createElement('div');
+  card.className = 'result-card';
+  const sourceLabel = source === 'camera' ? 'Camera' : 'Image';
+  card.innerHTML = `
+    <h3 style="color:#eab308">\u26A0\uFE0F Non-OTP QR Code<span class="source-tag">${sourceLabel}</span></h3>
+    ${note ? `<p style="color:#888;font-size:0.8rem;margin-bottom:10px">${escapeHTML(note)}</p>` : ''}
+    <div class="raw-uri" onclick="copyText(this.textContent)">${escapeHTML(data)}</div>`;
+  resultsEl.prepend(card);
+}
+
+// ===== Utilities =====
+function base32ToHex(base32) {
+  const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  let bits = '';
+  const clean = base32.toUpperCase().replace(/[=\s]/g, '');
+  for (const c of clean) {
+    const val = alphabet.indexOf(c);
+    if (val === -1) throw new Error('Invalid base32');
+    bits += val.toString(2).padStart(5, '0');
+  }
+  let hex = '';
+  for (let i = 0; i + 4 <= bits.length; i += 4) hex += parseInt(bits.substr(i, 4), 2).toString(16);
+  return hex.toUpperCase();
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 1500);
+  });
+}
+
+function resetResults() {
+  resultsEl.innerHTML = '';
+  imagePreviews.innerHTML = '';
+  decoded.clear();
+  setStatus('Results cleared. Ready to scan.');
+  scanFrame.classList.remove('detected');
+}
+
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function escapeAttr(str) {
+  return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+</script>
+</body>
+</html>
