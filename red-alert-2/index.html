@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red Alert 2 - Browser Clone</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Segoe UI', Arial, sans-serif; }
+#game-container { width: 100%; height: 100%; position: relative; }
+#game-canvas { display: block; cursor: default; }
+#ui-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+#ui-overlay > * { pointer-events: auto; }
+
+/* Top resource bar */
+#resource-bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 32px;
+  background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
+  border-bottom: 2px solid #333;
+  display: flex; align-items: center; padding: 0 10px;
+  font-size: 13px; color: #ffd700; z-index: 10;
+}
+.resource-item { margin-right: 20px; display: flex; align-items: center; gap: 5px; }
+.resource-item span { color: #fff; }
+.resource-label { color: #aaa; font-size: 11px; }
+
+/* Right sidebar */
+#sidebar {
+  position: absolute; top: 32px; right: 0; width: 200px; bottom: 0;
+  background: linear-gradient(180deg, #1a1a2e 0%, #111122 100%);
+  border-left: 2px solid #333; overflow-y: auto; z-index: 10;
+}
+#sidebar::-webkit-scrollbar { width: 6px; }
+#sidebar::-webkit-scrollbar-track { background: #111; }
+#sidebar::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+
+.sidebar-section { padding: 5px; }
+.sidebar-title {
+  color: #ffd700; font-size: 11px; text-transform: uppercase;
+  padding: 4px 8px; background: #222; border-bottom: 1px solid #444;
+  letter-spacing: 1px;
+}
+.build-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px; }
+.build-btn {
+  background: #1a2a1a; border: 1px solid #2a4a2a; border-radius: 3px;
+  padding: 3px; cursor: pointer; text-align: center; color: #ccc;
+  font-size: 10px; transition: all 0.15s;
+  display: flex; flex-direction: column; align-items: center;
+}
+.build-btn:hover { background: #2a3a2a; border-color: #4a6a4a; }
+.build-btn.selected { background: #2a4a2a; border-color: #6a9a6a; box-shadow: 0 0 6px rgba(100,200,100,0.3); }
+.build-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+.build-btn svg { width: 48px; height: 48px; }
+.build-btn .label { margin-top: 2px; }
+.build-btn .cost { color: #ffd700; font-size: 9px; }
+.build-progress {
+  width: 100%; height: 3px; background: #333; margin-top: 2px; border-radius: 1px;
+}
+.build-progress-fill { height: 100%; background: #4a4; border-radius: 1px; width: 0; }
+
+/* Minimap */
+#minimap-container {
+  position: absolute; bottom: 0; left: 0; width: 200px; height: 160px;
+  background: #111; border-top: 2px solid #333; border-right: 2px solid #333;
+  z-index: 10;
+}
+#minimap { width: 100%; height: 100%; display: block; }
+
+/* Selection info */
+#selection-info {
+  position: absolute; bottom: 0; left: 200px; right: 200px; height: 80px;
+  background: linear-gradient(180deg, #1a1a2e 0%, #0d0d1a 100%);
+  border-top: 2px solid #333;
+  display: flex; align-items: center; padding: 5px 15px;
+  color: #fff; font-size: 12px; z-index: 10;
+}
+.sel-portrait { width: 60px; height: 60px; border: 2px solid #444; background: #222; margin-right: 10px; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+.sel-portrait svg { width: 50px; height: 50px; }
+.sel-details { flex: 1; }
+.sel-name { color: #ffd700; font-size: 14px; font-weight: bold; }
+.sel-hp { margin-top: 3px; }
+.hp-bar { width: 120px; height: 6px; background: #333; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; }
+.hp-fill { height: 100%; background: #4a4; border-radius: 3px; }
+.sel-multi { display: flex; flex-wrap: wrap; gap: 3px; }
+.sel-multi-icon { width: 36px; height: 36px; border: 1px solid #444; background: #222; border-radius: 3px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.sel-multi-icon:hover { border-color: #888; }
+.sel-multi-icon svg { width: 28px; height: 28px; }
+
+/* Tab buttons */
+.tab-row { display: flex; border-bottom: 1px solid #333; }
+.tab-btn {
+  flex: 1; padding: 4px; text-align: center; font-size: 10px;
+  color: #888; cursor: pointer; background: #151525;
+  border: none; border-right: 1px solid #333;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.tab-btn:last-child { border-right: none; }
+.tab-btn.active { color: #ffd700; background: #222; }
+.tab-btn:hover { color: #fff; }
+
+/* Menu screens */
+.menu-screen {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: radial-gradient(ellipse at center, #1a0a0a 0%, #000 70%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 100;
+}
+.menu-screen h1 {
+  font-size: 48px; color: #c00; text-shadow: 0 0 20px rgba(200,0,0,0.5);
+  margin-bottom: 5px; letter-spacing: 3px;
+}
+.menu-screen h2 {
+  font-size: 18px; color: #888; margin-bottom: 40px; font-weight: normal;
+}
+.menu-btn {
+  display: block; width: 280px; padding: 12px; margin: 6px;
+  background: linear-gradient(180deg, #2a1a1a 0%, #1a0a0a 100%);
+  border: 1px solid #600; color: #faa; font-size: 16px;
+  cursor: pointer; text-align: center; border-radius: 4px;
+  transition: all 0.2s; text-transform: uppercase; letter-spacing: 1px;
+}
+.menu-btn:hover {
+  background: linear-gradient(180deg, #4a1a1a 0%, #2a0a0a 100%);
+  border-color: #a00; color: #fff; box-shadow: 0 0 15px rgba(200,0,0,0.3);
+}
+
+/* Map editor */
+#map-editor-ui {
+  position: absolute; top: 32px; right: 0; width: 200px; bottom: 0;
+  background: #1a1a2e; border-left: 2px solid #333; z-index: 10;
+  overflow-y: auto;
+}
+.editor-tool {
+  padding: 8px 10px; cursor: pointer; color: #ccc; font-size: 12px;
+  border-bottom: 1px solid #222;
+}
+.editor-tool:hover { background: #2a2a3e; }
+.editor-tool.active { background: #2a4a2a; color: #fff; }
+
+/* Game setup screen */
+.setup-screen {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+}
+.setup-panel {
+  background: #1a1a2e; border: 2px solid #444; border-radius: 8px;
+  padding: 30px; width: 500px; max-height: 80vh; overflow-y: auto;
+}
+.setup-panel h2 { color: #ffd700; margin-bottom: 15px; }
+.setup-row { margin: 10px 0; display: flex; align-items: center; gap: 10px; }
+.setup-row label { color: #aaa; width: 120px; font-size: 13px; }
+.setup-row select, .setup-row input {
+  flex: 1; background: #222; border: 1px solid #444; color: #fff;
+  padding: 6px 10px; border-radius: 4px; font-size: 13px;
+}
+.setup-row input[type="range"] { padding: 0; }
+
+/* Notifications */
+#notifications {
+  position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+  z-index: 50; display: flex; flex-direction: column; align-items: center;
+}
+.notification {
+  background: rgba(0,0,0,0.8); border: 1px solid #ffd700; color: #fff;
+  padding: 6px 16px; border-radius: 4px; margin: 3px; font-size: 13px;
+  animation: notifFade 3s forwards;
+}
+@keyframes notifFade {
+  0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; }
+}
+
+/* Tooltip */
+#tooltip {
+  position: absolute; background: rgba(0,0,0,0.9); border: 1px solid #555;
+  color: #fff; padding: 6px 10px; border-radius: 4px; font-size: 11px;
+  pointer-events: none; z-index: 60; display: none; max-width: 200px;
+}
+</style>
+</head>
+<body>
+<div id="game-container">
+  <canvas id="game-canvas"></canvas>
+  <div id="ui-overlay">
+    <div id="resource-bar">
+      <div class="resource-item">
+        <span id="credits-display">5000</span>
+        <span class="resource-label">Credits</span>
+      </div>
+      <div class="resource-item">
+        <span id="power-display">0/0</span>
+        <span class="resource-label">Power</span>
+      </div>
+      <div class="resource-item">
+        <span id="unit-count-display">0/50</span>
+        <span class="resource-label">Units</span>
+      </div>
+      <div class="resource-item" style="margin-left:auto;">
+        <span id="fps-display">0</span>
+        <span class="resource-label">FPS</span>
+      </div>
+    </div>
+    <div id="sidebar"></div>
+    <div id="minimap-container"><canvas id="minimap"></canvas></div>
+    <div id="selection-info"></div>
+    <div id="notifications"></div>
+    <div id="tooltip"></div>
+  </div>
+</div>
+
+<!-- Game scripts loaded as modules -->
+<script src="js/sprites.js"></script>
+<script src="js/config.js"></script>
+<script src="js/map.js"></script>
+<script src="js/pathfinding.js"></script>
+<script src="js/entities.js"></script>
+<script src="js/combat.js"></script>
+<script src="js/resources.js"></script>
+<script src="js/fog.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/input.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/network.js"></script>
+<script src="js/mapeditor.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
