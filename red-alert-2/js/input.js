@@ -22,6 +22,8 @@ class InputHandler {
       this._handleKeyDown(e);
     });
     window.addEventListener('keyup', e => {
+      const chatInput = document.getElementById('chat-input');
+      if (chatInput && document.activeElement === chatInput) return;
       this.keys[e.key.toLowerCase()] = false;
     });
 
@@ -344,6 +346,17 @@ class InputHandler {
 
   _handleKeyDown(e) {
     const key = e.key.toLowerCase();
+
+    // Enter - toggle chat
+    if (key === 'enter' && this.game.state === 'playing') {
+      e.preventDefault();
+      this.game.toggleChat();
+      return;
+    }
+
+    // Skip game hotkeys while chat input is focused
+    const chatInput = document.getElementById('chat-input');
+    if (chatInput && document.activeElement === chatInput) return;
 
     // Escape - deselect or cancel placement
     if (key === 'escape') {

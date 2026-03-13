@@ -243,10 +243,17 @@ class NetworkManager {
         break;
 
       case 'command':
-        this.receivedCommands.push(msg.command);
-        if (this.isHost) {
-          // Broadcast to all other peers
-          this._broadcastExcept(peerId, msg);
+        // Handle chat commands locally instead of queuing
+        if (msg.command && msg.command.type === 'chat') {
+          this.game.addChatMessage(msg.command.name, msg.command.color, msg.command.text);
+          if (this.isHost) {
+            this._broadcastExcept(peerId, msg);
+          }
+        } else {
+          this.receivedCommands.push(msg.command);
+          if (this.isHost) {
+            this._broadcastExcept(peerId, msg);
+          }
         }
         break;
 

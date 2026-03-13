@@ -15,6 +15,10 @@ class Game {
     this.aiManager = new AIManager();
     this.mapEditor = new MapEditor(this);
 
+    // Chat
+    this.chatMessages = [];
+    this.chatOpen = false;
+
     // Camera
     this.camera = {
       x: 0, y: 0, zoom: 1,
@@ -91,7 +95,7 @@ class Game {
         <h2 style="color:#ffd700;margin-bottom:20px;">Skirmish Setup</h2>
         <div class="setup-row">
           <label>Your Name</label>
-          <input type="text" id="player-name" value="Commander" maxlength="20">
+          <input type="text" id="player-name" value="Commander" maxlength="10">
         </div>
         <div class="setup-row">
           <label>Faction</label>
@@ -177,7 +181,7 @@ class Game {
         </p>
         <div class="setup-row">
           <label>Your Name</label>
-          <input type="text" id="mp-name" value="Commander" maxlength="20">
+          <input type="text" id="mp-name" value="Commander" maxlength="10">
         </div>
         <div class="setup-row">
           <label>Faction</label>
@@ -325,6 +329,8 @@ class Game {
     this.state = 'playing';
     this.ui.init();
     this.sound.init();
+    this.initChat();
+    this.addChatMessage(null, null, 'Game started. Press Enter to chat.', true);
   }
 
   startGameWithMap(map) {
@@ -382,6 +388,8 @@ class Game {
 
     this.state = 'playing';
     this.ui.init();
+    this.initChat();
+    this.addChatMessage(null, null, 'Game started. Press Enter to chat.', true);
     CONFIG.FOG_ENABLED = true;
   }
 
@@ -596,6 +604,89 @@ class Game {
 
   addEffect(effect) {
     this.effects.push(effect);
+  }
+
+  initChat() {
+    const container = document.getElementById('chat-container');
+    const input = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('chat-send-btn');
+
+    container.style.display = 'flex';
+
+    sendBtn.onclick = () => this._sendChatFromInput();
+    input.addEventListener('keydown', (e) => {
+      e.stopPropagation(); // prevent game keys while typing
+    });
+    input.addEventListener('keyup', (e) => {
+      e.stopPropagation();
+    });
+  }
+
+  toggleChat() {
+    const input = document.getElementById('chat-input');
+    if (!input) return;
+
+    if (document.activeElement === input) {
+      // Send message and blur
+      this._sendChatFromInput();
+      input.blur();
+      this.chatOpen = false;
+    } else {
+      // Focus input
+      input.focus();
+      this.chatOpen = true;
+    }
+  }
+
+  _sendChatFromInput() {
+    const input = document.getElementById('chat-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const player = this.players[this.localPlayerId];
+    const name = player ? player.name : 'Player';
+    const color = player ? player.color : '#fff';
+
+    this.addChatMessage(name, color, text);
+
+    // Broadcast via network
+    this.network.sendCommand({
+      type: 'chat',
+      name,
+      color,
+      text,
+    });
+
+    input.value = '';
+  }
+
+  addChatMessage(name, color, text, isSystem = false) {
+    const log = document.getElementById('chat-log');
+    if (!log) return;
+
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg' + (isSystem ? ' system' : '');
+
+    if (isSystem) {
+      msg.textContent = text;
+    } else {
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'chat-name';
+      nameSpan.style.color = color;
+      nameSpan.textContent = name + ':';
+      msg.appendChild(nameSpan);
+      msg.appendChild(document.createTextNode(' ' + text));
+    }
+
+    log.appendChild(msg);
+    log.scrollTop = log.scrollHeight;
+
+    // Keep max 100 messages
+    this.chatMessages.push({ name, color, text, isSystem });
+    while (log.children.length > 100) {
+      log.removeChild(log.firstChild);
+      this.chatMessages.shift();
+    }
   }
 
   notify(message) {
