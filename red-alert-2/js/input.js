@@ -224,11 +224,20 @@ class InputHandler {
       this.selectedEntities.push(clicked);
       this.game.sound?.playSelect();
       this.game.ui.updateSelection(this.selectedEntities);
-    } else if (enemyClicked && this.selectedEntities.length > 0) {
-      // Click on enemy = attack
-      this._commandAttack(enemyClicked);
+    } else if (this.selectedEntities.length > 0) {
+      // Check if only buildings are selected — click empty deselects
+      const hasUnits = this.selectedEntities.some(e => e.type === 'unit');
+      if (enemyClicked) {
+        this._commandAttack(enemyClicked);
+      } else if (hasUnits) {
+        // Units selected: click moves to position
+        this._commandMove(tile.x, tile.y);
+      } else {
+        // Only buildings selected: click empty deselects
+        this._deselectAll();
+        this.game.ui.updateSelection([]);
+      }
     } else {
-      // Clicking empty space deselects
       if (!this.keys['shift']) {
         this._deselectAll();
         this.game.ui.updateSelection([]);
