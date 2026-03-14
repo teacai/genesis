@@ -110,6 +110,9 @@ class Renderer {
     // Draw building context menu (repair/sell)
     this._drawBuildingContextMenu(ctx);
 
+    // Draw attack target cursor on hovered enemy
+    this._drawAttackCursor(ctx);
+
     // Draw selection box
     if (this.game.input.isDragging && this.game.input.dragStart) {
       this._drawSelectionBox(ctx);
@@ -440,6 +443,54 @@ class Renderer {
         }
       }
     }
+  }
+
+  _drawAttackCursor(ctx) {
+    const enemy = this.game.input.hoveredEnemy;
+    if (!enemy) return;
+    // Only show if we have armed units selected
+    if (!this.game.input.selectedEntities.some(e => e.type === 'unit' && e.weapon)) return;
+
+    const screen = this.tileToScreen(enemy.x, enemy.y);
+    const zoom = this.game.camera.zoom;
+    const time = performance.now() / 1000;
+
+    // Animated rotating crosshair
+    const r = 18 * zoom;
+    const pulse = 1 + Math.sin(time * 6) * 0.15;
+    const rot = time * 2;
+
+    ctx.save();
+    ctx.translate(screen.x, screen.y - (enemy.type === 'building' ? enemy.def.size * 16 * zoom : 16 * zoom));
+
+    // Outer rotating ring
+    ctx.strokeStyle = '#f44';
+    ctx.lineWidth = 2 * zoom;
+    ctx.globalAlpha = 0.8;
+    ctx.beginPath();
+    ctx.arc(0, 0, r * pulse, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Crosshair lines (rotating)
+    ctx.globalAlpha = 0.9;
+    for (let i = 0; i < 4; i++) {
+      const angle = rot + (i * Math.PI / 2);
+      const inner = r * 0.5 * pulse;
+      const outer = r * pulse;
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(angle) * inner, Math.sin(angle) * inner);
+      ctx.lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer);
+      ctx.stroke();
+    }
+
+    // Inner dot
+    ctx.fillStyle = '#f44';
+    ctx.globalAlpha = 0.6 + Math.sin(time * 8) * 0.4;
+    ctx.beginPath();
+    ctx.arc(0, 0, 3 * zoom, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
   }
 
   _drawBuildingContextMenu(ctx) {

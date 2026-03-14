@@ -65,6 +65,22 @@ class InputHandler {
     this.mouse.tileX = tile.x;
     this.mouse.tileY = tile.y;
 
+    // Track hovered enemy for attack cursor
+    this.hoveredEnemy = null;
+    if (this.selectedEntities.length > 0 && !this.placingBuilding) {
+      const nearby = this.game.entities.getEntitiesNear(tile.x, tile.y, 1.5);
+      this.hoveredEnemy = nearby.find(ent => ent.playerId !== this.game.localPlayerId && !ent.dead) || null;
+    }
+
+    // Update cursor
+    if (this.hoveredEnemy && this.selectedEntities.some(e => e.type === 'unit' && e.weapon)) {
+      this.canvas.style.cursor = 'crosshair';
+    } else if (this.placingBuilding) {
+      this.canvas.style.cursor = 'cell';
+    } else {
+      this.canvas.style.cursor = 'default';
+    }
+
     if (this.dragStart && !this.isRightDragging) {
       const dx = this.mouse.x - this.dragStart.sx;
       const dy = this.mouse.y - this.dragStart.sy;
@@ -431,16 +447,24 @@ class InputHandler {
       }
     }
 
-    // Control groups (Ctrl+1-9 to set, 1-9 to recall)
-    if (key >= '1' && key <= '9') {
+    // Control groups (Ctrl+0-9 to set, 0-9 to recall, double-tap to center)
+    if (key >= '0' && key <= '9') {
       const groupNum = parseInt(key);
       if (this.keys['control']) {
-        // Set control group
+        // Assign control group
         this.controlGroups[groupNum] = this.selectedEntities.map(e => e.id);
+        if (this.selectedEntities.length > 0) {
+          this.game.notify(`Group ${groupNum}: ${this.selectedEntities.length} units assigned`);
+        }
       } else {
-        // Recall control group
+        // Recall control group (double-tap centers camera)
         const group = this.controlGroups[groupNum];
-        if (group) {
+        if (group && group.length > 0) {
+          const now = performance.now();
+          const doubleTap = this._lastGroupKey === groupNum && (now - this._lastGroupTime) < 400;
+          this._lastGroupKey = groupNum;
+          this._lastGroupTime = now;
+
           this._deselectAll();
           for (const id of group) {
             const entity = this.game.entities.get(id);
@@ -450,6 +474,14 @@ class InputHandler {
             }
           }
           this.game.ui.updateSelection(this.selectedEntities);
+
+          // Double-tap: center camera on group
+          if (doubleTap && this.selectedEntities.length > 0) {
+            const e = this.selectedEntities[0];
+            const world = this.game.map.tileToWorld(e.tileX, e.tileY);
+            this.game.camera.x = world.x;
+            this.game.camera.y = world.y;
+          }
         }
       }
     }
