@@ -224,14 +224,11 @@ class InputHandler {
       this.selectedEntities.push(clicked);
       this.game.sound?.playSelect();
       this.game.ui.updateSelection(this.selectedEntities);
-    } else if (this.selectedEntities.length > 0) {
-      // Units selected: left-click on enemy = attack, on ground = move
-      if (enemyClicked) {
-        this._commandAttack(enemyClicked);
-      } else {
-        this._commandMove(tile.x, tile.y);
-      }
+    } else if (enemyClicked && this.selectedEntities.length > 0) {
+      // Click on enemy = attack
+      this._commandAttack(enemyClicked);
     } else {
+      // Clicking empty space deselects
       if (!this.keys['shift']) {
         this._deselectAll();
         this.game.ui.updateSelection([]);
@@ -240,10 +237,20 @@ class InputHandler {
   }
 
   _handleRightClick() {
-    // Right-click deselects
-    if (this.selectedEntities.length > 0) {
-      this._deselectAll();
-      this.game.ui.updateSelection([]);
+    if (this.selectedEntities.length === 0) return;
+
+    const world = this._screenToWorld(this.mouse.x, this.mouse.y);
+    const tile = this._worldToTile(world.x, world.y);
+
+    // Check if right-clicking on enemy
+    const entities = this.game.entities.getEntitiesNear(tile.x, tile.y, 1.5);
+    const enemy = entities.find(e => e.playerId !== this.game.localPlayerId);
+
+    if (enemy) {
+      this._commandAttack(enemy);
+    } else {
+      // Move command
+      this._commandMove(tile.x, tile.y);
     }
   }
 
