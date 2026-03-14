@@ -121,6 +121,15 @@ class InputHandler {
 
   _onTouchStart(e) {
     e.preventDefault();
+    if (e.touches.length === 2) {
+      // Two-finger: start camera pan
+      this._twoFingerStart = {
+        x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+        y: (e.touches[0].clientY + e.touches[1].clientY) / 2,
+      };
+      this._isTwoFingerPan = true;
+      return;
+    }
     if (e.touches.length === 1) {
       const touch = e.touches[0];
       this.mouse.x = touch.clientX;
@@ -132,12 +141,25 @@ class InputHandler {
         sx: this.mouse.x, sy: this.mouse.y,
         wx: world.x, wy: world.y,
       };
+      this._isTwoFingerPan = false;
     }
   }
 
   _onTouchMove(e) {
     e.preventDefault();
-    if (e.touches.length === 1) {
+    if (e.touches.length === 2 && this._twoFingerStart) {
+      // Two-finger pan: drag camera
+      const cx = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+      const cy = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+      const dx = cx - this._twoFingerStart.x;
+      const dy = cy - this._twoFingerStart.y;
+      const cam = this.game.camera;
+      cam.x -= dx / cam.zoom;
+      cam.y -= dy / cam.zoom;
+      this._twoFingerStart = { x: cx, y: cy };
+      return;
+    }
+    if (e.touches.length === 1 && !this._isTwoFingerPan) {
       const touch = e.touches[0];
       this.mouse.x = touch.clientX;
       this.mouse.y = touch.clientY;
@@ -149,6 +171,13 @@ class InputHandler {
   }
 
   _onTouchEnd(e) {
+    if (this._isTwoFingerPan) {
+      if (e.touches.length === 0) {
+        this._isTwoFingerPan = false;
+        this._twoFingerStart = null;
+      }
+      return;
+    }
     if (this.isDragging && this.dragStart) {
       this._handleBoxSelect();
     } else {
@@ -159,6 +188,9 @@ class InputHandler {
   }
 
   _handleLeftClick() {
+    // Check building context menu click
+    if (this._handleContextMenuClick()) return;
+
     const world = this._screenToWorld(this.mouse.x, this.mouse.y);
     const tile = this._worldToTile(world.x, world.y);
 
@@ -168,6 +200,7 @@ class InputHandler {
     const enemyClicked = entities.find(e => e.playerId !== this.game.localPlayerId);
 
     if (clicked) {
+      // Clicking own entity always selects
       if (!this.keys['shift']) {
         this._deselectAll();
       }
@@ -175,9 +208,13 @@ class InputHandler {
       this.selectedEntities.push(clicked);
       this.game.sound?.playSelect();
       this.game.ui.updateSelection(this.selectedEntities);
-    } else if (enemyClicked && this.selectedEntities.length > 0) {
-      // Attack-move to enemy
-      this._commandAttack(enemyClicked);
+    } else if (this.selectedEntities.length > 0) {
+      // Units selected: left-click on enemy = attack, on ground = move
+      if (enemyClicked) {
+        this._commandAttack(enemyClicked);
+      } else {
+        this._commandMove(tile.x, tile.y);
+      }
     } else {
       if (!this.keys['shift']) {
         this._deselectAll();
@@ -187,20 +224,10 @@ class InputHandler {
   }
 
   _handleRightClick() {
-    if (this.selectedEntities.length === 0) return;
-
-    const world = this._screenToWorld(this.mouse.x, this.mouse.y);
-    const tile = this._worldToTile(world.x, world.y);
-
-    // Check if right-clicking on enemy
-    const entities = this.game.entities.getEntitiesNear(tile.x, tile.y, 1.5);
-    const enemy = entities.find(e => e.playerId !== this.game.localPlayerId);
-
-    if (enemy) {
-      this._commandAttack(enemy);
-    } else {
-      // Move command
-      this._commandMove(tile.x, tile.y);
+    // Right-click deselects
+    if (this.selectedEntities.length > 0) {
+      this._deselectAll();
+      this.game.ui.updateSelection([]);
     }
   }
 
@@ -239,6 +266,42 @@ class InputHandler {
     }
 
     this.game.ui.updateSelection(this.selectedEntities);
+  }
+
+  _handleContextMenuClick() {
+    const menu = this.game._buildingContextMenu;
+    if (!menu) return false;
+    const mx = this.mouse.x;
+    const my = this.mouse.y;
+
+    // Check repair button
+    const r = menu.repair;
+    if (mx >= r.x && mx <= r.x + r.w && my >= r.y && my <= r.y + r.h) {
+      const entity = this.game.entities.get(menu.entityId);
+      if (entity && !entity.dead) {
+        entity._repairing = !entity._repairing;
+        this.game.notify(entity._repairing ? 'Repairing...' : 'Repair stopped');
+      }
+      return true;
+    }
+
+    // Check sell button
+    const s = menu.sell;
+    if (mx >= s.x && mx <= s.x + s.w && my >= s.y && my <= s.y + s.h) {
+      const entity = this.game.entities.get(menu.entityId);
+      if (entity && !entity.dead) {
+        const player = this.game.players[entity.playerId];
+        const refund = Math.floor(entity.def.cost * 0.5);
+        player.credits += refund;
+        entity.takeDamage(entity.hp);
+        this._deselectAll();
+        this.game.ui.updateSelection([]);
+        this.game.notify(`Sold for $${refund}`);
+      }
+      return true;
+    }
+
+    return false;
   }
 
   _commandMove(tx, ty) {
@@ -414,28 +477,22 @@ class InputHandler {
       }
     }
 
-    // H - select all harvesters
+    // H - center view on home base (construction yard)
     if (key === 'h') {
-      this._deselectAll();
-      const harvesters = this.game.entities.getPlayerUnits(this.game.localPlayerId)
-        .filter(u => u.def.isHarvester);
-      for (const h of harvesters) {
-        h.selected = true;
-        this.selectedEntities.push(h);
+      const cy = this.game.entities.getPlayerBuildings(this.game.localPlayerId)
+        .find(b => b.defKey === 'construction_yard');
+      if (cy) {
+        const world = this.game.map.tileToWorld(cy.tileX, cy.tileY);
+        this.game.camera.x = world.x;
+        this.game.camera.y = world.y;
       }
-      this.game.ui.updateSelection(this.selectedEntities);
     }
 
-    // Q - select all combat units
-    if (key === 'q') {
-      this._deselectAll();
-      const combatUnits = this.game.entities.getPlayerUnits(this.game.localPlayerId)
-        .filter(u => u.weapon && !u.def.isHarvester);
-      for (const u of combatUnits) {
-        u.selected = true;
-        this.selectedEntities.push(u);
-      }
-      this.game.ui.updateSelection(this.selectedEntities);
+    // Q/W/E/R - switch sidebar build tabs
+    const tabMap = { q: 'structures', w: 'defense', e: 'infantry', r: 'vehicles' };
+    if (tabMap[key] && this.game.ui) {
+      this.game.ui.activeTab = tabMap[key];
+      this.game.ui.refreshSidebar();
     }
 
     // F - focus on selected
@@ -451,11 +508,13 @@ class InputHandler {
     const cam = this.game.camera;
     const speed = CONFIG.CAMERA_SPEED / cam.zoom;
 
-    // Edge scrolling
-    if (this.mouse.x < CONFIG.CAMERA_EDGE_SCROLL) cam.x -= speed;
-    if (this.mouse.x > cam.screenW - CONFIG.CAMERA_EDGE_SCROLL) cam.x += speed;
-    if (this.mouse.y < CONFIG.CAMERA_EDGE_SCROLL + 32) cam.y -= speed;
-    if (this.mouse.y > cam.screenH - CONFIG.CAMERA_EDGE_SCROLL) cam.y += speed;
+    // 5% frame-based edge scrolling
+    const frameX = cam.screenW * 0.05;
+    const frameY = cam.screenH * 0.05;
+    if (this.mouse.x < frameX && this.mouse.x >= 0) cam.x -= speed;
+    if (this.mouse.x > cam.screenW - frameX && this.mouse.x <= cam.screenW) cam.x += speed;
+    if (this.mouse.y < frameY && this.mouse.y >= 0) cam.y -= speed;
+    if (this.mouse.y > cam.screenH - frameY && this.mouse.y <= cam.screenH) cam.y += speed;
 
     // Arrow keys / WASD
     if (this.keys['arrowleft'] || this.keys['a'] && this.keys['control']) cam.x -= speed;

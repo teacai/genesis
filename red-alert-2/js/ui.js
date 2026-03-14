@@ -18,15 +18,22 @@ class GameUI {
 
     this.sidebar.innerHTML = '';
 
-    // Tab buttons
+    // Tab buttons with icons and hotkeys
     const tabRow = document.createElement('div');
     tabRow.className = 'tab-row';
-    ['Structures', 'Defense', 'Infantry', 'Vehicles'].forEach(tab => {
+    const tabs = [
+      { key: 'structures', icon: '\u{1F3E0}', hotkey: 'Q' },
+      { key: 'defense', icon: '\u{1F6E1}', hotkey: 'W' },
+      { key: 'infantry', icon: '\u{1F6B6}', hotkey: 'E' },
+      { key: 'vehicles', icon: '\u{1F698}', hotkey: 'R' },
+    ];
+    tabs.forEach(tab => {
       const btn = document.createElement('button');
-      btn.className = 'tab-btn' + (this.activeTab === tab.toLowerCase() ? ' active' : '');
-      btn.textContent = tab;
+      btn.className = 'tab-btn' + (this.activeTab === tab.key ? ' active' : '');
+      btn.innerHTML = `<span class="tab-icon">${tab.icon}</span><span class="tab-hotkey">${tab.hotkey}</span>`;
+      btn.title = tab.key.charAt(0).toUpperCase() + tab.key.slice(1) + ` (${tab.hotkey})`;
       btn.onclick = () => {
-        this.activeTab = tab.toLowerCase();
+        this.activeTab = tab.key;
         this._buildSidebar();
       };
       tabRow.appendChild(btn);

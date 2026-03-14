@@ -238,6 +238,20 @@ class Entity {
       return;
     }
 
+    // Auto-repair if repairing flag set
+    if (this._repairing && this.hp < this.maxHp) {
+      const player = game.players[this.playerId];
+      const repairCost = this.def.cost * 0.005 * dt; // costs ~50% of building cost to fully repair
+      const repairAmount = this.maxHp * 0.02 * dt; // ~2% max HP per second
+      if (player && player.credits >= repairCost) {
+        player.credits -= repairCost;
+        this.repair(repairAmount);
+      }
+      if (this.hp >= this.maxHp) {
+        this._repairing = false;
+      }
+    }
+
     // Defense weapon
     if (this.weapon && this.powered) {
       if (this.attackCooldown > 0) this.attackCooldown -= dt;

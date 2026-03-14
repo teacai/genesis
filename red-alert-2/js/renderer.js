@@ -107,6 +107,9 @@ class Renderer {
     // Draw effects
     this._drawEffects(ctx);
 
+    // Draw building context menu (repair/sell)
+    this._drawBuildingContextMenu(ctx);
+
     // Draw selection box
     if (this.game.input.isDragging && this.game.input.dragStart) {
       this._drawSelectionBox(ctx);
@@ -437,6 +440,57 @@ class Renderer {
         }
       }
     }
+  }
+
+  _drawBuildingContextMenu(ctx) {
+    const selected = this.game.input.selectedEntities;
+    if (selected.length !== 1) return;
+    const entity = selected[0];
+    if (entity.type !== 'building' || entity.playerId !== this.game.localPlayerId) return;
+    if (entity.buildProgress < 1) return;
+
+    const screen = this.tileToScreen(entity.x, entity.y);
+    const zoom = this.game.camera.zoom;
+    const btnW = 40 * zoom;
+    const btnH = 18 * zoom;
+    const gap = 4 * zoom;
+    const totalW = btnW * 2 + gap;
+    const startX = screen.x - totalW / 2;
+    const startY = screen.y + 4 * zoom;
+
+    // Store hit areas for click detection
+    this.game._buildingContextMenu = {
+      entityId: entity.id,
+      repair: { x: startX, y: startY, w: btnW, h: btnH },
+      sell: { x: startX + btnW + gap, y: startY, w: btnW, h: btnH },
+    };
+
+    // Repair button
+    const repairing = entity._repairing;
+    ctx.fillStyle = repairing ? '#2a5a2a' : '#1a3a1a';
+    ctx.fillRect(startX, startY, btnW, btnH);
+    ctx.strokeStyle = repairing ? '#6a9a6a' : '#3a6a3a';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(startX, startY, btnW, btnH);
+    ctx.fillStyle = '#4f4';
+    ctx.font = `${Math.max(9, 10 * zoom)}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    // Wrench icon (unicode)
+    ctx.fillText('\u{1F527}', startX + btnW / 2, startY + btnH / 2);
+
+    // Sell button
+    const sellX = startX + btnW + gap;
+    ctx.fillStyle = '#3a1a1a';
+    ctx.fillRect(sellX, startY, btnW, btnH);
+    ctx.strokeStyle = '#6a3a3a';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(sellX, startY, btnW, btnH);
+    ctx.fillStyle = '#f44';
+    ctx.fillText('\u{1F4B0}', sellX + btnW / 2, startY + btnH / 2);
+
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
   }
 
   _drawSelectionBox(ctx) {
