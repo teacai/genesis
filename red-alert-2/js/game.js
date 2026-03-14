@@ -191,6 +191,11 @@ class Game {
             <input type="range" id="game-speed" min="0.5" max="1.5" step="0.1" value="1.0">
             <span id="game-speed-val" style="color:#fff;width:36px;">1.0x</span>
           </div>
+          <div class="setup-row">
+            <label>Frame Rate Cap</label>
+            <input type="range" id="fps-cap" min="60" max="120" step="10" value="60">
+            <span id="fps-cap-val" style="color:#fff;width:42px;">60 FPS</span>
+          </div>
         </div>
 
         <div style="display:flex;gap:10px;margin-top:20px;">
@@ -204,6 +209,11 @@ class Game {
     // Update game speed display
     document.getElementById('game-speed').oninput = (e) => {
       document.getElementById('game-speed-val').textContent = parseFloat(e.target.value).toFixed(1) + 'x';
+    };
+
+    // Update FPS cap display
+    document.getElementById('fps-cap').oninput = (e) => {
+      document.getElementById('fps-cap-val').textContent = e.target.value + ' FPS';
     };
 
     // Update total players display
@@ -257,9 +267,11 @@ class Game {
       }
 
       const gameSpeed = parseFloat(document.getElementById('game-speed').value);
+      const fpsCap = parseInt(document.getElementById('fps-cap').value);
 
       CONFIG.STARTING_CREDITS = startCredits;
       CONFIG.GAME_SPEED = gameSpeed;
+      CONFIG.FRAME_RATE_CAP = fpsCap;
       setup.remove();
       this.startSkirmish(name, faction, mapSize, botSeats, difficulty, {
         country: countryKey,
@@ -337,6 +349,11 @@ class Game {
             <input type="range" id="mp-game-speed" min="0.5" max="1.5" step="0.1" value="1.0">
             <span id="mp-game-speed-val" style="color:#fff;width:36px;">1.0x</span>
           </div>
+          <div class="setup-row">
+            <label>Frame Rate Cap</label>
+            <input type="range" id="mp-fps-cap" min="60" max="120" step="10" value="60">
+            <span id="mp-fps-cap-val" style="color:#fff;width:42px;">60 FPS</span>
+          </div>
         </div>
 
         <div style="display:flex;gap:10px;margin-top:20px;">
@@ -372,6 +389,11 @@ class Game {
       document.getElementById('mp-game-speed-val').textContent = parseFloat(e.target.value).toFixed(1) + 'x';
     };
 
+    // FPS cap display
+    document.getElementById('mp-fps-cap').oninput = (e) => {
+      document.getElementById('mp-fps-cap-val').textContent = e.target.value + ' FPS';
+    };
+
     document.getElementById('btn-mp-back').onclick = () => {
       setup.remove();
       this.showMenu();
@@ -381,6 +403,7 @@ class Game {
       const countryKey = document.getElementById('mp-country').value;
       const country = COUNTRIES[countryKey];
       const gameSpeed = parseFloat(document.getElementById('mp-game-speed').value);
+      const fpsCap = parseInt(document.getElementById('mp-fps-cap').value);
       const enabledCountries = [];
       document.querySelectorAll('#mp-allied-countries input:checked, #mp-soviet-countries input:checked').forEach(cb => {
         enabledCountries.push(cb.value);
@@ -388,12 +411,13 @@ class Game {
       if (enabledCountries.length === 0) {
         Object.keys(COUNTRIES).forEach(k => enabledCountries.push(k));
       }
-      return { countryKey, faction: country ? country.faction : 'ALLIED', gameSpeed, enabledCountries };
+      return { countryKey, faction: country ? country.faction : 'ALLIED', gameSpeed, fpsCap, enabledCountries };
     };
 
     document.getElementById('btn-host').onclick = async () => {
       const settings = _getMpSettings();
       CONFIG.GAME_SPEED = settings.gameSpeed;
+      CONFIG.FRAME_RATE_CAP = settings.fpsCap;
       const code = await this.network.hostGame();
       document.getElementById('mp-room-code').style.display = 'block';
       document.getElementById('room-code-input').value = code;
@@ -409,6 +433,7 @@ class Game {
       if (code.length < 4) return;
       const settings = _getMpSettings();
       CONFIG.GAME_SPEED = settings.gameSpeed;
+      CONFIG.FRAME_RATE_CAP = settings.fpsCap;
       document.getElementById('mp-status').textContent = 'Connecting...';
       try {
         await this.network.joinGame(code);
@@ -604,6 +629,13 @@ class Game {
 
   // Game loop
   _gameLoop(timestamp) {
+    // Frame rate cap: skip frame if too soon
+    const minFrameTime = 1000 / CONFIG.FRAME_RATE_CAP;
+    if (this.lastTime && (timestamp - this.lastTime) < minFrameTime * 0.95) {
+      requestAnimationFrame(this._gameLoop);
+      return;
+    }
+
     const dt = Math.min((timestamp - this.lastTime) / 1000, 0.1);
     this.lastTime = timestamp;
 

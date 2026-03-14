@@ -19,6 +19,7 @@ const CONFIG = {
   FOG_ENABLED: true,
   TICK_RATE: 20,
   RENDER_FPS: 60,
+  FRAME_RATE_CAP: 60, // 60-120 FPS cap
   GAME_SPEED: 1.0, // 0.5x to 1.5x
 };
 
