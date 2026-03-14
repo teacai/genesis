@@ -186,6 +186,11 @@ class Game {
               <option value="50000">50,000</option>
             </select>
           </div>
+          <div class="setup-row">
+            <label>Game Speed</label>
+            <input type="range" id="game-speed" min="0.5" max="1.5" step="0.1" value="1.0">
+            <span id="game-speed-val" style="color:#fff;width:36px;">1.0x</span>
+          </div>
         </div>
 
         <div style="display:flex;gap:10px;margin-top:20px;">
@@ -195,6 +200,11 @@ class Game {
       </div>
     `;
     container.appendChild(setup);
+
+    // Update game speed display
+    document.getElementById('game-speed').oninput = (e) => {
+      document.getElementById('game-speed-val').textContent = parseFloat(e.target.value).toFixed(1) + 'x';
+    };
 
     // Update total players display
     const updateTotalPlayers = () => {
@@ -246,7 +256,10 @@ class Game {
         Object.keys(COUNTRIES).forEach(k => enabledCountries.push(k));
       }
 
+      const gameSpeed = parseFloat(document.getElementById('game-speed').value);
+
       CONFIG.STARTING_CREDITS = startCredits;
+      CONFIG.GAME_SPEED = gameSpeed;
       setup.remove();
       this.startSkirmish(name, faction, mapSize, botSeats, difficulty, {
         country: countryKey,
@@ -261,11 +274,31 @@ class Game {
     const menu = document.getElementById('main-menu');
     if (menu) menu.remove();
 
+    // Build country checkbox HTML
+    const alliedCountries = Object.entries(COUNTRIES)
+      .filter(([, c]) => c.faction === 'ALLIED')
+      .map(([key, c]) => `<label class="country-check" title="${c.description}"><input type="checkbox" value="${key}" checked data-faction="ALLIED"><span class="country-flag" style="background:${c.color};"></span>${c.name}</label>`)
+      .join('');
+    const sovietCountries = Object.entries(COUNTRIES)
+      .filter(([, c]) => c.faction === 'SOVIET')
+      .map(([key, c]) => `<label class="country-check" title="${c.description}"><input type="checkbox" value="${key}" checked data-faction="SOVIET"><span class="country-flag" style="background:${c.color};"></span>${c.name}</label>`)
+      .join('');
+
+    // Build country options for player dropdown
+    const alliedOptions = Object.entries(COUNTRIES)
+      .filter(([, c]) => c.faction === 'ALLIED')
+      .map(([key, c]) => `<option value="${key}" data-faction="ALLIED">${c.name}</option>`)
+      .join('');
+    const sovietOptions = Object.entries(COUNTRIES)
+      .filter(([, c]) => c.faction === 'SOVIET')
+      .map(([key, c]) => `<option value="${key}" data-faction="SOVIET">${c.name}</option>`)
+      .join('');
+
     const setup = document.createElement('div');
     setup.className = 'menu-screen';
     setup.id = 'mp-setup';
     setup.innerHTML = `
-      <div class="setup-panel">
+      <div class="setup-panel" style="max-width:520px;">
         <h2 style="color:#ffd700;margin-bottom:20px;">Multiplayer</h2>
         <p style="color:#aaa;font-size:13px;margin-bottom:15px;">
           WebRTC peer-to-peer connection. Both players must be on the same network or use the same signaling channel.
@@ -275,12 +308,37 @@ class Game {
           <input type="text" id="mp-name" value="Commander" maxlength="10">
         </div>
         <div class="setup-row">
-          <label>Faction</label>
-          <select id="mp-faction">
-            <option value="ALLIED">Allied</option>
-            <option value="SOVIET">Soviet</option>
+          <label>Your Country</label>
+          <select id="mp-country">
+            <optgroup label="Allied">${alliedOptions}</optgroup>
+            <optgroup label="Soviet">${sovietOptions}</optgroup>
           </select>
         </div>
+        <div id="mp-country-bonus" style="color:#8f8;font-size:11px;margin:-8px 0 8px 0;padding-left:4px;"></div>
+
+        <div style="border-top:1px solid #333;margin:12px 0;padding-top:12px;">
+          <h3 style="color:#ccc;font-size:14px;margin-bottom:10px;">Enabled Countries</h3>
+          <p style="color:#777;font-size:11px;margin-bottom:8px;">Countries available in this match.</p>
+          <div style="display:flex;gap:16px;">
+            <div>
+              <div style="color:#4a9eff;font-size:12px;margin-bottom:4px;font-weight:bold;">Allied</div>
+              <div id="mp-allied-countries" class="country-list">${alliedCountries}</div>
+            </div>
+            <div>
+              <div style="color:#ff4a4a;font-size:12px;margin-bottom:4px;font-weight:bold;">Soviet</div>
+              <div id="mp-soviet-countries" class="country-list">${sovietCountries}</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top:1px solid #333;margin:12px 0;padding-top:12px;">
+          <div class="setup-row">
+            <label>Game Speed</label>
+            <input type="range" id="mp-game-speed" min="0.5" max="1.5" step="0.1" value="1.0">
+            <span id="mp-game-speed-val" style="color:#fff;width:36px;">1.0x</span>
+          </div>
+        </div>
+
         <div style="display:flex;gap:10px;margin-top:20px;">
           <button class="menu-btn" id="btn-host" style="background:linear-gradient(180deg,#1a2a1a,#0a1a0a);border-color:#060;">Host Game</button>
           <button class="menu-btn" id="btn-join">Join Game</button>
@@ -300,12 +358,42 @@ class Game {
     `;
     container.appendChild(setup);
 
+    // Country bonus display
+    const updateMpCountryBonus = () => {
+      const countryKey = document.getElementById('mp-country').value;
+      const country = COUNTRIES[countryKey];
+      document.getElementById('mp-country-bonus').textContent = country ? country.description : '';
+    };
+    document.getElementById('mp-country').onchange = updateMpCountryBonus;
+    updateMpCountryBonus();
+
+    // Game speed display
+    document.getElementById('mp-game-speed').oninput = (e) => {
+      document.getElementById('mp-game-speed-val').textContent = parseFloat(e.target.value).toFixed(1) + 'x';
+    };
+
     document.getElementById('btn-mp-back').onclick = () => {
       setup.remove();
       this.showMenu();
     };
 
+    const _getMpSettings = () => {
+      const countryKey = document.getElementById('mp-country').value;
+      const country = COUNTRIES[countryKey];
+      const gameSpeed = parseFloat(document.getElementById('mp-game-speed').value);
+      const enabledCountries = [];
+      document.querySelectorAll('#mp-allied-countries input:checked, #mp-soviet-countries input:checked').forEach(cb => {
+        enabledCountries.push(cb.value);
+      });
+      if (enabledCountries.length === 0) {
+        Object.keys(COUNTRIES).forEach(k => enabledCountries.push(k));
+      }
+      return { countryKey, faction: country ? country.faction : 'ALLIED', gameSpeed, enabledCountries };
+    };
+
     document.getElementById('btn-host').onclick = async () => {
+      const settings = _getMpSettings();
+      CONFIG.GAME_SPEED = settings.gameSpeed;
       const code = await this.network.hostGame();
       document.getElementById('mp-room-code').style.display = 'block';
       document.getElementById('room-code-input').value = code;
@@ -319,6 +407,8 @@ class Game {
     document.getElementById('btn-connect')?.addEventListener('click', async () => {
       const code = document.getElementById('join-code-input').value.toUpperCase();
       if (code.length < 4) return;
+      const settings = _getMpSettings();
+      CONFIG.GAME_SPEED = settings.gameSpeed;
       document.getElementById('mp-status').textContent = 'Connecting...';
       try {
         await this.network.joinGame(code);
@@ -546,8 +636,10 @@ class Game {
   }
 
   _updateGame(dt) {
+    // Apply game speed to simulation
+    const speedDt = dt * CONFIG.GAME_SPEED;
     // Fixed timestep simulation
-    this.tickAccumulator += dt;
+    this.tickAccumulator += speedDt;
     while (this.tickAccumulator >= this.tickInterval) {
       this.tickAccumulator -= this.tickInterval;
       this._simulationTick(this.tickInterval);

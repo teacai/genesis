@@ -103,6 +103,19 @@ Complete record of every step, decision, and parameter used to build this game.
    - Country bonus descriptions shown in UI
 4. Updated startSkirmish to create open human slots (AI-controlled placeholders) and assign bot countries from the enabled pool
 
+### Commit 4: Game Speed & Multiplayer Country Selection
+**Changes:**
+1. Added `GAME_SPEED` to CONFIG (default 1.0, range 0.5x-1.5x)
+2. Applied game speed multiplier in `_updateGame()` — multiplies delta time before feeding into fixed-step simulation accumulator, so all game systems (movement, combat, AI, building, harvesting) scale uniformly
+3. Added game speed slider (0.5x to 1.5x, step 0.1) to skirmish setup UI
+4. Completely redesigned multiplayer setup UI:
+   - Replaced simple "Faction" dropdown with full "Your Country" selector (same as skirmish)
+   - Added country bonus description display
+   - Added enabled countries checkbox grid (Allied + Soviet columns)
+   - Added game speed slider
+   - Host and join buttons apply game speed + country settings before connecting
+5. Decision: Game speed works by scaling the simulation dt, not the tick rate — this means at 0.5x everything runs at half speed (units move slower, buildings build slower, AI thinks at same intervals but game time passes slower), and at 1.5x everything runs 50% faster
+
 ---
 
 ## Core Configuration Parameters
@@ -127,6 +140,7 @@ HARVESTER_GATHER_RATE:0.5         ore units per second
 FOG_ENABLED:          true
 TICK_RATE:            20          simulation ticks per second
 RENDER_FPS:           60          frames per second
+GAME_SPEED:           1.0         multiplier (range: 0.5x to 1.5x, step 0.1)
 ```
 
 ### Map Size Options
@@ -740,6 +754,30 @@ Game state includes: map (tiles, ore, spawn points), players (id, name, faction,
 - **Map Size:** 48x48 / 64x64 / 96x96 (default) / 128x128
 - **AI Difficulty:** Easy / Medium (default) / Hard / Brutal
 - **Starting Credits:** 5,000 (default) / 10,000 / 25,000 / 50,000
+- **Game Speed:** Range slider 0.5x to 1.5x (step 0.1, default 1.0x)
+  - Applies to all simulation: movement, combat, building, AI, harvesting
+  - Works by multiplying dt in `_updateGame()` before fixed-step accumulator
+
+### Multiplayer Setup UI (game.js: showMultiplayerSetup)
+
+#### Player Configuration
+- **Your Name:** Text input, max 10 characters, default "Commander"
+- **Your Country:** Dropdown with optgroups (Allied / Soviet), auto-determines faction
+- **Country Bonus:** Shown below dropdown in green text
+
+#### Enabled Countries
+- Same checkbox grid as skirmish (Allied + Soviet columns)
+- All enabled by default
+- Tooltips show country bonus description
+
+#### Game Speed
+- Range slider 0.5x to 1.5x (step 0.1, default 1.0x)
+- Applied by both host and client on connect
+
+#### Connection
+- **Host Game:** Generates room code, applies game speed setting
+- **Join Game:** Enter 6-char room code, applies game speed setting
+- WebRTC peer-to-peer with BroadcastChannel signaling
 
 ### Quick Start
 - Quick Match (4 Players): 64x64 map, medium difficulty, 3 bots
@@ -811,4 +849,4 @@ red-alert-2/
 
 ---
 
-*Last updated: 2026-03-14*
+*Last updated: 2026-03-14 (commit 4)*

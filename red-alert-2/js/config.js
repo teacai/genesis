@@ -19,6 +19,7 @@ const CONFIG = {
   FOG_ENABLED: true,
   TICK_RATE: 20,
   RENDER_FPS: 60,
+  GAME_SPEED: 1.0, // 0.5x to 1.5x
 };
 
 const TERRAIN = {
