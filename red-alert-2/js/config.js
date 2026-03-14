@@ -88,6 +88,66 @@ const FACTIONS = {
   },
 };
 
+// Country definitions (subfactions within each faction)
+const COUNTRIES = {
+  // Allied countries
+  america: {
+    name: 'America', faction: 'ALLIED', color: '#3366cc',
+    specialUnit: 'gi', // Paratroopers (bonus: GIs have +25% HP)
+    bonus: { unitKey: 'gi', hpMult: 1.25 },
+    description: 'Paratroopers. GIs have 25% more health.',
+  },
+  korea: {
+    name: 'Korea', faction: 'ALLIED', color: '#cc6633',
+    specialUnit: 'harrier', // Black Eagle (bonus: Harriers deal +30% damage)
+    bonus: { unitKey: 'harrier', damageMult: 1.3 },
+    description: 'Black Eagles. Harriers deal 30% more damage.',
+  },
+  france: {
+    name: 'France', faction: 'ALLIED', color: '#6633cc',
+    specialUnit: 'prism_tower', // Grand Cannon (bonus: Prism Towers have +50% range)
+    bonus: { buildingKey: 'prism_tower', rangeMult: 1.5 },
+    description: 'Grand Cannon. Prism Towers have 50% more range.',
+  },
+  germany: {
+    name: 'Germany', faction: 'ALLIED', color: '#666666',
+    specialUnit: 'grizzly', // Tank Destroyer (bonus: Grizzlies deal +20% damage)
+    bonus: { unitKey: 'grizzly', damageMult: 1.2 },
+    description: 'Tank Destroyer. Grizzly Tanks deal 20% more damage.',
+  },
+  britain: {
+    name: 'Great Britain', faction: 'ALLIED', color: '#cc3333',
+    specialUnit: 'seal', // Sniper (bonus: SEALs have +40% range)
+    bonus: { unitKey: 'seal', rangeMult: 1.4 },
+    description: 'Snipers. Navy SEALs have 40% more range.',
+  },
+  // Soviet countries
+  russia: {
+    name: 'Russia', faction: 'SOVIET', color: '#cc0000',
+    specialUnit: 'tesla_coil', // Tesla Troopers (bonus: Tesla Coils deal +25% damage)
+    bonus: { buildingKey: 'tesla_coil', damageMult: 1.25 },
+    description: 'Tesla power. Tesla Coils deal 25% more damage.',
+  },
+  cuba: {
+    name: 'Cuba', faction: 'SOVIET', color: '#33cc33',
+    specialUnit: 'crazy_ivan', // Terrorists (bonus: Crazy Ivan bombs do +30% damage)
+    bonus: { unitKey: 'crazy_ivan', damageMult: 1.3 },
+    description: 'Terrorists. Crazy Ivan bombs deal 30% more damage.',
+  },
+  iraq: {
+    name: 'Iraq', faction: 'SOVIET', color: '#cccc33',
+    specialUnit: 'tesla_trooper', // Desolator (bonus: Tesla Troopers have +30% HP)
+    bonus: { unitKey: 'tesla_trooper', hpMult: 1.3 },
+    description: 'Desolators. Tesla Troopers have 30% more health.',
+  },
+  libya: {
+    name: 'Libya', faction: 'SOVIET', color: '#cc6600',
+    specialUnit: 'v3_launcher', // Demolition Truck (bonus: V3s deal +25% damage)
+    bonus: { unitKey: 'v3_launcher', damageMult: 1.25 },
+    description: 'Demo Trucks. V3 Launchers deal 25% more damage.',
+  },
+};
+
 // Building definitions
 const BUILDINGS = {
   construction_yard: {

@@ -87,55 +87,107 @@ class Game {
     const menu = document.getElementById('main-menu');
     if (menu) menu.remove();
 
+    // Build country checkbox HTML
+    const alliedCountries = Object.entries(COUNTRIES)
+      .filter(([, c]) => c.faction === 'ALLIED')
+      .map(([key, c]) => `<label class="country-check" title="${c.description}"><input type="checkbox" value="${key}" checked data-faction="ALLIED"><span class="country-flag" style="background:${c.color};"></span>${c.name}</label>`)
+      .join('');
+    const sovietCountries = Object.entries(COUNTRIES)
+      .filter(([, c]) => c.faction === 'SOVIET')
+      .map(([key, c]) => `<label class="country-check" title="${c.description}"><input type="checkbox" value="${key}" checked data-faction="SOVIET"><span class="country-flag" style="background:${c.color};"></span>${c.name}</label>`)
+      .join('');
+
+    // Build country options for player dropdown
+    const alliedOptions = Object.entries(COUNTRIES)
+      .filter(([, c]) => c.faction === 'ALLIED')
+      .map(([key, c]) => `<option value="${key}" data-faction="ALLIED">${c.name}</option>`)
+      .join('');
+    const sovietOptions = Object.entries(COUNTRIES)
+      .filter(([, c]) => c.faction === 'SOVIET')
+      .map(([key, c]) => `<option value="${key}" data-faction="SOVIET">${c.name}</option>`)
+      .join('');
+
     const setup = document.createElement('div');
     setup.className = 'menu-screen';
     setup.id = 'setup-screen';
     setup.innerHTML = `
-      <div class="setup-panel">
-        <h2 style="color:#ffd700;margin-bottom:20px;">Skirmish Setup</h2>
+      <div class="setup-panel" style="max-width:520px;">
+        <h2 style="color:#ffd700;margin-bottom:20px;">Skirmish Room Setup</h2>
+
         <div class="setup-row">
           <label>Your Name</label>
           <input type="text" id="player-name" value="Commander" maxlength="10">
         </div>
         <div class="setup-row">
-          <label>Faction</label>
-          <select id="player-faction">
-            <option value="ALLIED">Allied</option>
-            <option value="SOVIET">Soviet</option>
+          <label>Your Country</label>
+          <select id="player-country">
+            <optgroup label="Allied">${alliedOptions}</optgroup>
+            <optgroup label="Soviet">${sovietOptions}</optgroup>
           </select>
         </div>
-        <div class="setup-row">
-          <label>Map Size</label>
-          <select id="map-size-setup">
-            <option value="48">Small (48x48)</option>
-            <option value="64">Medium (64x64)</option>
-            <option value="96" selected>Large (96x96)</option>
-            <option value="128">Huge (128x128)</option>
-          </select>
+        <div id="country-bonus" style="color:#8f8;font-size:11px;margin:-8px 0 8px 0;padding-left:4px;"></div>
+
+        <div style="border-top:1px solid #333;margin:12px 0;padding-top:12px;">
+          <h3 style="color:#ccc;font-size:14px;margin-bottom:10px;">Room Seats</h3>
+          <div class="setup-row">
+            <label>Human Player Seats</label>
+            <input type="range" id="human-seats" min="1" max="8" value="1">
+            <span id="human-seats-val" style="color:#fff;width:30px;">1</span>
+          </div>
+          <div class="setup-row">
+            <label>Bot Seats</label>
+            <input type="range" id="bot-seats" min="0" max="99" value="3">
+            <span id="bot-seats-val" style="color:#fff;width:30px;">3</span>
+          </div>
+          <div id="total-players-info" style="color:#aaa;font-size:11px;margin-bottom:8px;">Total players: 4</div>
         </div>
-        <div class="setup-row">
-          <label>Bot Count</label>
-          <input type="range" id="bot-count" min="1" max="99" value="3">
-          <span id="bot-count-val" style="color:#fff;width:30px;">3</span>
+
+        <div style="border-top:1px solid #333;margin:12px 0;padding-top:12px;">
+          <h3 style="color:#ccc;font-size:14px;margin-bottom:10px;">Enabled Countries</h3>
+          <p style="color:#777;font-size:11px;margin-bottom:8px;">Bots will only use enabled countries. At least one must be enabled.</p>
+          <div style="display:flex;gap:16px;">
+            <div>
+              <div style="color:#4a9eff;font-size:12px;margin-bottom:4px;font-weight:bold;">Allied</div>
+              <div id="allied-countries" class="country-list">${alliedCountries}</div>
+            </div>
+            <div>
+              <div style="color:#ff4a4a;font-size:12px;margin-bottom:4px;font-weight:bold;">Soviet</div>
+              <div id="soviet-countries" class="country-list">${sovietCountries}</div>
+            </div>
+          </div>
         </div>
-        <div class="setup-row">
-          <label>AI Difficulty</label>
-          <select id="ai-difficulty">
-            <option value="easy">Easy</option>
-            <option value="medium" selected>Medium</option>
-            <option value="hard">Hard</option>
-            <option value="brutal">Brutal</option>
-          </select>
+
+        <div style="border-top:1px solid #333;margin:12px 0;padding-top:12px;">
+          <h3 style="color:#ccc;font-size:14px;margin-bottom:10px;">Game Settings</h3>
+          <div class="setup-row">
+            <label>Map Size</label>
+            <select id="map-size-setup">
+              <option value="48">Small (48x48)</option>
+              <option value="64">Medium (64x64)</option>
+              <option value="96" selected>Large (96x96)</option>
+              <option value="128">Huge (128x128)</option>
+            </select>
+          </div>
+          <div class="setup-row">
+            <label>AI Difficulty</label>
+            <select id="ai-difficulty">
+              <option value="easy">Easy</option>
+              <option value="medium" selected>Medium</option>
+              <option value="hard">Hard</option>
+              <option value="brutal">Brutal</option>
+            </select>
+          </div>
+          <div class="setup-row">
+            <label>Starting Credits</label>
+            <select id="start-credits">
+              <option value="5000" selected>5,000</option>
+              <option value="10000">10,000</option>
+              <option value="25000">25,000</option>
+              <option value="50000">50,000</option>
+            </select>
+          </div>
         </div>
-        <div class="setup-row">
-          <label>Starting Credits</label>
-          <select id="start-credits">
-            <option value="5000" selected>5,000</option>
-            <option value="10000">10,000</option>
-            <option value="25000">25,000</option>
-            <option value="50000">50,000</option>
-          </select>
-        </div>
+
         <div style="display:flex;gap:10px;margin-top:20px;">
           <button class="menu-btn" id="btn-start-game" style="background:linear-gradient(180deg,#1a2a1a,#0a1a0a);border-color:#060;">Start Game</button>
           <button class="menu-btn" id="btn-back" style="width:120px;">Back</button>
@@ -144,24 +196,63 @@ class Game {
     `;
     container.appendChild(setup);
 
-    document.getElementById('bot-count').oninput = (e) => {
-      document.getElementById('bot-count-val').textContent = e.target.value;
+    // Update total players display
+    const updateTotalPlayers = () => {
+      const humans = parseInt(document.getElementById('human-seats').value);
+      const bots = parseInt(document.getElementById('bot-seats').value);
+      document.getElementById('total-players-info').textContent = `Total players: ${humans + bots}`;
     };
+
+    // Update country bonus description
+    const updateCountryBonus = () => {
+      const countryKey = document.getElementById('player-country').value;
+      const country = COUNTRIES[countryKey];
+      document.getElementById('country-bonus').textContent = country ? country.description : '';
+    };
+
+    document.getElementById('human-seats').oninput = (e) => {
+      document.getElementById('human-seats-val').textContent = e.target.value;
+      updateTotalPlayers();
+    };
+    document.getElementById('bot-seats').oninput = (e) => {
+      document.getElementById('bot-seats-val').textContent = e.target.value;
+      updateTotalPlayers();
+    };
+    document.getElementById('player-country').onchange = updateCountryBonus;
+    updateCountryBonus();
+
     document.getElementById('btn-back').onclick = () => {
       setup.remove();
       this.showMenu();
     };
     document.getElementById('btn-start-game').onclick = () => {
       const name = document.getElementById('player-name').value || 'Commander';
-      const faction = document.getElementById('player-faction').value;
+      const countryKey = document.getElementById('player-country').value;
+      const country = COUNTRIES[countryKey];
+      const faction = country ? country.faction : 'ALLIED';
       const mapSize = parseInt(document.getElementById('map-size-setup').value);
-      const botCount = parseInt(document.getElementById('bot-count').value);
+      const humanSeats = parseInt(document.getElementById('human-seats').value);
+      const botSeats = parseInt(document.getElementById('bot-seats').value);
       const difficulty = document.getElementById('ai-difficulty').value;
       const startCredits = parseInt(document.getElementById('start-credits').value);
 
+      // Gather enabled countries
+      const enabledCountries = [];
+      document.querySelectorAll('#allied-countries input:checked, #soviet-countries input:checked').forEach(cb => {
+        enabledCountries.push(cb.value);
+      });
+      if (enabledCountries.length === 0) {
+        // Fallback: enable all
+        Object.keys(COUNTRIES).forEach(k => enabledCountries.push(k));
+      }
+
       CONFIG.STARTING_CREDITS = startCredits;
       setup.remove();
-      this.startSkirmish(name, faction, mapSize, botCount, difficulty);
+      this.startSkirmish(name, faction, mapSize, botSeats, difficulty, {
+        country: countryKey,
+        humanSeats,
+        enabledCountries,
+      });
     };
   }
 
@@ -263,10 +354,11 @@ class Game {
     this.startSkirmish('Commander', 'ALLIED', mapSize, numPlayers - 1, 'medium');
   }
 
-  startSkirmish(name, faction, mapSize, botCount, difficulty) {
+  startSkirmish(name, faction, mapSize, botCount, difficulty, options = {}) {
     document.getElementById('ui-overlay').style.display = '';
 
-    const totalPlayers = botCount + 1;
+    const humanSeats = options.humanSeats || 1;
+    const totalPlayers = botCount + humanSeats;
     this.map = GameMap.generateRandom(mapSize, mapSize, totalPlayers);
     this.fog = new FogOfWar(mapSize, mapSize);
     this.pathfinder = new Pathfinder(this.map);
@@ -275,16 +367,30 @@ class Game {
     this.effects = [];
     this.localPlayerId = 0;
 
+    // Enabled countries for bots
+    const enabledCountries = options.enabledCountries || Object.keys(COUNTRIES);
+
     // Create players
     this.players = {};
 
     // Human player
-    this.players[0] = new Player(0, name, faction, TEAM_COLORS[0], false);
+    const playerCountry = options.country || null;
+    this.players[0] = new Player(0, name, faction, TEAM_COLORS[0], false, playerCountry);
+
+    // Additional human seats (placeholders controlled by AI until a human joins)
+    for (let i = 1; i < humanSeats; i++) {
+      const slotCountry = enabledCountries[Math.floor(Math.random() * enabledCountries.length)];
+      const slotFaction = COUNTRIES[slotCountry]?.faction || 'ALLIED';
+      this.players[i] = new Player(i, `Open Slot ${i}`, slotFaction, TEAM_COLORS[i % TEAM_COLORS.length], true, slotCountry);
+      this.players[i].isOpenSlot = true;
+      this.aiManager.addBot(i, 'easy'); // AI placeholder for open human slots
+    }
 
     // Bot players
-    for (let i = 1; i <= botCount; i++) {
-      const botFaction = Math.random() > 0.5 ? 'ALLIED' : 'SOVIET';
-      this.players[i] = new Player(i, `Bot ${i}`, botFaction, TEAM_COLORS[i % TEAM_COLORS.length], true);
+    for (let i = humanSeats; i < totalPlayers; i++) {
+      const botCountry = enabledCountries[Math.floor(Math.random() * enabledCountries.length)];
+      const botFaction = COUNTRIES[botCountry]?.faction || (Math.random() > 0.5 ? 'ALLIED' : 'SOVIET');
+      this.players[i] = new Player(i, `Bot ${i - humanSeats + 1}`, botFaction, TEAM_COLORS[i % TEAM_COLORS.length], true, botCountry);
       this.aiManager.addBot(i, difficulty);
     }
 

@@ -1,9 +1,10 @@
 // Player and resource management
 class Player {
-  constructor(id, name, faction, color, isBot = false) {
+  constructor(id, name, faction, color, isBot = false, country = null) {
     this.id = id;
     this.name = name;
     this.faction = faction; // 'ALLIED' or 'SOVIET'
+    this.country = country; // Country key (e.g., 'america', 'russia') or null for random
     this.color = color;
     this.isBot = isBot;
     this.credits = CONFIG.STARTING_CREDITS;
@@ -16,6 +17,15 @@ class Player {
     this.hasRadar = false;
     this.unitCount = 0;
     this.buildingsOwned = new Set();
+  }
+
+  get countryDef() {
+    return this.country ? COUNTRIES[this.country] : null;
+  }
+
+  get countryName() {
+    const def = this.countryDef;
+    return def ? def.name : FACTIONS[this.faction]?.name || this.faction;
   }
 
   get power() {
