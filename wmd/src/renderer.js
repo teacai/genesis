@@ -186,6 +186,9 @@ export class WizardRenderer {
       hr.className = 'wmd-divider';
       return hr;
     }
+    if (field.type === '_code') {
+      return this._renderCodeBlock(field);
+    }
     if (field.type === 'hidden') {
       return document.createElement('span');
     }
@@ -364,6 +367,46 @@ export class WizardRenderer {
 
     wrapper.appendChild(input);
     this._appendError(wrapper, field.name);
+    return wrapper;
+  }
+
+  _renderCodeBlock(field) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'wmd-code-block';
+
+    // Header bar with optional language label and copy button
+    const header = document.createElement('div');
+    header.className = 'wmd-code-header';
+
+    const langLabel = document.createElement('span');
+    langLabel.className = 'wmd-code-lang';
+    langLabel.textContent = field.lang || '';
+    header.appendChild(langLabel);
+
+    const copyBtn = document.createElement('button');
+    copyBtn.type = 'button';
+    copyBtn.className = 'wmd-code-copy';
+    copyBtn.textContent = this._t('codeCopy');
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(field.code).then(() => {
+        copyBtn.textContent = this._t('codeCopied');
+        copyBtn.classList.add('wmd-code-copied');
+        setTimeout(() => {
+          copyBtn.textContent = this._t('codeCopy');
+          copyBtn.classList.remove('wmd-code-copied');
+        }, 2000);
+      });
+    });
+    header.appendChild(copyBtn);
+
+    wrapper.appendChild(header);
+
+    const pre = document.createElement('pre');
+    const code = document.createElement('code');
+    code.textContent = field.code;
+    pre.appendChild(code);
+    wrapper.appendChild(pre);
+
     return wrapper;
   }
 

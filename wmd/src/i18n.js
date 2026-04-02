@@ -65,6 +65,8 @@ export const DEFAULT_LOCALE = {
   submitError: 'Submission failed: {error}',
   selectPlaceholder: 'Select {label}...',
   defaultSuccess: 'Form submitted successfully!',
+  codeCopy: 'Copy',
+  codeCopied: 'Copied!',
 
   // Validation
   required: '{label} is required',

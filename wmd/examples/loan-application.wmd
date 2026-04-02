@@ -135,6 +135,17 @@ success_message: Thank you! Your loan application has been submitted for review.
 
 > Please review your information and agree to the following before submitting.
 
+> Your data will be submitted as a JSON payload in the following format:
+
+```json
+{
+  "first_name": "John",
+  "last_name": "Doe",
+  "loan_amount": 10000,
+  "loan_purpose": "Home improvement"
+}
+```
+
 [checkbox: certify_accurate] I certify that all information provided in this application is true, complete, and accurate to the best of my knowledge *
 [checkbox: authorize_credit_check] I authorize the lender to obtain my credit report for the purpose of evaluating this application *
 [checkbox: agree_terms] I have read and agree to the Terms of Service and Privacy Policy *

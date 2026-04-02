@@ -178,6 +178,26 @@ Use `##` for visual grouping within a step (does not create a new wizard step):
 [currency: investments] Investment Portfolio Value
 ```
 
+## Code Blocks
+
+Use fenced code blocks (triple backticks) to display code snippets within a step. A copy-to-clipboard button appears in the top-right corner. Optionally specify a language after the opening backticks:
+
+````
+```json
+{
+  "name": "John Doe",
+  "email": "john@example.com"
+}
+```
+````
+
+The code block renders with:
+- A header bar showing the language label (if provided) and a **Copy** button
+- Dark-themed `<pre><code>` block with monospace font
+- The Copy button shows "Copied!" feedback for 2 seconds after clicking
+
+Code blocks are display-only — they do not produce form values in the JSON output.
+
 ## Dividers
 
 Use `---` (outside frontmatter) to add a visual divider within a step:
@@ -301,6 +321,8 @@ JS options.locale > frontmatter locale.* > locale_url JSON file > built-in Engli
 | `submitError` | Submission failed: {error} | Error banner |
 | `selectPlaceholder` | Select {label}... | Dropdown default option |
 | `defaultSuccess` | Form submitted successfully! | Success screen |
+| `codeCopy` | Copy | Code block copy button |
+| `codeCopied` | Copied! | Code block copy confirmation |
 
 **Validation Messages:**
 

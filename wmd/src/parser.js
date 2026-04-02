@@ -91,6 +91,26 @@ export function parse(source) {
       continue;
     }
 
+    // Fenced code block
+    if (/^```/.test(trimmed) && currentStep) {
+      commitPendingField();
+      const lang = trimmed.slice(3).trim() || '';
+      const codeLines = [];
+      i++;
+      while (i < lines.length && !(/^```\s*$/.test(lines[i].trim()))) {
+        codeLines.push(lines[i]);
+        i++;
+      }
+      i++; // skip closing ```
+      const target = currentCondition || currentStep;
+      target.fields.push({
+        type: '_code',
+        lang,
+        code: codeLines.join('\n'),
+      });
+      continue;
+    }
+
     // Divider
     if (trimmed === '---' && currentStep) {
       commitPendingField();

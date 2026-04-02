@@ -8,6 +8,8 @@
   "submitError": "Error al enviar: {error}",
   "selectPlaceholder": "Seleccionar {label}...",
   "defaultSuccess": "¡Formulario enviado con éxito!",
+  "codeCopy": "Copiar",
+  "codeCopied": "¡Copiado!",
 
   "required": "{label} es obligatorio",
   "invalidEmail": "{label} debe ser un correo electrónico válido",
