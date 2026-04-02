@@ -175,6 +175,20 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
+/* Formula (readonly computed) fields */
+.wmd-input-formula {
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 600;
+  cursor: default;
+  border-style: dashed;
+}
+
+.wmd-input-formula:focus {
+  border-color: #cbd5e1;
+  box-shadow: none;
+}
+
 textarea.wmd-input {
   resize: vertical;
   min-height: 5rem;

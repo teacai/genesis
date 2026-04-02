@@ -76,7 +76,7 @@ export function validateStep(fields, values, locale) {
   const allErrors = {};
   for (const field of fields) {
     if (field.type.startsWith('_')) continue;
-    if (field.type === 'hidden') continue;
+    if (field.type === 'hidden' || field.type === 'formula') continue;
     const errs = validateField(field, values[field.name], locale);
     if (errs.length) allErrors[field.name] = errs;
   }

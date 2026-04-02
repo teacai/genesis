@@ -202,7 +202,18 @@ export function parse(source) {
       const label = rawLabel ? rawLabel.trim().replace(/\s*\*$/, '').trim() : name;
       const attrs = parseAttributes(attrStr || '');
 
-      pendingField = { type, name, label, required: !!required, attrs, options: [] };
+      if (type === 'formula') {
+        const fullLabel = rawLabel ? rawLabel.trim() : '';
+        const eqIdx = fullLabel.indexOf(' = ');
+        pendingField = {
+          type, name,
+          label: eqIdx >= 0 ? fullLabel.substring(0, eqIdx).trim() : fullLabel || name,
+          formula: eqIdx >= 0 ? fullLabel.substring(eqIdx + 3).trim() : '',
+          required: false, attrs, options: [],
+        };
+      } else {
+        pendingField = { type, name, label, required: !!required, attrs, options: [] };
+      }
       i++;
       continue;
     }

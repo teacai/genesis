@@ -95,6 +95,7 @@ Append `*` to the label to mark required:
 | `checkboxes`| Checkbox group      | Options follow on `- ` lines, multi-select|
 | `file`      | File upload         | Accepts file types via attributes        |
 | `hidden`    | Hidden field        | Not shown, value set via `= value`       |
+| `formula`   | Readonly computed   | Value calculated from other fields       |
 
 ### Field Options
 
@@ -134,6 +135,8 @@ Add attributes in parentheses after the type:
 | `accept`      | file             | Accepted file types                  |
 | `default`     | all              | Default value                        |
 | `mask`        | text             | Input mask pattern (# = digit, A = letter) |
+| `format`      | formula          | Display format: `currency` ($) or `percent` (%) |
+| `decimals`    | formula          | Decimal places (default: 2)              |
 
 ### Hidden Fields
 
@@ -142,6 +145,53 @@ Set hidden field values with `=`:
 ```
 [hidden: source] = website
 ```
+
+### Formula Fields
+
+Formula fields display a readonly computed value derived from other fields. The value updates automatically when referenced fields change. Use `=` to separate the label from the formula expression:
+
+```
+[formula: monthly_payment] Monthly Payment = loan_amount / loan_term
+```
+
+With formatting attributes:
+
+```
+[formula(format="currency", decimals=2): monthly_cost] Monthly Cost = annual_cost / 12
+[formula(format="percent", decimals=1): tax_rate] Effective Tax Rate = taxes / income * 100
+```
+
+#### Expression Syntax
+
+| Element | Example | Description |
+|---------|---------|-------------|
+| Field reference | `loan_amount` | Resolves to the field's current numeric value (0 if empty) |
+| Number literal | `12`, `3.14` | Numeric constants |
+| Arithmetic | `a + b`, `a - b`, `a * b`, `a / b`, `a % b` | Standard math operators |
+| Parentheses | `(a + b) * c` | Grouping for operator precedence |
+| Unary minus | `-amount` | Negation |
+
+#### Built-in Functions
+
+| Function | Description | Example |
+|----------|-------------|---------|
+| `round(x, n)` | Round to `n` decimal places | `round(price * 1.08, 2)` |
+| `floor(x)` | Round down | `floor(quantity)` |
+| `ceil(x)` | Round up | `ceil(hours)` |
+| `abs(x)` | Absolute value | `abs(balance)` |
+| `min(a, b, ...)` | Minimum value | `min(income, cap)` |
+| `max(a, b, ...)` | Maximum value | `max(total, 0)` |
+| `pow(x, n)` | Exponentiation | `pow(1 + rate, years)` |
+
+#### Behavior
+
+- Formula fields are **readonly** — users cannot edit them
+- Values are **recomputed on every render** (when any field changes)
+- Fields from **any step** can be referenced (including previous steps)
+- Non-numeric or empty field references resolve to `0`
+- Division by zero returns `0`
+- Formula values are included in the submitted JSON as numbers
+- Formula fields are **never required** and skip validation
 
 ## Conditional Logic
 
@@ -426,6 +476,12 @@ success_message: Thank you! Your application is under review.
 [currency: annual_revenue] Annual Business Revenue *
 ?endif
 
+##### Loan Request
+
+[currency: loan_amount] Loan Amount *
+[number: loan_term_months] Loan Term (months) *
+[formula(format="currency"): est_monthly_payment] Estimated Monthly Payment = round(loan_amount / loan_term_months, 2)
+
 ##### Review & Submit
 
 < Please review your information before submitting.
@@ -455,12 +511,15 @@ The wizard submits a flat JSON object keyed by field names:
   "employment_status": "Employed full-time",
   "employer_name": "Acme Corp",
   "annual_salary": 75000,
+  "loan_amount": 25000,
+  "loan_term_months": 36,
+  "est_monthly_payment": 694.44,
   "certify_accurate": true,
   "agree_terms": true
 }
 ```
 
-Fields hidden by conditional logic are excluded from the output.
+Fields hidden by conditional logic are excluded from the output. Formula fields are included with their computed numeric value.
 
 ## Internationalization (i18n)
 

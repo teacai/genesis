@@ -4,6 +4,7 @@
 
 import { validateStep } from './validator.js';
 import { t, mergeLocale, DEFAULT_LOCALE } from './i18n.js';
+import { evaluateFormula } from './formula.js';
 
 export class WizardRenderer {
   constructor(ast, container, options = {}) {
@@ -218,6 +219,9 @@ export class WizardRenderer {
     }
     if (field.type === '_toggle') {
       return this._renderToggle(field);
+    }
+    if (field.type === 'formula') {
+      return this._renderFormula(field);
     }
     if (field.type === 'hidden') {
       return document.createElement('span');
@@ -527,6 +531,59 @@ export class WizardRenderer {
     return wrapper;
   }
 
+  _renderFormula(field) {
+    const displayLabel = this._tField(field);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'wmd-field wmd-field-formula';
+
+    const label = document.createElement('label');
+    label.className = 'wmd-label';
+    this._appendInline(label, displayLabel);
+    label.htmlFor = `wmd-${field.name}`;
+    label.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(a.href, '_blank', 'noopener,noreferrer');
+      });
+    });
+    wrapper.appendChild(label);
+
+    // Evaluate formula against current values
+    const rawValue = evaluateFormula(field.formula, this.values);
+    const decimals = field.attrs.decimals !== undefined ? Number(field.attrs.decimals) : 2;
+    const numValue = Number(rawValue.toFixed(decimals));
+
+    // Store computed value for submission and other formulas
+    this.values[field.name] = numValue;
+
+    // Format for display
+    const formatted = this._formatFormulaValue(numValue, decimals, field.attrs.format);
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = `wmd-${field.name}`;
+    input.name = field.name;
+    input.className = 'wmd-input wmd-input-formula';
+    input.readOnly = true;
+    input.tabIndex = -1;
+    input.value = formatted;
+
+    wrapper.appendChild(input);
+    return wrapper;
+  }
+
+  _formatFormulaValue(num, decimals, format) {
+    const fixed = num.toFixed(decimals);
+    const [intPart, decPart] = fixed.split('.');
+    const withCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const display = decPart !== undefined ? `${withCommas}.${decPart}` : withCommas;
+
+    if (format === 'currency') return `$${display}`;
+    if (format === 'percent') return `${display}%`;
+    return display;
+  }
+
   _renderMarkdown(field) {
     const frag = document.createDocumentFragment();
     let i = 0;
@@ -791,6 +848,13 @@ export class WizardRenderer {
       const visible = this._flattenFields(this._resolveFields(step.fields));
       for (const field of visible) {
         if (field.type?.startsWith('_')) continue;
+        if (field.type === 'formula') {
+          // Recompute formula at submission time
+          output[field.name] = evaluateFormula(field.formula, this.values);
+          const dec = field.attrs?.decimals !== undefined ? Number(field.attrs.decimals) : 2;
+          output[field.name] = Number(output[field.name].toFixed(dec));
+          continue;
+        }
         const val = field.type === 'hidden' ? field.value : this.values[field.name];
         if (val !== undefined && val !== '') {
           output[field.name] = field.type === 'number' || field.type === 'currency'

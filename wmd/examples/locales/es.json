@@ -67,7 +67,8 @@
     "certify_accurate": "Certifico que toda la información proporcionada en esta solicitud es verdadera, completa y precisa según mi leal saber y entender",
     "authorize_credit_check": "Autorizo al prestamista a obtener mi informe crediticio para evaluar esta solicitud",
     "agree_terms": "He leído y acepto los Términos de Servicio y la Política de Privacidad",
-    "agree_electronic": "Doy mi consentimiento para recibir comunicaciones electrónicamente"
+    "agree_electronic": "Doy mi consentimiento para recibir comunicaciones electrónicamente",
+    "est_monthly_payment": "Pago Mensual Estimado"
   },
 
   "placeholders": {

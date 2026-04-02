@@ -135,11 +135,13 @@ success_message: Thank you! Your loan application has been submitted for review.
 - Other
 
 [select: loan_term] Preferred Loan Term *
-- 12 months
-- 24 months
-- 36 months
-- 48 months
-- 60 months
+- 12 months | 12
+- 24 months | 24
+- 36 months | 36
+- 48 months | 48
+- 60 months | 60
+
+[formula(format="currency"): est_monthly_payment] Estimated Monthly Payment = round(loan_amount / loan_term, 2)
 
 ?toggle Additional Details (Optional)
 [text: referral_code] Referral Code
