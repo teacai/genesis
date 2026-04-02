@@ -195,6 +195,9 @@ export class WizardRenderer {
     if (field.type === '_text') {
       return this._renderMarkdown(field);
     }
+    if (field.type === '_table') {
+      return this._renderTable(field);
+    }
     if (field.type === '_toggle') {
       return this._renderToggle(field);
     }
@@ -392,6 +395,43 @@ export class WizardRenderer {
 
     wrapper.appendChild(input);
     this._appendError(wrapper, field.name);
+    return wrapper;
+  }
+
+  _renderTable(field) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'wmd-table-wrapper';
+
+    const table = document.createElement('table');
+    table.className = 'wmd-table';
+
+    // Header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    field.headers.forEach((h, idx) => {
+      const th = document.createElement('th');
+      th.style.textAlign = field.aligns[idx] || 'left';
+      this._appendInline(th, h);
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Body
+    const tbody = document.createElement('tbody');
+    for (const row of field.rows) {
+      const tr = document.createElement('tr');
+      row.forEach((cell, idx) => {
+        const td = document.createElement('td');
+        td.style.textAlign = field.aligns[idx] || 'left';
+        this._appendInline(td, cell);
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+
+    wrapper.appendChild(table);
     return wrapper;
   }
 

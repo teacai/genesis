@@ -224,6 +224,38 @@ export function parse(source) {
       continue;
     }
 
+    // Markdown table (lines starting with |)
+    if (/^\|.+\|/.test(trimmed) && currentStep) {
+      commitPendingField();
+      const tableLines = [];
+      while (i < lines.length && /^\|.+\|/.test(lines[i].trim())) {
+        tableLines.push(lines[i].trim());
+        i++;
+      }
+      if (tableLines.length >= 2) {
+        const parseCells = row =>
+          row.split('|').slice(1, -1).map(c => c.trim());
+
+        const headers = parseCells(tableLines[0]);
+
+        // Parse alignment row (second line)
+        const alignRow = parseCells(tableLines[1]);
+        const aligns = alignRow.map(cell => {
+          const stripped = cell.replace(/\s/g, '');
+          if (/^:-+:$/.test(stripped)) return 'center';
+          if (/^-+:$/.test(stripped)) return 'right';
+          return 'left';
+        });
+
+        // Remaining lines are data rows (skip separator)
+        const rows = tableLines.slice(2).map(parseCells);
+
+        const target = currentCondition || currentStep;
+        target.fields.push({ type: '_table', headers, aligns, rows });
+      }
+      continue;
+    }
+
     // Markdown text lines: unordered list, ordered list, or paragraph text
     if (trimmed && currentStep) {
       // Check if this is a list item or plain text
@@ -247,6 +279,7 @@ export function parse(source) {
           if (/^\?if\s+/.test(t) || /^\?endif/.test(t)) break;
           if (/^\?toggle/.test(t) || /^\?endtoggle/.test(t)) break;
           if (/^\[\w+[\s(].*:\s*\w+\]/.test(t) || /^\[hidden\s*:/.test(t)) break; // field definition (not markdown link)
+          if (/^\|.+\|/.test(t)) break; // table
 
           const lineIsUl = /^[-*+] /.test(t);
           const lineOlMatch = t.match(/^(\d+)[.)]\s/);

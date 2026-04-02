@@ -272,6 +272,27 @@ It continues on the next line and wraps into a single `<p>` element.
 
 Lists and text blocks are display-only — they do not produce form values in the JSON output.
 
+## Tables
+
+Standard markdown tables are supported. Tables require a header row, a separator row (with optional alignment), and one or more data rows:
+
+```
+| Plan     | Price   | Features          |
+|----------|:-------:|------------------:|
+| Basic    | $9/mo   | 10 projects       |
+| Pro      | $29/mo  | Unlimited         |
+| Business | $99/mo  | Unlimited + SSO   |
+```
+
+**Alignment** is controlled by colons in the separator row:
+- `|------|` or `|:-----|` — left-aligned (default)
+- `|:----:|` — center-aligned
+- `|-----:|` — right-aligned
+
+Cell content supports inline formatting: **bold**, *italic*, `code`, and [links](url).
+
+Tables are display-only — they do not produce form values in the JSON output. The table wrapper scrolls horizontally on narrow screens.
+
 ## Code Blocks
 
 Use fenced code blocks (triple backticks) to display code snippets within a step. A copy-to-clipboard button appears in the top-right corner. Optionally specify a language after the opening backticks:
