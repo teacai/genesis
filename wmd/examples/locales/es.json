@@ -62,6 +62,8 @@
     "loan_amount": "Monto del Préstamo ($)",
     "loan_purpose": "Propósito del Préstamo",
     "loan_term": "Plazo del Préstamo",
+    "referral_code": "Código de Referencia",
+    "loan_notes": "Notas o Comentarios Adicionales",
     "certify_accurate": "Certifico que toda la información proporcionada en esta solicitud es verdadera, completa y precisa según mi leal saber y entender",
     "authorize_credit_check": "Autorizo al prestamista a obtener mi informe crediticio para evaluar esta solicitud",
     "agree_terms": "He leído y acepto los Términos de Servicio y la Política de Privacidad",
@@ -111,5 +113,9 @@
     }
   },
 
-  "sections": {}
+  "sections": {},
+
+  "toggles": {
+    "Additional Details (Optional)": "Detalles Adicionales (Opcional)"
+  }
 }

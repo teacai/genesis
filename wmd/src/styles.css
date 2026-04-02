@@ -209,6 +209,61 @@ select.wmd-input {
   margin-top: 0.3rem;
 }
 
+/* Toggle section */
+.wmd-toggle {
+  margin-bottom: 1.25rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.wmd-toggle-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  background: #f8fafc;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #334155;
+  text-align: left;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.wmd-toggle-header:hover {
+  background: #f1f5f9;
+}
+
+.wmd-toggle-arrow {
+  display: inline-flex;
+  font-size: 0.6rem;
+  color: #64748b;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.wmd-toggle-open > .wmd-toggle-header .wmd-toggle-arrow {
+  transform: rotate(90deg);
+}
+
+.wmd-toggle-label {
+  flex: 1;
+}
+
+.wmd-toggle-content {
+  display: none;
+  padding: 1rem 0.85rem 0.25rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.wmd-toggle-open > .wmd-toggle-content {
+  display: block;
+}
+
 /* Markdown text */
 .wmd-markdown {
   margin-bottom: 1.25rem;

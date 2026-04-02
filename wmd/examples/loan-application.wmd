@@ -131,6 +131,11 @@ success_message: Thank you! Your loan application has been submitted for review.
 - 48 months
 - 60 months
 
+?toggle Additional Details (Optional)
+[text: referral_code] Referral Code
+[textarea: loan_notes] Additional Notes or Comments
+?endtoggle
+
 # Review & Consent
 
 > Please review your information and **agree to the following** before submitting.

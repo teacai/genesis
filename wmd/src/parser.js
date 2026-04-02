@@ -120,6 +120,38 @@ export function parse(source) {
       continue;
     }
 
+    // Toggle section start
+    const toggleMatch = trimmed.match(/^\?toggle(?:\((\w+)\))?\s+(.+)$/);
+    if (toggleMatch && currentStep) {
+      commitPendingField();
+      const toggle = {
+        type: '_toggle',
+        open: toggleMatch[1] === 'open',
+        label: toggleMatch[2],
+        fields: [],
+      };
+      const target = currentCondition || currentStep;
+      target.fields.push(toggle);
+      // Push toggle as a container context — nest inside current condition if any
+      // We use a stack approach: save previous condition, set toggle as current
+      toggle._prevCondition = currentCondition;
+      currentCondition = toggle;
+      i++;
+      continue;
+    }
+
+    // Toggle section end
+    if (/^\?endtoggle/.test(trimmed)) {
+      commitPendingField();
+      if (currentCondition && currentCondition.type === '_toggle') {
+        const prev = currentCondition._prevCondition;
+        delete currentCondition._prevCondition;
+        currentCondition = prev;
+      }
+      i++;
+      continue;
+    }
+
     // Conditional start
     if (/^\?if\s+/.test(trimmed)) {
       commitPendingField();

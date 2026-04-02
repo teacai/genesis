@@ -152,6 +152,9 @@ export class WizardRenderer {
         if (this._evalCondition(field)) {
           result.push(...this._resolveFields(field.fields));
         }
+      } else if (field.type === '_toggle') {
+        // Keep toggle as a single node; resolve its children at render time
+        result.push({ ...field, fields: this._resolveFields(field.fields) });
       } else {
         result.push(field);
       }
@@ -191,6 +194,9 @@ export class WizardRenderer {
     }
     if (field.type === '_text') {
       return this._renderMarkdown(field);
+    }
+    if (field.type === '_toggle') {
+      return this._renderToggle(field);
     }
     if (field.type === 'hidden') {
       return document.createElement('span');
@@ -370,6 +376,49 @@ export class WizardRenderer {
 
     wrapper.appendChild(input);
     this._appendError(wrapper, field.name);
+    return wrapper;
+  }
+
+  _renderToggle(field) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'wmd-toggle';
+
+    // Auto-open if there are validation errors inside this toggle
+    const childFields = this._flattenFields(field.fields);
+    const hasErrors = childFields.some(f => f.name && this.errors[f.name]);
+    const isOpen = field.open || hasErrors;
+    if (isOpen) wrapper.classList.add('wmd-toggle-open');
+
+    const header = document.createElement('button');
+    header.type = 'button';
+    header.className = 'wmd-toggle-header';
+
+    const arrow = document.createElement('span');
+    arrow.className = 'wmd-toggle-arrow';
+    arrow.textContent = '\u25B6'; // right-pointing triangle
+    header.appendChild(arrow);
+
+    const label = document.createElement('span');
+    label.className = 'wmd-toggle-label';
+    const displayLabel = this.locale.toggles?.[field.label] ?? field.label;
+    this._appendInline(label, displayLabel);
+    header.appendChild(label);
+
+    wrapper.appendChild(header);
+
+    const content = document.createElement('div');
+    content.className = 'wmd-toggle-content';
+
+    for (const child of field.fields) {
+      content.appendChild(this._renderField(child));
+    }
+
+    wrapper.appendChild(content);
+
+    header.addEventListener('click', () => {
+      wrapper.classList.toggle('wmd-toggle-open');
+    });
+
     return wrapper;
   }
 
@@ -569,9 +618,22 @@ export class WizardRenderer {
     return nav;
   }
 
+  /** Flatten toggles so their children are included for validation/submission. */
+  _flattenFields(fields) {
+    const result = [];
+    for (const field of fields) {
+      if (field.type === '_toggle') {
+        result.push(...this._flattenFields(field.fields));
+      } else {
+        result.push(field);
+      }
+    }
+    return result;
+  }
+
   _handleNext(isSubmit) {
     const step = this.ast.steps[this.currentStep];
-    const visibleFields = this._resolveFields(step.fields);
+    const visibleFields = this._flattenFields(this._resolveFields(step.fields));
     // Set _displayLabel on each field before validation so messages use translated labels
     for (const field of visibleFields) {
       if (!field.type.startsWith('_') && field.type !== 'hidden') {
@@ -601,7 +663,7 @@ export class WizardRenderer {
     // Build clean output — exclude hidden conditional fields
     const output = {};
     for (const step of this.ast.steps) {
-      const visible = this._resolveFields(step.fields);
+      const visible = this._flattenFields(this._resolveFields(step.fields));
       for (const field of visible) {
         if (field.type?.startsWith('_')) continue;
         const val = field.type === 'hidden' ? field.value : this.values[field.name];

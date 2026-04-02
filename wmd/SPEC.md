@@ -158,6 +158,39 @@ Show or hide fields based on other field values using `?if` syntax:
 
 Supported operators: `=`, `!=`, `>`, `<`, `>=`, `<=`, `contains`
 
+## Toggle Sections
+
+Use `?toggle` / `?endtoggle` to create collapsible sections. A clickable label with a horizontal arrow indicator lets users expand or collapse the content:
+
+```
+?toggle Additional Details (Optional)
+[text: referral_code] Referral Code
+[textarea: notes] Additional Notes
+?endtoggle
+```
+
+To make a toggle open by default, add `(open)`:
+
+```
+?toggle(open) Required Documents
+- Government-issued photo ID
+- Proof of income (pay stub or tax return)
+- Proof of address (utility bill or bank statement)
+?endtoggle
+```
+
+Toggle sections can contain any content: fields, text, lists, code blocks, and even nested conditionals. If validation fails on a field inside a collapsed toggle, the toggle auto-opens to reveal the error.
+
+Toggle labels support i18n via `locale.toggles`:
+
+```json
+{
+  "toggles": {
+    "Additional Details (Optional)": "Detalles Adicionales (Opcional)"
+  }
+}
+```
+
 ## Sections Within Steps
 
 Use `##` for visual grouping within a step (does not create a new wizard step):
