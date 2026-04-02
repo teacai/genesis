@@ -2,7 +2,7 @@
  * WMD Formula Evaluator — Parses and evaluates arithmetic expressions
  * that reference field values.
  *
- * Supports: +, -, *, /, %, parentheses, unary minus, number literals,
+ * Supports: +, -, *, /, %, ^, parentheses, unary minus, number literals,
  * field references, and functions (round, floor, ceil, abs, min, max, pow).
  */
 
@@ -26,15 +26,25 @@ export function evaluateFormula(expression, values) {
   }
 
   function multiplicative() {
-    let left = unary();
+    let left = power();
     while (peek() && (peek().value === '*' || peek().value === '/' || peek().value === '%')) {
       const op = consume().value;
-      const right = unary();
+      const right = power();
       if (op === '*') left *= right;
       else if (op === '/') left = right !== 0 ? left / right : 0;
       else left = right !== 0 ? left % right : 0;
     }
     return left;
+  }
+
+  // Right-associative: 2 ^ 3 ^ 2 = 2 ^ (3 ^ 2) = 512
+  function power() {
+    let base = unary();
+    if (peek() && peek().value === '^') {
+      consume();
+      base = Math.pow(base, power());
+    }
+    return base;
   }
 
   function unary() {
@@ -139,7 +149,7 @@ function tokenize(expression) {
     }
 
     // Operators, parens, comma
-    if ('+-*/%(),'.includes(expression[i])) {
+    if ('+-*/%^(),'.includes(expression[i])) {
       tokens.push({ type: 'op', value: expression[i] });
       i++;
       continue;

@@ -168,6 +168,7 @@ With formatting attributes:
 | Field reference | `loan_amount` | Resolves to the field's current numeric value (0 if empty) |
 | Number literal | `12`, `3.14` | Numeric constants |
 | Arithmetic | `a + b`, `a - b`, `a * b`, `a / b`, `a % b` | Standard math operators |
+| Power | `a ^ b` | Exponentiation (right-associative: `2 ^ 3 ^ 2` = `2 ^ 9`) |
 | Parentheses | `(a + b) * c` | Grouping for operator precedence |
 | Unary minus | `-amount` | Negation |
 
