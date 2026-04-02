@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WMD — Wizard Markdown Demo</title>
+  <link rel="stylesheet" href="src/styles.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #f8fafc;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+    .demo-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .demo-header h1 {
+      font-size: 1.8rem;
+      color: #1a1a2e;
+      margin-bottom: 0.25rem;
+    }
+    .demo-header p {
+      color: #64748b;
+      font-size: 0.95rem;
+    }
+    .demo-header code {
+      background: #e2e8f0;
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.25rem;
+      font-size: 0.85rem;
+    }
+    #wizard {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 24px rgba(0,0,0,0.04);
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .demo-output {
+      max-width: 640px;
+      margin: 2rem auto 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .demo-output summary {
+      cursor: pointer;
+      color: #64748b;
+      font-size: 0.85rem;
+    }
+    .demo-output pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-header">
+    <h1>WMD — Wizard Markdown</h1>
+    <p>A markdown-based markup language for wizard forms. See <code>examples/loan-application.wmd</code></p>
+  </div>
+
+  <div id="wizard"></div>
+
+  <div class="demo-output">
+    <details>
+      <summary>View submitted JSON output</summary>
+      <pre id="output">Submit the form to see the JSON output here.</pre>
+    </details>
+  </div>
+
+  <script type="module">
+    import WMD from './src/wmd.js';
+
+    const wizard = await WMD.render('#wizard', {
+      src: 'examples/loan-application.wmd',
+      onSubmit(data) {
+        document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+        document.querySelector('.demo-output details').open = true;
+        console.log('[WMD] Submitted:', data);
+
+        // Show success in the wizard
+        const el = document.getElementById('wizard');
+        el.innerHTML = `
+          <div class="wmd-wizard">
+            <div class="wmd-success">
+              <div class="wmd-success-icon">\u2713</div>
+              <p>Thank you! Your loan application has been submitted for review.</p>
+            </div>
+          </div>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>
