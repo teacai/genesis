@@ -237,6 +237,16 @@ export function parse(source) {
       continue;
     }
 
+    // Standalone image line: ![alt](url)
+    const imgMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (imgMatch && currentStep) {
+      commitPendingField();
+      const target = currentCondition || currentStep;
+      target.fields.push({ type: '_image', alt: imgMatch[1], src: imgMatch[2] });
+      i++;
+      continue;
+    }
+
     // Markdown table (lines starting with |)
     if (/^\|.+\|/.test(trimmed) && currentStep) {
       commitPendingField();

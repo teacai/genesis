@@ -209,6 +209,34 @@ select.wmd-input {
   margin-top: 0.3rem;
 }
 
+/* Images */
+.wmd-image {
+  margin: 0 0 1.25rem;
+  padding: 0;
+}
+
+.wmd-image img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.wmd-image-caption {
+  font-size: 0.8rem;
+  color: #64748b;
+  text-align: center;
+  margin-top: 0.4rem;
+}
+
+.wmd-inline-image {
+  display: inline;
+  max-height: 1.4em;
+  vertical-align: text-bottom;
+  border-radius: 0.2rem;
+}
+
 /* Blockquote */
 .wmd-blockquote {
   margin: 0 0 1.25rem;

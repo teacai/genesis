@@ -224,6 +224,7 @@ Standard markdown inline formatting is supported in descriptions (`<`), blockquo
 | `***bold italic***` or `___bold italic___` | ***bold italic*** |
 | `` `inline code` `` | `inline code` |
 | `[link text](url)` | clickable link (opens in new tab) |
+| `![alt text](url)` | inline image |
 
 ### Links
 
@@ -247,6 +248,29 @@ Example:
 ```
 < Please provide your **legal name** as it appears on your *government-issued ID*.
 ```
+
+### Images
+
+Markdown images use the standard `![alt text](url)` syntax. Images can be used in two ways:
+
+**Block images** — a standalone line with just the image renders as a full-width figure with an optional caption (from the alt text):
+
+```
+![Application process flowchart](https://example.com/flowchart.png)
+```
+
+Block images render as a `<figure>` with:
+- Responsive sizing (`max-width: 100%`)
+- Rounded border
+- Caption below the image (from the alt text)
+
+**Inline images** — images within text, lists, or other content render inline at line height:
+
+```
+Click the ![save icon](icons/save.png) button to continue.
+```
+
+Images are display-only — they do not produce form values in the JSON output.
 
 ## Blockquotes
 

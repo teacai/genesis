@@ -198,6 +198,9 @@ export class WizardRenderer {
     if (field.type === '_blockquote') {
       return this._renderBlockquote(field);
     }
+    if (field.type === '_image') {
+      return this._renderImage(field);
+    }
     if (field.type === '_table') {
       return this._renderTable(field);
     }
@@ -401,6 +404,26 @@ export class WizardRenderer {
     return wrapper;
   }
 
+  _renderImage(field) {
+    const figure = document.createElement('figure');
+    figure.className = 'wmd-image';
+
+    const img = document.createElement('img');
+    img.src = field.src;
+    img.alt = field.alt;
+    img.loading = 'lazy';
+    figure.appendChild(img);
+
+    if (field.alt) {
+      const caption = document.createElement('figcaption');
+      caption.className = 'wmd-image-caption';
+      caption.textContent = field.alt;
+      figure.appendChild(caption);
+    }
+
+    return figure;
+  }
+
   _renderBlockquote(field) {
     const bq = document.createElement('blockquote');
     bq.className = 'wmd-blockquote';
@@ -552,12 +575,13 @@ export class WizardRenderer {
    */
   _appendInline(parent, text) {
     // Regex matches inline tokens in order of priority:
-    // 1. [link text](url)         — markdown link
-    // 2. ***bold italic*** / ___  — bold italic
-    // 3. **bold** / __            — bold
-    // 4. *italic* / _             — italic
-    // 5. `inline code`            — code
-    const TOKEN_RE = /\[([^\]]+)\]\(([^)]+)\)|(\*{3}|_{3})(.*?)\3|(\*{2}|_{2})(.*?)\5|(\*|_)(.*?)\7|`([^`]+)`/g;
+    // 1. ![alt](url)              — inline image (must be before link)
+    // 2. [link text](url)         — markdown link
+    // 3. ***bold italic*** / ___  — bold italic
+    // 4. **bold** / __            — bold
+    // 5. *italic* / _             — italic
+    // 6. `inline code`            — code
+    const TOKEN_RE = /!\[([^\]]*)\]\(([^)]+)\)|\[([^\]]+)\]\(([^)]+)\)|(\*{3}|_{3})(.*?)\5|(\*{2}|_{2})(.*?)\7|(\*|_)(.*?)\9|`([^`]+)`/g;
 
     let lastIndex = 0;
     let match;
@@ -569,37 +593,45 @@ export class WizardRenderer {
       }
 
       if (match[1] !== undefined) {
+        // ![alt](url) — inline image
+        const img = document.createElement('img');
+        img.src = match[2];
+        img.alt = match[1];
+        img.loading = 'lazy';
+        img.className = 'wmd-inline-image';
+        parent.appendChild(img);
+      } else if (match[3] !== undefined) {
         // [link text](url)
         const a = document.createElement('a');
-        a.href = match[2];
+        a.href = match[4];
         a.target = '_blank';
         a.rel = 'noopener noreferrer';
         a.className = 'wmd-link';
         // Recurse to support formatting inside link text: [**bold link**](url)
-        this._appendInline(a, match[1]);
+        this._appendInline(a, match[3]);
         parent.appendChild(a);
-      } else if (match[3]) {
+      } else if (match[5]) {
         // ***bold italic***
         const el = document.createElement('strong');
         const em = document.createElement('em');
-        em.textContent = match[4];
+        em.textContent = match[6];
         el.appendChild(em);
         parent.appendChild(el);
-      } else if (match[5]) {
+      } else if (match[7]) {
         // **bold**
         const el = document.createElement('strong');
-        el.textContent = match[6];
-        parent.appendChild(el);
-      } else if (match[7]) {
-        // *italic*
-        const el = document.createElement('em');
         el.textContent = match[8];
         parent.appendChild(el);
-      } else if (match[9] !== undefined) {
+      } else if (match[9]) {
+        // *italic*
+        const el = document.createElement('em');
+        el.textContent = match[10];
+        parent.appendChild(el);
+      } else if (match[11] !== undefined) {
         // `inline code`
         const el = document.createElement('code');
         el.className = 'wmd-inline-code';
-        el.textContent = match[9];
+        el.textContent = match[11];
         parent.appendChild(el);
       }
 
