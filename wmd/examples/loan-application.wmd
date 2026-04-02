@@ -6,7 +6,7 @@ success_message: Thank you! Your loan application has been submitted for review.
 
 # Personal Information
 
-> Please provide your legal name and contact details exactly as they appear on your government-issued ID.
+< Please provide your legal name and contact details exactly as they appear on your government-issued ID.
 
 [text(placeholder="John", min=1, max=50): first_name] First Name *
 [text(placeholder="Doe", min=1, max=50): last_name] Last Name *
@@ -17,7 +17,7 @@ success_message: Thank you! Your loan application has been submitted for review.
 
 # Residential Address
 
-> Your current residential address. PO Boxes are not accepted.
+< Your current residential address. PO Boxes are not accepted.
 
 [text(placeholder="123 Main Street"): street_address] Street Address *
 [text(placeholder="Apt 4B"): apt_unit] Apt / Suite / Unit
@@ -77,7 +77,7 @@ success_message: Thank you! Your loan application has been submitted for review.
 
 # Employment & Income
 
-> Tell us about your current employment and income.
+< Tell us about your current employment and income.
 
 [select: employment_status] Employment Status *
 - Employed full-time
@@ -111,7 +111,7 @@ success_message: Thank you! Your loan application has been submitted for review.
 
 # Loan Details
 
-> How much would you like to borrow and for what purpose?
+< How much would you like to borrow and for what purpose?
 
 | Term | APR | Monthly Payment (per $10,000) |
 |------|:---:|------------------------------:|
@@ -146,7 +146,7 @@ success_message: Thank you! Your loan application has been submitted for review.
 
 # Review & Consent
 
-> Please review your information and **agree to the following** before submitting.
+< Please review your information and **agree to the following** before submitting.
 
 By submitting this application, you acknowledge that:
 
@@ -156,7 +156,7 @@ By submitting this application, you acknowledge that:
 
 ***Important:*** Incomplete applications will be automatically declined.
 
-> Your data will be submitted as a JSON payload in the following format:
+> **Note:** Your data will be submitted as a JSON payload in the following format:
 
 ```json
 {

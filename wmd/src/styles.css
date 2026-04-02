@@ -209,6 +209,26 @@ select.wmd-input {
   margin-top: 0.3rem;
 }
 
+/* Blockquote */
+.wmd-blockquote {
+  margin: 0 0 1.25rem;
+  padding: 0.6rem 1rem;
+  border-left: 3px solid #3b82f6;
+  background: #f0f7ff;
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+
+.wmd-blockquote p {
+  font-size: 0.9rem;
+  color: #334155;
+  line-height: 1.6;
+  margin: 0 0 0.4rem;
+}
+
+.wmd-blockquote p:last-child {
+  margin-bottom: 0;
+}
+
 /* Table */
 .wmd-table-wrapper {
   margin-bottom: 1.25rem;

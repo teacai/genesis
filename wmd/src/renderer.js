@@ -195,6 +195,9 @@ export class WizardRenderer {
     if (field.type === '_text') {
       return this._renderMarkdown(field);
     }
+    if (field.type === '_blockquote') {
+      return this._renderBlockquote(field);
+    }
     if (field.type === '_table') {
       return this._renderTable(field);
     }
@@ -396,6 +399,17 @@ export class WizardRenderer {
     wrapper.appendChild(input);
     this._appendError(wrapper, field.name);
     return wrapper;
+  }
+
+  _renderBlockquote(field) {
+    const bq = document.createElement('blockquote');
+    bq.className = 'wmd-blockquote';
+    for (const line of field.lines) {
+      const p = document.createElement('p');
+      this._appendInline(p, line);
+      bq.appendChild(p);
+    }
+    return bq;
   }
 
   _renderTable(field) {

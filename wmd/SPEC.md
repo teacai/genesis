@@ -15,7 +15,7 @@ frontmatter (YAML-like config)
 
 # Step heading
 
-> Description text
+< Description text
 
 field definitions
 ```
@@ -53,12 +53,14 @@ Each `#` heading creates a new wizard step. The heading text becomes the step la
 
 ## Descriptions
 
-Lines starting with `>` add description text to the current step.
+Lines starting with `<` add description text to the current step. Multiple `<` lines are joined into a single paragraph displayed below the step heading.
 
 ```
-> Please provide your legal name as it appears on your ID.
-> All fields marked with * are required.
+< Please provide your legal name as it appears on your ID.
+< All fields marked with * are required.
 ```
+
+Description text supports inline formatting: **bold**, *italic*, `code`, and [links](url).
 
 ## Fields
 
@@ -213,7 +215,7 @@ Use `##` for visual grouping within a step (does not create a new wizard step):
 
 ## Inline Formatting
 
-Standard markdown inline formatting is supported in descriptions (`>`), text blocks, list items, and field labels (including checkbox labels):
+Standard markdown inline formatting is supported in descriptions (`<`), blockquotes (`>`), text blocks, list items, and field labels (including checkbox labels):
 
 | Syntax | Renders As |
 |--------|------------|
@@ -230,7 +232,7 @@ Markdown links use the standard `[text](url)` syntax. All links open in a new br
 Links work everywhere inline formatting is supported:
 
 ```
-> Please read our [Privacy Policy](https://example.com/privacy) before continuing.
+< Please read our [Privacy Policy](https://example.com/privacy) before continuing.
 
 - You can review the [full terms](https://example.com/terms) at any time
 
@@ -243,8 +245,21 @@ Link text supports nested formatting: `[**bold link**](url)` renders a bold link
 
 Example:
 ```
-> Please provide your **legal name** as it appears on your *government-issued ID*.
+< Please provide your **legal name** as it appears on your *government-issued ID*.
 ```
+
+## Blockquotes
+
+Lines starting with `>` render as styled blockquotes — callout boxes with a blue left border. Unlike descriptions (`<`), blockquotes are display elements that can appear anywhere within a step, between fields.
+
+```
+> **Important:** Your application will be reviewed within 2 business days.
+> Please ensure all information is accurate before submitting.
+```
+
+Consecutive `>` lines are grouped into a single blockquote. Each line becomes a separate paragraph within the blockquote. Blockquote content supports all inline formatting (bold, italic, code, links).
+
+Blockquotes are display-only — they do not produce form values in the JSON output.
 
 ## Text Blocks & Lists
 
@@ -335,7 +350,7 @@ success_message: Thank you! Your application is under review.
 
 # Personal Information
 
-> Please provide your legal information exactly as it appears on your government-issued ID.
+< Please provide your legal information exactly as it appears on your government-issued ID.
 
 [text(placeholder="John"): first_name] First Name *
 [text(placeholder="Doe"): last_name] Last Name *
@@ -346,7 +361,7 @@ success_message: Thank you! Your application is under review.
 
 # Address
 
-> Your current residential address.
+< Your current residential address.
 
 [text: street_address] Street Address *
 [text: apt_number] Apt / Suite / Unit
@@ -379,7 +394,9 @@ success_message: Thank you! Your application is under review.
 
 # Review & Submit
 
-> Please review your information before submitting.
+< Please review your information before submitting.
+
+> **Note:** By submitting, you agree to a soft credit check.
 
 [checkbox: certify_accurate] I certify that all information provided is accurate and complete *
 [checkbox: agree_terms] I agree to the Terms of Service and Privacy Policy *

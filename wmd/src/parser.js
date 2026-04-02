@@ -82,12 +82,25 @@ export function parse(source) {
       continue;
     }
 
-    // Description
-    if (/^> /.test(trimmed)) {
+    // Step description (< prefix)
+    if (/^< /.test(trimmed)) {
       if (currentStep) {
-        currentStep.descriptions.push(trimmed.replace(/^> /, ''));
+        currentStep.descriptions.push(trimmed.replace(/^< /, ''));
       }
       i++;
+      continue;
+    }
+
+    // Blockquote (> prefix) — display element within a step
+    if (/^> /.test(trimmed) && currentStep) {
+      commitPendingField();
+      const quoteLines = [];
+      while (i < lines.length && /^> /.test(lines[i].trim())) {
+        quoteLines.push(lines[i].trim().replace(/^> /, ''));
+        i++;
+      }
+      const target = currentCondition || currentStep;
+      target.fields.push({ type: '_blockquote', lines: quoteLines });
       continue;
     }
 
@@ -273,7 +286,7 @@ export function parse(source) {
           if (!t) break; // blank line ends the block
           // Stop if we hit a structural element
           if (/^#{1,2} /.test(t)) break;
-          if (/^> /.test(t)) break;
+          if (/^[<>] /.test(t)) break;
           if (/^```/.test(t)) break;
           if (t === '---') break;
           if (/^\?if\s+/.test(t) || /^\?endif/.test(t)) break;
