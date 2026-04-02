@@ -245,7 +245,8 @@ export function parse(source) {
           if (/^```/.test(t)) break;
           if (t === '---') break;
           if (/^\?if\s+/.test(t) || /^\?endif/.test(t)) break;
-          if (/^\[[\w(]/.test(t)) break; // field definition
+          if (/^\?toggle/.test(t) || /^\?endtoggle/.test(t)) break;
+          if (/^\[\w+[\s(].*:\s*\w+\]/.test(t) || /^\[hidden\s*:/.test(t)) break; // field definition (not markdown link)
 
           const lineIsUl = /^[-*+] /.test(t);
           const lineOlMatch = t.match(/^(\d+)[.)]\s/);

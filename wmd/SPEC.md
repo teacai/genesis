@@ -213,7 +213,7 @@ Use `##` for visual grouping within a step (does not create a new wizard step):
 
 ## Inline Formatting
 
-Standard markdown inline formatting is supported in descriptions (`>`), text blocks, and list items:
+Standard markdown inline formatting is supported in descriptions (`>`), text blocks, list items, and field labels (including checkbox labels):
 
 | Syntax | Renders As |
 |--------|------------|
@@ -221,6 +221,25 @@ Standard markdown inline formatting is supported in descriptions (`>`), text blo
 | `*italic*` or `_italic_` | *italic* |
 | `***bold italic***` or `___bold italic___` | ***bold italic*** |
 | `` `inline code` `` | `inline code` |
+| `[link text](url)` | clickable link (opens in new tab) |
+
+### Links
+
+Markdown links use the standard `[text](url)` syntax. All links open in a new browser tab/window with `target="_blank"` and `rel="noopener noreferrer"`.
+
+Links work everywhere inline formatting is supported:
+
+```
+> Please read our [Privacy Policy](https://example.com/privacy) before continuing.
+
+- You can review the [full terms](https://example.com/terms) at any time
+
+[checkbox: agree_terms] I agree to the [Terms of Service](https://example.com/terms) *
+```
+
+When links appear inside field labels (especially checkbox labels), clicking the link opens the URL without toggling the checkbox or focusing the input.
+
+Link text supports nested formatting: `[**bold link**](url)` renders a bold link.
 
 Example:
 ```

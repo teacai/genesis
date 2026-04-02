@@ -144,7 +144,7 @@ By submitting this application, you acknowledge that:
 
 - All information provided is **true and accurate**
 - You authorize a *soft credit inquiry* that will **not** affect your credit score
-- Your data will be processed according to our `Privacy Policy`
+- Your data will be processed according to our [Privacy Policy](https://example.com/privacy)
 
 ***Important:*** Incomplete applications will be automatically declined.
 
@@ -161,5 +161,5 @@ By submitting this application, you acknowledge that:
 
 [checkbox: certify_accurate] I certify that all information provided in this application is true, complete, and accurate to the best of my knowledge *
 [checkbox: authorize_credit_check] I authorize the lender to obtain my credit report for the purpose of evaluating this application *
-[checkbox: agree_terms] I have read and agree to the Terms of Service and Privacy Policy *
+[checkbox: agree_terms] I have read and agree to the [Terms of Service](https://example.com/terms) and [Privacy Policy](https://example.com/privacy) *
 [checkbox: agree_electronic] I consent to receive communications electronically *

@@ -225,7 +225,15 @@ export class WizardRenderer {
       });
       label.appendChild(input);
       const span = document.createElement('span');
-      span.textContent = displayLabel + (field.required ? ' *' : '');
+      this._appendInline(span, displayLabel + (field.required ? ' *' : ''));
+      // Prevent link clicks from toggling the checkbox
+      span.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          window.open(a.href, '_blank', 'noopener,noreferrer');
+        });
+      });
       label.appendChild(span);
       wrapper.appendChild(label);
       this._appendError(wrapper, field.name);
@@ -235,8 +243,16 @@ export class WizardRenderer {
     // Label
     const label = document.createElement('label');
     label.className = 'wmd-label';
-    label.textContent = displayLabel + (field.required ? ' *' : '');
+    this._appendInline(label, displayLabel + (field.required ? ' *' : ''));
     label.htmlFor = `wmd-${field.name}`;
+    // Prevent link clicks from activating the label's associated input
+    label.querySelectorAll('a').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.open(a.href, '_blank', 'noopener,noreferrer');
+      });
+    });
     wrapper.appendChild(label);
 
     // Input
@@ -477,16 +493,17 @@ export class WizardRenderer {
   }
 
   /**
-   * Parse inline markdown (bold, italic, bold-italic, inline code) and
-   * append as DOM nodes to the parent element. No innerHTML — safe from XSS.
+   * Parse inline markdown (bold, italic, bold-italic, inline code, links)
+   * and append as DOM nodes to the parent element. No innerHTML — safe from XSS.
    */
   _appendInline(parent, text) {
     // Regex matches inline tokens in order of priority:
-    // 1. ***bold italic*** or ___bold italic___
-    // 2. **bold** or __bold__
-    // 3. *italic* or _italic_
-    // 4. `inline code`
-    const TOKEN_RE = /(\*{3}|_{3})(.*?)\1|(\*{2}|_{2})(.*?)\3|(\*|_)(.*?)\5|`([^`]+)`/g;
+    // 1. [link text](url)         — markdown link
+    // 2. ***bold italic*** / ___  — bold italic
+    // 3. **bold** / __            — bold
+    // 4. *italic* / _             — italic
+    // 5. `inline code`            — code
+    const TOKEN_RE = /\[([^\]]+)\]\(([^)]+)\)|(\*{3}|_{3})(.*?)\3|(\*{2}|_{2})(.*?)\5|(\*|_)(.*?)\7|`([^`]+)`/g;
 
     let lastIndex = 0;
     let match;
@@ -497,28 +514,38 @@ export class WizardRenderer {
         parent.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
       }
 
-      if (match[1]) {
+      if (match[1] !== undefined) {
+        // [link text](url)
+        const a = document.createElement('a');
+        a.href = match[2];
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+        a.className = 'wmd-link';
+        // Recurse to support formatting inside link text: [**bold link**](url)
+        this._appendInline(a, match[1]);
+        parent.appendChild(a);
+      } else if (match[3]) {
         // ***bold italic***
         const el = document.createElement('strong');
         const em = document.createElement('em');
-        em.textContent = match[2];
+        em.textContent = match[4];
         el.appendChild(em);
         parent.appendChild(el);
-      } else if (match[3]) {
+      } else if (match[5]) {
         // **bold**
         const el = document.createElement('strong');
-        el.textContent = match[4];
-        parent.appendChild(el);
-      } else if (match[5]) {
-        // *italic*
-        const el = document.createElement('em');
         el.textContent = match[6];
         parent.appendChild(el);
-      } else if (match[7] !== undefined) {
+      } else if (match[7]) {
+        // *italic*
+        const el = document.createElement('em');
+        el.textContent = match[8];
+        parent.appendChild(el);
+      } else if (match[9] !== undefined) {
         // `inline code`
         const el = document.createElement('code');
         el.className = 'wmd-inline-code';
-        el.textContent = match[7];
+        el.textContent = match[9];
         parent.appendChild(el);
       }
 
