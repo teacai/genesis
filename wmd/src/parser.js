@@ -54,12 +54,12 @@ export function parse(source) {
     const line = lines[i];
     const trimmed = line.trim();
 
-    // Step heading
-    if (/^# /.test(trimmed) && !/^## /.test(trimmed)) {
+    // Step heading (##### )
+    if (/^#{5} /.test(trimmed)) {
       commitPendingField();
       currentCondition = null;
       currentStep = {
-        title: trimmed.replace(/^# /, ''),
+        title: trimmed.replace(/^#{5} /, ''),
         descriptions: [],
         fields: [],
       };
@@ -68,14 +68,16 @@ export function parse(source) {
       continue;
     }
 
-    // Section heading (visual grouping within step)
-    if (/^## /.test(trimmed)) {
+    // Display headings (# through ####) — rendered as h1-h4 within a step
+    const headingMatch = trimmed.match(/^(#{1,4}) (.+)$/);
+    if (headingMatch && !/^#{5}/.test(trimmed)) {
       commitPendingField();
       if (currentStep) {
         const target = currentCondition || currentStep;
         target.fields.push({
-          type: '_section',
-          label: trimmed.replace(/^## /, ''),
+          type: '_heading',
+          level: headingMatch[1].length,
+          label: headingMatch[2],
         });
       }
       i++;
@@ -295,7 +297,7 @@ export function parse(source) {
           const t = lines[i].trim();
           if (!t) break; // blank line ends the block
           // Stop if we hit a structural element
-          if (/^#{1,2} /.test(t)) break;
+          if (/^#{1,5} /.test(t)) break;
           if (/^[<>] /.test(t)) break;
           if (/^```/.test(t)) break;
           if (t === '---') break;

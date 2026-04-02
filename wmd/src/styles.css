@@ -108,14 +108,34 @@
   line-height: 1.5;
 }
 
-/* Section heading within step */
-.wmd-section-title {
-  font-size: 1rem;
+/* Display headings within step (# through ####) */
+.wmd-heading {
   font-weight: 600;
+  color: #1a1a2e;
   margin: 1.5rem 0 0.75rem;
-  color: #334155;
+}
+
+.wmd-heading-1 {
+  font-size: 1.4rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.wmd-heading-2 {
+  font-size: 1.15rem;
   padding-bottom: 0.35rem;
   border-bottom: 1px solid #e2e8f0;
+  color: #334155;
+}
+
+.wmd-heading-3 {
+  font-size: 1rem;
+  color: #334155;
+}
+
+.wmd-heading-4 {
+  font-size: 0.9rem;
+  color: #475569;
 }
 
 .wmd-divider {

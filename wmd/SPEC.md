@@ -13,7 +13,7 @@ WMD files (`.wmd`) define wizard forms using a readable, markdown-inspired synta
 frontmatter (YAML-like config)
 ---
 
-# Step heading
+##### Step heading
 
 < Description text
 
@@ -45,10 +45,10 @@ auth_header: Bearer {{token}}
 
 ## Steps
 
-Each `#` heading creates a new wizard step. The heading text becomes the step label.
+Each `#####` (five hashes) heading creates a new wizard step. The heading text becomes the step label.
 
 ```
-# Personal Information
+##### Personal Information
 ```
 
 ## Descriptions
@@ -193,25 +193,35 @@ Toggle labels support i18n via `locale.toggles`:
 }
 ```
 
-## Sections Within Steps
+## Headings Within Steps
 
-Use `##` for visual grouping within a step (does not create a new wizard step):
+Use `#` through `####` for display headings within a step. These render as standard HTML headings (h2-h5) and do **not** create new wizard steps:
 
 ```
-# Financial Information
+##### Financial Information
 
-## Income
+# Main Section Title
 [currency: annual_income] Annual Income *
-[select: income_source] Primary Income Source *
-- Employment
-- Self-employment
-- Investments
-- Retirement
 
-## Assets
+## Subsection
 [currency: savings] Total Savings *
-[currency: investments] Investment Portfolio Value
+
+### Minor Heading
+Some explanatory text here.
+
+#### Small Heading
+Additional details.
 ```
+
+| Syntax | Rendered As | Use Case |
+|--------|------------|----------|
+| `#` | Large heading (h2) | Major section titles within a step |
+| `##` | Medium heading (h3) | Subsections |
+| `###` | Small heading (h4) | Minor groupings |
+| `####` | Smallest heading (h5) | Fine-grained labels |
+| `#####` | **Wizard step** | Defines a new wizard step |
+
+Heading text supports inline formatting: **bold**, *italic*, `code`, and [links](url).
 
 ## Inline Formatting
 
@@ -372,7 +382,7 @@ submit_url: https://api.bank.example/applications
 success_message: Thank you! Your application is under review.
 ---
 
-# Personal Information
+##### Personal Information
 
 < Please provide your legal information exactly as it appears on your government-issued ID.
 
@@ -383,7 +393,7 @@ success_message: Thank you! Your application is under review.
 [phone: phone_number] Phone Number *
 [email: email_address] Email Address *
 
-# Address
+##### Address
 
 < Your current residential address.
 
@@ -396,7 +406,7 @@ success_message: Thank you! Your application is under review.
 - Arizona | AZ
 [text(pattern="\\d{5}"): zip_code] ZIP Code *
 
-# Employment & Income
+##### Employment & Income
 
 [select: employment_status] Employment Status *
 - Employed full-time
@@ -416,7 +426,7 @@ success_message: Thank you! Your application is under review.
 [currency: annual_revenue] Annual Business Revenue *
 ?endif
 
-# Review & Submit
+##### Review & Submit
 
 < Please review your information before submitting.
 
@@ -504,7 +514,7 @@ JS options.locale > frontmatter locale.* > locale_url JSON file > built-in Engli
 | `descriptions.{original text}` | Step descriptions | `descriptions["Provide your name..."] = "..."` |
 | `fields.{field_name}` | Field labels | `fields.first_name = "Nombre"` |
 | `placeholders.{field_name}` | Placeholder text | `placeholders.first_name = "Juan"` |
-| `sections.{original title}` | `##` section headings | `sections["Income"] = "Ingresos"` |
+| `headings.{original title}` | `#`-`####` display headings | `headings["Income"] = "Ingresos"` |
 | `options.{field_name}.{original label}` | Select/radio/checkbox options | `options.state["California"] = "California"` |
 
 ### Method 1: JS Options (Runtime)

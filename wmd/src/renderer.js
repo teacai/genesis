@@ -60,6 +60,11 @@ export class WizardRenderer {
     return this.locale.sections?.[label] ?? label;
   }
 
+  /** Translate a heading label. Falls back to sections for backward compat. */
+  _tHeading(label) {
+    return this.locale.headings?.[label] ?? this.locale.sections?.[label] ?? label;
+  }
+
   /** Translate an option label for a given field. */
   _tOption(fieldName, optionLabel) {
     return this.locale.options?.[fieldName]?.[optionLabel] ?? optionLabel;
@@ -178,9 +183,16 @@ export class WizardRenderer {
   }
 
   _renderField(field) {
+    if (field.type === '_heading') {
+      const level = Math.min(Math.max(field.level, 1), 4);
+      const h = document.createElement(`h${level + 1}`);
+      h.className = `wmd-heading wmd-heading-${level}`;
+      this._appendInline(h, this._tHeading(field.label));
+      return h;
+    }
     if (field.type === '_section') {
       const h = document.createElement('h3');
-      h.className = 'wmd-section-title';
+      h.className = 'wmd-heading wmd-heading-2';
       h.textContent = this._tSection(field.label);
       return h;
     }
