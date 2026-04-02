@@ -12,8 +12,9 @@ export class WizardRenderer {
     this.errors = {};
     this.currentStep = 0;
     this.onSubmit = options.onSubmit || null;
+    this._storageKey = `wmd:${ast.config.title || 'form'}`;
 
-    // Initialize hidden field values
+    // Initialize hidden field values and defaults
     this._walkFields(ast.steps, field => {
       if (field.type === 'hidden' && field.value !== undefined) {
         this.values[field.name] = field.value;
@@ -22,6 +23,9 @@ export class WizardRenderer {
         this.values[field.name] = field.attrs.default;
       }
     });
+
+    // Restore saved state from localStorage
+    this._loadState();
   }
 
   render() {
@@ -252,6 +256,7 @@ export class WizardRenderer {
               this.values[field.name] = cur.filter(v => v !== opt.value);
             }
             this._clearFieldError(field.name, wrapper);
+            this._saveState();
           });
           cl.appendChild(c);
           const s = document.createElement('span');
@@ -300,9 +305,9 @@ export class WizardRenderer {
       }
 
       input.addEventListener('input', () => {
-        this.values[field.name] = field.type === 'number' || field.type === 'currency'
-          ? input.value : input.value;
+        this.values[field.name] = input.value;
         this._clearFieldError(field.name, wrapper);
+        this._saveState();
       });
 
       // For select
@@ -348,6 +353,7 @@ export class WizardRenderer {
       back.addEventListener('click', () => {
         this.currentStep--;
         this.errors = {};
+        this._saveState();
         this.render();
       });
       nav.appendChild(back);
@@ -383,6 +389,7 @@ export class WizardRenderer {
       this._submit();
     } else {
       this.currentStep++;
+      this._saveState();
       this.render();
       this.container.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -405,6 +412,7 @@ export class WizardRenderer {
 
     // Custom submit handler
     if (this.onSubmit) {
+      this._clearState();
       this.onSubmit(output);
       return;
     }
@@ -446,6 +454,7 @@ export class WizardRenderer {
   }
 
   _showSuccess(output) {
+    this._clearState();
     this.container.innerHTML = '';
     const msg = document.createElement('div');
     msg.className = 'wmd-success';
@@ -465,7 +474,33 @@ export class WizardRenderer {
     console.log('[WMD] Submitted data:', output);
   }
 
+  _saveState() {
+    try {
+      const state = { values: this.values, step: this.currentStep };
+      localStorage.setItem(this._storageKey, JSON.stringify(state));
+    } catch { /* quota exceeded or unavailable — ignore */ }
+  }
+
+  _loadState() {
+    try {
+      const raw = localStorage.getItem(this._storageKey);
+      if (!raw) return;
+      const state = JSON.parse(raw);
+      if (state.values && typeof state.values === 'object') {
+        Object.assign(this.values, state.values);
+      }
+      if (typeof state.step === 'number' && state.step >= 0 && state.step < this.ast.steps.length) {
+        this.currentStep = state.step;
+      }
+    } catch { /* corrupted or unavailable — start fresh */ }
+  }
+
+  _clearState() {
+    try { localStorage.removeItem(this._storageKey); } catch { /* ignore */ }
+  }
+
   _rerender() {
+    this._saveState();
     this.render();
   }
 
