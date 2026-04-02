@@ -133,7 +133,15 @@ success_message: Thank you! Your loan application has been submitted for review.
 
 # Review & Consent
 
-> Please review your information and agree to the following before submitting.
+> Please review your information and **agree to the following** before submitting.
+
+By submitting this application, you acknowledge that:
+
+- All information provided is **true and accurate**
+- You authorize a *soft credit inquiry* that will **not** affect your credit score
+- Your data will be processed according to our `Privacy Policy`
+
+***Important:*** Incomplete applications will be automatically declined.
 
 > Your data will be submitted as a JSON payload in the following format:
 

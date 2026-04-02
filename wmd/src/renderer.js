@@ -133,7 +133,7 @@ export class WizardRenderer {
     if (step.descriptions.length) {
       const desc = document.createElement('p');
       desc.className = 'wmd-step-desc';
-      desc.textContent = step.descriptions.map(d => this._tDesc(d)).join(' ');
+      this._appendInline(desc, step.descriptions.map(d => this._tDesc(d)).join(' '));
       el.appendChild(desc);
     }
 
@@ -188,6 +188,9 @@ export class WizardRenderer {
     }
     if (field.type === '_code') {
       return this._renderCodeBlock(field);
+    }
+    if (field.type === '_text') {
+      return this._renderMarkdown(field);
     }
     if (field.type === 'hidden') {
       return document.createElement('span');
@@ -368,6 +371,115 @@ export class WizardRenderer {
     wrapper.appendChild(input);
     this._appendError(wrapper, field.name);
     return wrapper;
+  }
+
+  _renderMarkdown(field) {
+    const frag = document.createDocumentFragment();
+    let i = 0;
+    const lines = field.lines;
+
+    while (i < lines.length) {
+      const line = lines[i];
+
+      // Unordered list — collect consecutive ul items
+      if (line.kind === 'ul') {
+        const ul = document.createElement('ul');
+        ul.className = 'wmd-list';
+        while (i < lines.length && lines[i].kind === 'ul') {
+          const li = document.createElement('li');
+          this._appendInline(li, lines[i].text);
+          ul.appendChild(li);
+          i++;
+        }
+        frag.appendChild(ul);
+        continue;
+      }
+
+      // Ordered list — collect consecutive ol items
+      if (line.kind === 'ol') {
+        const ol = document.createElement('ol');
+        ol.className = 'wmd-list';
+        while (i < lines.length && lines[i].kind === 'ol') {
+          const li = document.createElement('li');
+          this._appendInline(li, lines[i].text);
+          ol.appendChild(li);
+          i++;
+        }
+        frag.appendChild(ol);
+        continue;
+      }
+
+      // Paragraph — collect consecutive p lines into one <p>
+      const p = document.createElement('p');
+      p.className = 'wmd-text';
+      const pTexts = [];
+      while (i < lines.length && lines[i].kind === 'p') {
+        pTexts.push(lines[i].text);
+        i++;
+      }
+      this._appendInline(p, pTexts.join(' '));
+      frag.appendChild(p);
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'wmd-markdown';
+    wrapper.appendChild(frag);
+    return wrapper;
+  }
+
+  /**
+   * Parse inline markdown (bold, italic, bold-italic, inline code) and
+   * append as DOM nodes to the parent element. No innerHTML — safe from XSS.
+   */
+  _appendInline(parent, text) {
+    // Regex matches inline tokens in order of priority:
+    // 1. ***bold italic*** or ___bold italic___
+    // 2. **bold** or __bold__
+    // 3. *italic* or _italic_
+    // 4. `inline code`
+    const TOKEN_RE = /(\*{3}|_{3})(.*?)\1|(\*{2}|_{2})(.*?)\3|(\*|_)(.*?)\5|`([^`]+)`/g;
+
+    let lastIndex = 0;
+    let match;
+
+    while ((match = TOKEN_RE.exec(text)) !== null) {
+      // Append any plain text before this match
+      if (match.index > lastIndex) {
+        parent.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+      }
+
+      if (match[1]) {
+        // ***bold italic***
+        const el = document.createElement('strong');
+        const em = document.createElement('em');
+        em.textContent = match[2];
+        el.appendChild(em);
+        parent.appendChild(el);
+      } else if (match[3]) {
+        // **bold**
+        const el = document.createElement('strong');
+        el.textContent = match[4];
+        parent.appendChild(el);
+      } else if (match[5]) {
+        // *italic*
+        const el = document.createElement('em');
+        el.textContent = match[6];
+        parent.appendChild(el);
+      } else if (match[7] !== undefined) {
+        // `inline code`
+        const el = document.createElement('code');
+        el.className = 'wmd-inline-code';
+        el.textContent = match[7];
+        parent.appendChild(el);
+      }
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Append remaining plain text
+    if (lastIndex < text.length) {
+      parent.appendChild(document.createTextNode(text.slice(lastIndex)));
+    }
   }
 
   _renderCodeBlock(field) {

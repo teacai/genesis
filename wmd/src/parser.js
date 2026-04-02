@@ -192,6 +192,51 @@ export function parse(source) {
       continue;
     }
 
+    // Markdown text lines: unordered list, ordered list, or paragraph text
+    if (trimmed && currentStep) {
+      // Check if this is a list item or plain text
+      const isUl = /^[-*+] /.test(trimmed);
+      const olMatch = trimmed.match(/^(\d+)[.)]\s/);
+      const isOl = !!olMatch;
+
+      if (isUl || isOl || /[a-zA-Z0-9\\_*`]/.test(trimmed)) {
+        commitPendingField();
+        const textLines = [];
+
+        // Accumulate consecutive text/list lines
+        while (i < lines.length) {
+          const t = lines[i].trim();
+          if (!t) break; // blank line ends the block
+          // Stop if we hit a structural element
+          if (/^#{1,2} /.test(t)) break;
+          if (/^> /.test(t)) break;
+          if (/^```/.test(t)) break;
+          if (t === '---') break;
+          if (/^\?if\s+/.test(t) || /^\?endif/.test(t)) break;
+          if (/^\[[\w(]/.test(t)) break; // field definition
+
+          const lineIsUl = /^[-*+] /.test(t);
+          const lineOlMatch = t.match(/^(\d+)[.)]\s/);
+          const lineIsOl = !!lineOlMatch;
+
+          if (lineIsUl) {
+            textLines.push({ kind: 'ul', text: t.replace(/^[-*+] /, '') });
+          } else if (lineIsOl) {
+            textLines.push({ kind: 'ol', text: t.replace(/^\d+[.)]\s/, '') });
+          } else {
+            textLines.push({ kind: 'p', text: t });
+          }
+          i++;
+        }
+
+        if (textLines.length) {
+          const target = currentCondition || currentStep;
+          target.fields.push({ type: '_text', lines: textLines });
+        }
+        continue;
+      }
+    }
+
     // Empty line or unrecognized — skip
     i++;
   }

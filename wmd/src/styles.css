@@ -209,6 +209,81 @@ select.wmd-input {
   margin-top: 0.3rem;
 }
 
+/* Markdown text */
+.wmd-markdown {
+  margin-bottom: 1.25rem;
+}
+
+.wmd-text {
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0 0 0.75rem;
+}
+
+.wmd-text:last-child {
+  margin-bottom: 0;
+}
+
+.wmd-list {
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.6;
+  margin: 0 0 0.75rem;
+  padding-left: 1.5rem;
+}
+
+.wmd-list:last-child {
+  margin-bottom: 0;
+}
+
+.wmd-list li {
+  margin-bottom: 0.25rem;
+}
+
+.wmd-list li:last-child {
+  margin-bottom: 0;
+}
+
+.wmd-markdown strong {
+  font-weight: 600;
+  color: #334155;
+}
+
+.wmd-markdown em {
+  font-style: italic;
+}
+
+.wmd-inline-code {
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.82em;
+  background: #f1f5f9;
+  color: #0f172a;
+  padding: 0.15em 0.35em;
+  border-radius: 0.25rem;
+  border: 1px solid #e2e8f0;
+}
+
+/* Also apply inline formatting in descriptions */
+.wmd-step-desc strong {
+  font-weight: 600;
+  color: #334155;
+}
+
+.wmd-step-desc em {
+  font-style: italic;
+}
+
+.wmd-step-desc .wmd-inline-code {
+  font-family: "SF Mono", "Fira Code", Menlo, Consolas, monospace;
+  font-size: 0.82em;
+  background: #f1f5f9;
+  color: #0f172a;
+  padding: 0.15em 0.35em;
+  border-radius: 0.25rem;
+  border: 1px solid #e2e8f0;
+}
+
 /* Code block */
 .wmd-code-block {
   margin-bottom: 1.25rem;

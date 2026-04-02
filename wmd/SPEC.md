@@ -178,6 +178,48 @@ Use `##` for visual grouping within a step (does not create a new wizard step):
 [currency: investments] Investment Portfolio Value
 ```
 
+## Inline Formatting
+
+Standard markdown inline formatting is supported in descriptions (`>`), text blocks, and list items:
+
+| Syntax | Renders As |
+|--------|------------|
+| `**bold**` or `__bold__` | **bold** |
+| `*italic*` or `_italic_` | *italic* |
+| `***bold italic***` or `___bold italic___` | ***bold italic*** |
+| `` `inline code` `` | `inline code` |
+
+Example:
+```
+> Please provide your **legal name** as it appears on your *government-issued ID*.
+```
+
+## Text Blocks & Lists
+
+Plain text lines and list items between fields render as styled markdown content. Consecutive lines of the same type are grouped together.
+
+**Paragraphs** — any non-field, non-heading text line:
+```
+This is a paragraph of explanatory text.
+It continues on the next line and wraps into a single `<p>` element.
+```
+
+**Unordered lists** — lines starting with `- `, `* `, or `+ `:
+```
+- First item with **bold** text
+- Second item with *italic* text
+- Third item with `code`
+```
+
+**Ordered lists** — lines starting with `1. `, `2) `, etc:
+```
+1. Complete the personal information section
+2. Provide your employment details
+3. Review and submit
+```
+
+Lists and text blocks are display-only — they do not produce form values in the JSON output.
+
 ## Code Blocks
 
 Use fenced code blocks (triple backticks) to display code snippets within a step. A copy-to-clipboard button appears in the top-right corner. Optionally specify a language after the opening backticks:
