@@ -4,7 +4,7 @@ submit_url: https://httpbin.org/post
 success_message: Thank you! Your loan application has been submitted for review. You will receive a confirmation email shortly.
 ---
 
-##### Personal Information
+{Personal Information}
 
 < Please provide your legal name and contact details exactly as they appear on your government-issued ID.
 
@@ -15,7 +15,7 @@ success_message: Thank you! Your loan application has been submitted for review.
 [email(placeholder="john@example.com"): email] Email Address *
 [phone(placeholder="(555) 123-4567"): phone] Phone Number *
 
-##### Residential Address
+{Residential Address}
 
 < Your current residential address. PO Boxes are not accepted.
 
@@ -75,7 +75,7 @@ success_message: Thank you! Your loan application has been submitted for review.
 - Wyoming | WY
 [text(placeholder="12345", pattern="\\d{5}(-\\d{4})?"): zip_code] ZIP Code *
 
-##### Employment & Income
+{Employment & Income}
 
 < Tell us about your current employment and income.
 
@@ -109,7 +109,7 @@ success_message: Thank you! Your loan application has been submitted for review.
 [currency(placeholder="50000"): retirement_income] Annual Retirement Income ($) *
 ?endif
 
-##### Loan Details
+{Loan Details}
 
 < How much would you like to borrow and for what purpose?
 
@@ -148,7 +148,7 @@ success_message: Thank you! Your loan application has been submitted for review.
 [textarea: loan_notes] Additional Notes or Comments
 ?endtoggle
 
-##### Review & Consent
+{Review & Consent}
 
 < Please review your information and **agree to the following** before submitting.
 

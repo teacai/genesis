@@ -185,8 +185,9 @@ export class WizardRenderer {
 
   _renderField(field) {
     if (field.type === '_heading') {
-      const level = Math.min(Math.max(field.level, 1), 4);
-      const h = document.createElement(`h${level + 1}`);
+      const level = Math.min(Math.max(field.level, 1), 6);
+      const tag = `h${Math.min(level + 1, 6)}`;
+      const h = document.createElement(tag);
       h.className = `wmd-heading wmd-heading-${level}`;
       this._appendInline(h, this._tHeading(field.label));
       return h;

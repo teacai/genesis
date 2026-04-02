@@ -54,12 +54,13 @@ export function parse(source) {
     const line = lines[i];
     const trimmed = line.trim();
 
-    // Step heading (##### )
-    if (/^#{5} /.test(trimmed)) {
+    // Wizard step definition: {Step Title}
+    const stepMatch = trimmed.match(/^\{(.+)\}$/);
+    if (stepMatch) {
       commitPendingField();
       currentCondition = null;
       currentStep = {
-        title: trimmed.replace(/^#{5} /, ''),
+        title: stepMatch[1].trim(),
         descriptions: [],
         fields: [],
       };
@@ -68,9 +69,9 @@ export function parse(source) {
       continue;
     }
 
-    // Display headings (# through ####) — rendered as h1-h4 within a step
-    const headingMatch = trimmed.match(/^(#{1,4}) (.+)$/);
-    if (headingMatch && !/^#{5}/.test(trimmed)) {
+    // Markdown headings (# through ######) — rendered as h1-h6 within a step
+    const headingMatch = trimmed.match(/^(#{1,6}) (.+)$/);
+    if (headingMatch) {
       commitPendingField();
       if (currentStep) {
         const target = currentCondition || currentStep;
@@ -308,7 +309,8 @@ export function parse(source) {
           const t = lines[i].trim();
           if (!t) break; // blank line ends the block
           // Stop if we hit a structural element
-          if (/^#{1,5} /.test(t)) break;
+          if (/^#{1,6} /.test(t)) break;
+          if (/^\{.+\}$/.test(t)) break;
           if (/^[<>] /.test(t)) break;
           if (/^```/.test(t)) break;
           if (t === '---') break;

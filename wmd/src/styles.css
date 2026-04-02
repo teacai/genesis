@@ -138,6 +138,20 @@
   color: #475569;
 }
 
+.wmd-heading-5 {
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.wmd-heading-6 {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
 .wmd-divider {
   border: none;
   border-top: 1px solid #e2e8f0;

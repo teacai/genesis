@@ -13,7 +13,7 @@ WMD files (`.wmd`) define wizard forms using a readable, markdown-inspired synta
 frontmatter (YAML-like config)
 ---
 
-##### Step heading
+{Step heading}
 
 < Description text
 
@@ -45,10 +45,10 @@ auth_header: Bearer {{token}}
 
 ## Steps
 
-Each `#####` (five hashes) heading creates a new wizard step. The heading text becomes the step label.
+Each step is defined by wrapping the step title in curly braces `{}`. The text inside becomes the step label.
 
 ```
-##### Personal Information
+{Personal Information}
 ```
 
 ## Descriptions
@@ -245,10 +245,10 @@ Toggle labels support i18n via `locale.toggles`:
 
 ## Headings Within Steps
 
-Use `#` through `####` for display headings within a step. These render as standard HTML headings (h2-h5) and do **not** create new wizard steps:
+Standard markdown headings `#` through `######` render as display headings within a step. They do **not** create wizard steps:
 
 ```
-##### Financial Information
+{Financial Information}
 
 # Main Section Title
 [currency: annual_income] Annual Income *
@@ -261,6 +261,9 @@ Some explanatory text here.
 
 #### Small Heading
 Additional details.
+
+##### Fine Print
+###### Legal Disclaimer
 ```
 
 | Syntax | Rendered As | Use Case |
@@ -268,8 +271,10 @@ Additional details.
 | `#` | Large heading (h2) | Major section titles within a step |
 | `##` | Medium heading (h3) | Subsections |
 | `###` | Small heading (h4) | Minor groupings |
-| `####` | Smallest heading (h5) | Fine-grained labels |
-| `#####` | **Wizard step** | Defines a new wizard step |
+| `####` | Small heading (h5) | Fine-grained labels |
+| `#####` | Smaller heading (h6) | Sub-labels |
+| `######` | Smallest heading (h6) | Captions, disclaimers |
+| `{Title}` | **Wizard step** | Defines a new wizard step |
 
 Heading text supports inline formatting: **bold**, *italic*, `code`, and [links](url).
 
@@ -432,7 +437,7 @@ submit_url: https://api.bank.example/applications
 success_message: Thank you! Your application is under review.
 ---
 
-##### Personal Information
+{Personal Information}
 
 < Please provide your legal information exactly as it appears on your government-issued ID.
 
@@ -443,7 +448,7 @@ success_message: Thank you! Your application is under review.
 [phone: phone_number] Phone Number *
 [email: email_address] Email Address *
 
-##### Address
+{Address}
 
 < Your current residential address.
 
@@ -456,7 +461,7 @@ success_message: Thank you! Your application is under review.
 - Arizona | AZ
 [text(pattern="\\d{5}"): zip_code] ZIP Code *
 
-##### Employment & Income
+{Employment & Income}
 
 [select: employment_status] Employment Status *
 - Employed full-time
@@ -476,13 +481,13 @@ success_message: Thank you! Your application is under review.
 [currency: annual_revenue] Annual Business Revenue *
 ?endif
 
-##### Loan Request
+{Loan Request}
 
 [currency: loan_amount] Loan Amount *
 [number: loan_term_months] Loan Term (months) *
 [formula(format="currency"): est_monthly_payment] Estimated Monthly Payment = round(loan_amount / loan_term_months, 2)
 
-##### Review & Submit
+{Review & Submit}
 
 < Please review your information before submitting.
 
