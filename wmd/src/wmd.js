@@ -7,6 +7,8 @@
  * Usage:
  *   WMD.render('#wizard', { src: '/form.wmd' });
  *   WMD.render('#wizard', { source: '---\ntitle: ...\n---\n# Step 1\n...' });
+ *   WMD.render('#wizard', { src: '/form.wmd', locale: { back: 'Zurück', ... } });
+ *   WMD.render('#wizard', { src: '/form.wmd', locale_url: '/locales/de.json' });
  */
 
 import { parse } from './parser.js';
@@ -21,11 +23,16 @@ const WMD = {
   /**
    * Render a wizard into a container element.
    *
+   * Locale precedence (highest wins):
+   *   JS options.locale > frontmatter locale.* > locale_url file > built-in English
+   *
    * @param {string|HTMLElement} container - CSS selector or DOM element
    * @param {Object} options
-   * @param {string} [options.src]      - URL to a .wmd file to fetch
-   * @param {string} [options.source]   - Raw WMD source string
-   * @param {Function} [options.onSubmit] - Custom submit handler (receives JSON data)
+   * @param {string}   [options.src]        - URL to a .wmd file to fetch
+   * @param {string}   [options.source]     - Raw WMD source string
+   * @param {Function} [options.onSubmit]   - Custom submit handler (receives JSON data)
+   * @param {Object}   [options.locale]     - Locale overrides (highest priority)
+   * @param {string}   [options.locale_url] - URL to a JSON locale file
    * @returns {Promise<WizardRenderer>}
    */
   async render(container, options = {}) {
@@ -40,7 +47,22 @@ const WMD = {
     if (!source) throw new Error('WMD.render requires either `src` or `source` option');
 
     const ast = parse(source);
-    const wizard = new WizardRenderer(ast, container, { onSubmit: options.onSubmit });
+
+    // Resolve locale_url: check JS option first, then frontmatter
+    const localeUrl = options.locale_url || ast.config.locale_url;
+    let externalLocale = null;
+    if (localeUrl) {
+      try {
+        const resp = await fetch(localeUrl);
+        if (resp.ok) externalLocale = await resp.json();
+      } catch { /* failed to load locale file — fall back to defaults */ }
+    }
+
+    const wizard = new WizardRenderer(ast, container, {
+      onSubmit: options.onSubmit,
+      locale: options.locale,
+      _externalLocale: externalLocale,
+    });
     wizard.render();
     return wizard;
   },
@@ -52,7 +74,9 @@ export default WMD;
 if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-wmd-src]').forEach(el => {
-      WMD.render(el, { src: el.dataset.wmdSrc });
+      const opts = { src: el.dataset.wmdSrc };
+      if (el.dataset.wmdLocale) opts.locale_url = el.dataset.wmdLocale;
+      WMD.render(el, opts);
     });
   });
 }

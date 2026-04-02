@@ -275,3 +275,158 @@ The wizard submits a flat JSON object keyed by field names:
 ```
 
 Fields hidden by conditional logic are excluded from the output.
+
+## Internationalization (i18n)
+
+WMD supports full internationalization of both UI chrome (buttons, validation messages) and content (step titles, field labels, descriptions, option text, placeholders).
+
+### Locale Precedence
+
+When multiple sources provide translations, the highest-priority source wins:
+
+```
+JS options.locale > frontmatter locale.* > locale_url JSON file > built-in English
+```
+
+### Translatable Strings
+
+**UI Chrome** (buttons, messages):
+
+| Key | Default | Context |
+|-----|---------|---------|
+| `back` | Back | Back button |
+| `next` | Next | Next button |
+| `submit` | Submit | Submit button (last step) |
+| `submitting` | Submitting... | Button during submission |
+| `submitError` | Submission failed: {error} | Error banner |
+| `selectPlaceholder` | Select {label}... | Dropdown default option |
+| `defaultSuccess` | Form submitted successfully! | Success screen |
+
+**Validation Messages:**
+
+| Key | Default | Interpolation |
+|-----|---------|---------------|
+| `required` | {label} is required | `{label}` |
+| `invalidEmail` | {label} must be a valid email | `{label}` |
+| `invalidPhone` | {label} must be a valid phone number | `{label}` |
+| `invalidSSN` | {label} must be a valid SSN (XXX-XX-XXXX) | `{label}` |
+| `invalidNumber` | {label} must be a number | `{label}` |
+| `minValue` | {label} must be at least {min} | `{label}`, `{min}` |
+| `maxValue` | {label} must be at most {max} | `{label}`, `{max}` |
+| `minLength` | {label} must be at least {min} characters | `{label}`, `{min}` |
+| `maxLength` | {label} must be at most {max} characters | `{label}`, `{max}` |
+| `invalidFormat` | {label} format is invalid | `{label}` |
+
+**Content** (keyed by original English text or field name):
+
+| Key | Maps | Example |
+|-----|------|---------|
+| `title` | Wizard title | `"Solicitud de Préstamo"` |
+| `steps.{original title}` | Step headings | `steps["Personal Info"] = "Datos Personales"` |
+| `descriptions.{original text}` | Step descriptions | `descriptions["Provide your name..."] = "..."` |
+| `fields.{field_name}` | Field labels | `fields.first_name = "Nombre"` |
+| `placeholders.{field_name}` | Placeholder text | `placeholders.first_name = "Juan"` |
+| `sections.{original title}` | `##` section headings | `sections["Income"] = "Ingresos"` |
+| `options.{field_name}.{original label}` | Select/radio/checkbox options | `options.state["California"] = "California"` |
+
+### Method 1: JS Options (Runtime)
+
+Pass a `locale` object when rendering — highest priority:
+
+```js
+WMD.render('#wizard', {
+  src: 'form.wmd',
+  locale: {
+    back: 'Zurück',
+    next: 'Weiter',
+    submit: 'Absenden',
+    required: '{label} ist erforderlich',
+    steps: {
+      'Personal Information': 'Persönliche Daten',
+    },
+    fields: {
+      first_name: 'Vorname',
+      last_name: 'Nachname',
+    },
+    options: {
+      employment_status: {
+        'Employed full-time': 'Vollzeit beschäftigt',
+      },
+    },
+  }
+});
+```
+
+### Method 2: Frontmatter (Self-Contained)
+
+Define translations inline in the `.wmd` file using dotted keys:
+
+```
+---
+title: Loan Application
+submit_url: https://api.example.com/apply
+locale.back: Zurück
+locale.next: Weiter
+locale.submit: Absenden
+locale.required: {label} ist erforderlich
+locale.steps.Personal Information: Persönliche Daten
+locale.fields.first_name: Vorname
+locale.fields.last_name: Nachname
+locale.options.employment_status.Employed full-time: Vollzeit beschäftigt
+---
+```
+
+### Method 3: External JSON File (Scalable)
+
+Reference a locale file URL — either in frontmatter or JS options:
+
+```
+---
+title: Loan Application
+submit_url: https://api.example.com/apply
+locale_url: /locales/de.json
+---
+```
+
+Or at render time:
+
+```js
+WMD.render('#wizard', {
+  src: 'form.wmd',
+  locale_url: '/locales/de.json',
+});
+```
+
+The JSON file uses the same shape as the JS `locale` object:
+
+```json
+{
+  "back": "Zurück",
+  "next": "Weiter",
+  "submit": "Absenden",
+  "required": "{label} ist erforderlich",
+  "steps": {
+    "Personal Information": "Persönliche Daten"
+  },
+  "fields": {
+    "first_name": "Vorname"
+  },
+  "options": {
+    "employment_status": {
+      "Employed full-time": "Vollzeit beschäftigt"
+    }
+  }
+}
+```
+
+### Auto-init with Locale
+
+When using declarative auto-init, set `data-wmd-locale` for the locale URL:
+
+```html
+<div data-wmd-src="form.wmd" data-wmd-locale="/locales/es.json"></div>
+```
+
+### Partial Translations
+
+All locale keys are optional. Only provide what you need to translate — everything else falls back to English defaults. Content keys (steps, fields, options) fall back to the original text from the `.wmd` file.

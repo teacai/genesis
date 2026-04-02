@@ -15,9 +15,24 @@ export function parse(source) {
   if (lines[i] && lines[i].trim() === '---') {
     i++;
     while (i < lines.length && lines[i].trim() !== '---') {
-      const match = lines[i].match(/^(\w+)\s*:\s*(.+)$/);
+      const match = lines[i].match(/^([\w.]+)\s*:\s*(.+)$/);
       if (match) {
-        ast.config[match[1].trim()] = match[2].trim();
+        const key = match[1].trim();
+        const val = match[2].trim();
+        // Support dotted keys: locale.back, locale.fields.name, locale.options.field.value
+        if (key.includes('.')) {
+          const parts = key.split('.');
+          let obj = ast.config;
+          for (let p = 0; p < parts.length - 1; p++) {
+            if (!obj[parts[p]] || typeof obj[parts[p]] !== 'object') {
+              obj[parts[p]] = {};
+            }
+            obj = obj[parts[p]];
+          }
+          obj[parts[parts.length - 1]] = val;
+        } else {
+          ast.config[key] = val;
+        }
       }
       i++;
     }

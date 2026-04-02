@@ -1,0 +1,113 @@
+{
+  "title": "Solicitud de Préstamo Personal",
+
+  "back": "Atrás",
+  "next": "Siguiente",
+  "submit": "Enviar",
+  "submitting": "Enviando...",
+  "submitError": "Error al enviar: {error}",
+  "selectPlaceholder": "Seleccionar {label}...",
+  "defaultSuccess": "¡Formulario enviado con éxito!",
+
+  "required": "{label} es obligatorio",
+  "invalidEmail": "{label} debe ser un correo electrónico válido",
+  "invalidPhone": "{label} debe ser un número de teléfono válido",
+  "invalidSSN": "{label} debe ser un SSN válido (XXX-XX-XXXX)",
+  "invalidNumber": "{label} debe ser un número",
+  "minValue": "{label} debe ser al menos {min}",
+  "maxValue": "{label} debe ser como máximo {max}",
+  "minLength": "{label} debe tener al menos {min} caracteres",
+  "maxLength": "{label} debe tener como máximo {max} caracteres",
+  "invalidFormat": "El formato de {label} es inválido",
+
+  "steps": {
+    "Personal Information": "Información Personal",
+    "Residential Address": "Dirección Residencial",
+    "Employment & Income": "Empleo e Ingresos",
+    "Loan Details": "Detalles del Préstamo",
+    "Review & Consent": "Revisión y Consentimiento"
+  },
+
+  "descriptions": {
+    "Please provide your legal name and contact details exactly as they appear on your government-issued ID.": "Proporcione su nombre legal y datos de contacto tal como aparecen en su identificación oficial.",
+    "Your current residential address. PO Boxes are not accepted.": "Su dirección residencial actual. No se aceptan apartados postales.",
+    "Tell us about your current employment and income.": "Cuéntenos sobre su empleo e ingresos actuales.",
+    "How much would you like to borrow and for what purpose?": "¿Cuánto desea pedir prestado y con qué propósito?",
+    "Please review your information and agree to the following before submitting.": "Revise su información y acepte lo siguiente antes de enviar."
+  },
+
+  "fields": {
+    "first_name": "Nombre",
+    "last_name": "Apellido",
+    "date_of_birth": "Fecha de Nacimiento",
+    "social_security_number": "Número de Seguro Social",
+    "email": "Correo Electrónico",
+    "phone": "Número de Teléfono",
+    "street_address": "Dirección",
+    "apt_unit": "Apto / Suite / Unidad",
+    "city": "Ciudad",
+    "state": "Estado",
+    "zip_code": "Código Postal",
+    "employment_status": "Situación Laboral",
+    "employer_name": "Nombre del Empleador",
+    "job_title": "Cargo",
+    "years_employed": "Años en el Empleo Actual",
+    "annual_salary": "Salario Anual ($)",
+    "business_name": "Nombre de la Empresa",
+    "years_in_business": "Años en el Negocio",
+    "annual_revenue": "Ingresos Anuales ($)",
+    "retirement_income": "Ingresos de Jubilación Anuales ($)",
+    "loan_amount": "Monto del Préstamo ($)",
+    "loan_purpose": "Propósito del Préstamo",
+    "loan_term": "Plazo del Préstamo",
+    "certify_accurate": "Certifico que toda la información proporcionada en esta solicitud es verdadera, completa y precisa según mi leal saber y entender",
+    "authorize_credit_check": "Autorizo al prestamista a obtener mi informe crediticio para evaluar esta solicitud",
+    "agree_terms": "He leído y acepto los Términos de Servicio y la Política de Privacidad",
+    "agree_electronic": "Doy mi consentimiento para recibir comunicaciones electrónicamente"
+  },
+
+  "placeholders": {
+    "first_name": "Juan",
+    "last_name": "García",
+    "email": "juan@ejemplo.com",
+    "phone": "(555) 123-4567",
+    "street_address": "Calle Principal 123",
+    "apt_unit": "Apto 4B",
+    "city": "Ciudad",
+    "zip_code": "12345",
+    "employer_name": "Corporación Acme",
+    "job_title": "Ingeniero de Software",
+    "business_name": "Mi Empresa LLC",
+    "loan_amount": "10000"
+  },
+
+  "options": {
+    "employment_status": {
+      "Employed full-time": "Empleado a tiempo completo",
+      "Employed part-time": "Empleado a tiempo parcial",
+      "Self-employed": "Trabajador independiente",
+      "Retired": "Jubilado",
+      "Student": "Estudiante",
+      "Unemployed": "Desempleado"
+    },
+    "loan_purpose": {
+      "Debt consolidation": "Consolidación de deudas",
+      "Home improvement": "Mejoras del hogar",
+      "Major purchase": "Compra importante",
+      "Medical expenses": "Gastos médicos",
+      "Vehicle purchase": "Compra de vehículo",
+      "Education": "Educación",
+      "Business": "Negocio",
+      "Other": "Otro"
+    },
+    "loan_term": {
+      "12 months": "12 meses",
+      "24 months": "24 meses",
+      "36 months": "36 meses",
+      "48 months": "48 meses",
+      "60 months": "60 meses"
+    }
+  },
+
+  "sections": {}
+}

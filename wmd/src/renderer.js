@@ -3,6 +3,7 @@
  */
 
 import { validateStep } from './validator.js';
+import { t, mergeLocale, DEFAULT_LOCALE } from './i18n.js';
 
 export class WizardRenderer {
   constructor(ast, container, options = {}) {
@@ -13,6 +14,7 @@ export class WizardRenderer {
     this.currentStep = 0;
     this.onSubmit = options.onSubmit || null;
     this._storageKey = `wmd:${ast.config.title || 'form'}`;
+    this.locale = mergeLocale(DEFAULT_LOCALE, options._externalLocale, ast.config.locale, options.locale);
 
     // Initialize hidden field values and defaults
     this._walkFields(ast.steps, field => {
@@ -28,13 +30,48 @@ export class WizardRenderer {
     this._loadState();
   }
 
+  /** Translate a UI string key with interpolation. */
+  _t(key, vars) {
+    return t(this.locale, key, vars);
+  }
+
+  /** Translate a step title. */
+  _tStep(title) {
+    return this.locale.steps?.[title] ?? title;
+  }
+
+  /** Translate a step description. */
+  _tDesc(text) {
+    return this.locale.descriptions?.[text] ?? text;
+  }
+
+  /** Translate a field label. Returns the translated label. */
+  _tField(field) {
+    return this.locale.fields?.[field.name] ?? field.label;
+  }
+
+  /** Translate a field placeholder. */
+  _tPlaceholder(field) {
+    return this.locale.placeholders?.[field.name] ?? field.attrs.placeholder ?? '';
+  }
+
+  /** Translate a section title. */
+  _tSection(label) {
+    return this.locale.sections?.[label] ?? label;
+  }
+
+  /** Translate an option label for a given field. */
+  _tOption(fieldName, optionLabel) {
+    return this.locale.options?.[fieldName]?.[optionLabel] ?? optionLabel;
+  }
+
   render() {
     this.container.innerHTML = '';
     this.container.classList.add('wmd-wizard');
 
     const title = document.createElement('h1');
     title.className = 'wmd-title';
-    title.textContent = this.ast.config.title || 'Form';
+    title.textContent = this.locale.title ?? this.ast.config.title ?? 'Form';
     this.container.appendChild(title);
 
     // Progress bar
@@ -68,7 +105,7 @@ export class WizardRenderer {
 
       const label = document.createElement('span');
       label.className = 'wmd-step-label';
-      label.textContent = step.title;
+      label.textContent = this._tStep(step.title);
       dot.appendChild(label);
 
       bar.appendChild(dot);
@@ -90,13 +127,13 @@ export class WizardRenderer {
 
     const heading = document.createElement('h2');
     heading.className = 'wmd-step-title';
-    heading.textContent = step.title;
+    heading.textContent = this._tStep(step.title);
     el.appendChild(heading);
 
     if (step.descriptions.length) {
       const desc = document.createElement('p');
       desc.className = 'wmd-step-desc';
-      desc.textContent = step.descriptions.join(' ');
+      desc.textContent = step.descriptions.map(d => this._tDesc(d)).join(' ');
       el.appendChild(desc);
     }
 
@@ -141,7 +178,7 @@ export class WizardRenderer {
     if (field.type === '_section') {
       const h = document.createElement('h3');
       h.className = 'wmd-section-title';
-      h.textContent = field.label;
+      h.textContent = this._tSection(field.label);
       return h;
     }
     if (field.type === '_divider') {
@@ -150,8 +187,12 @@ export class WizardRenderer {
       return hr;
     }
     if (field.type === 'hidden') {
-      return document.createElement('span'); // invisible
+      return document.createElement('span');
     }
+
+    const displayLabel = this._tField(field);
+    // Attach translated label for use in validation messages
+    field._displayLabel = displayLabel;
 
     const wrapper = document.createElement('div');
     wrapper.className = 'wmd-field';
@@ -172,7 +213,7 @@ export class WizardRenderer {
       });
       label.appendChild(input);
       const span = document.createElement('span');
-      span.textContent = field.label + (field.required ? ' *' : '');
+      span.textContent = displayLabel + (field.required ? ' *' : '');
       label.appendChild(span);
       wrapper.appendChild(label);
       this._appendError(wrapper, field.name);
@@ -182,7 +223,7 @@ export class WizardRenderer {
     // Label
     const label = document.createElement('label');
     label.className = 'wmd-label';
-    label.textContent = field.label + (field.required ? ' *' : '');
+    label.textContent = displayLabel + (field.required ? ' *' : '');
     label.htmlFor = `wmd-${field.name}`;
     wrapper.appendChild(label);
 
@@ -198,14 +239,14 @@ export class WizardRenderer {
         input = document.createElement('select');
         const blank = document.createElement('option');
         blank.value = '';
-        blank.textContent = `Select ${field.label}...`;
+        blank.textContent = this._t('selectPlaceholder', { label: displayLabel });
         blank.disabled = true;
         blank.selected = !this.values[field.name];
         input.appendChild(blank);
         for (const opt of field.options) {
           const o = document.createElement('option');
           o.value = opt.value;
-          o.textContent = opt.label;
+          o.textContent = this._tOption(field.name, opt.label);
           if (this.values[field.name] === opt.value) o.selected = true;
           input.appendChild(o);
         }
@@ -229,7 +270,7 @@ export class WizardRenderer {
           });
           rl.appendChild(r);
           const s = document.createElement('span');
-          s.textContent = opt.label;
+          s.textContent = this._tOption(field.name, opt.label);
           rl.appendChild(s);
           input.appendChild(rl);
         }
@@ -260,7 +301,7 @@ export class WizardRenderer {
           });
           cl.appendChild(c);
           const s = document.createElement('span');
-          s.textContent = opt.label;
+          s.textContent = this._tOption(field.name, opt.label);
           cl.appendChild(s);
           input.appendChild(cl);
         }
@@ -298,7 +339,8 @@ export class WizardRenderer {
       input.name = field.name;
       input.className = 'wmd-input';
 
-      if (field.attrs.placeholder) input.placeholder = field.attrs.placeholder;
+      const placeholder = this._tPlaceholder(field);
+      if (placeholder) input.placeholder = placeholder;
       if (field.attrs.accept) input.accept = field.attrs.accept;
       if (field.type !== 'file' && this.values[field.name] !== undefined) {
         input.value = this.values[field.name];
@@ -349,7 +391,7 @@ export class WizardRenderer {
       const back = document.createElement('button');
       back.type = 'button';
       back.className = 'wmd-btn wmd-btn-back';
-      back.textContent = 'Back';
+      back.textContent = this._t('back');
       back.addEventListener('click', () => {
         this.currentStep--;
         this.errors = {};
@@ -365,7 +407,7 @@ export class WizardRenderer {
     const next = document.createElement('button');
     next.type = 'button';
     next.className = 'wmd-btn wmd-btn-next';
-    next.textContent = isLast ? 'Submit' : 'Next';
+    next.textContent = isLast ? this._t('submit') : this._t('next');
     next.addEventListener('click', () => this._handleNext(isLast));
     nav.appendChild(next);
 
@@ -375,11 +417,16 @@ export class WizardRenderer {
   _handleNext(isSubmit) {
     const step = this.ast.steps[this.currentStep];
     const visibleFields = this._resolveFields(step.fields);
-    this.errors = validateStep(visibleFields, this.values);
+    // Set _displayLabel on each field before validation so messages use translated labels
+    for (const field of visibleFields) {
+      if (!field.type.startsWith('_') && field.type !== 'hidden') {
+        field._displayLabel = this._tField(field);
+      }
+    }
+    this.errors = validateStep(visibleFields, this.values, this.locale);
 
     if (Object.keys(this.errors).length > 0) {
       this.render();
-      // Scroll to first error
       const firstErr = this.container.querySelector('.wmd-field-error');
       if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
@@ -427,7 +474,7 @@ export class WizardRenderer {
     const nav = this.container.querySelector('.wmd-nav');
     const btn = nav.querySelector('.wmd-btn-next');
     btn.disabled = true;
-    btn.textContent = 'Submitting...';
+    btn.textContent = this._t('submitting');
 
     try {
       const headers = { 'Content-Type': 'application/json' };
@@ -445,10 +492,10 @@ export class WizardRenderer {
       this._showSuccess(output);
     } catch (err) {
       btn.disabled = false;
-      btn.textContent = 'Submit';
+      btn.textContent = this._t('submit');
       const errDiv = document.createElement('div');
       errDiv.className = 'wmd-submit-error';
-      errDiv.textContent = `Submission failed: ${err.message}`;
+      errDiv.textContent = this._t('submitError', { error: err.message });
       nav.prepend(errDiv);
     }
   }
@@ -465,12 +512,11 @@ export class WizardRenderer {
     msg.appendChild(icon);
 
     const text = document.createElement('p');
-    text.textContent = this.ast.config.success_message || 'Form submitted successfully!';
+    text.textContent = this.ast.config.success_message || this._t('defaultSuccess');
     msg.appendChild(text);
 
     this.container.appendChild(msg);
 
-    // Log output for dev purposes
     console.log('[WMD] Submitted data:', output);
   }
 
