@@ -480,6 +480,16 @@ Chart formulas use the same expression syntax as formula fields — arithmetic o
 
 The variable `x` or `y` (matching the range axis) represents the current value. Formulas can also reference wizard field values by name (e.g., `loan_amount`).
 
+### Field References in Ranges
+
+Range arguments (`start`, `end`, `step`) can reference wizard field values, not just literal numbers. This allows charts to adapt dynamically based on user input:
+
+```
+x=range(0, loan_term_months, 1)
+```
+
+Any range argument that isn't a plain number is evaluated as a formula expression using the current wizard field values. If a referenced field is empty or non-numeric, the range resolves to empty and the chart is not rendered.
+
 ### Examples
 
 **Line chart — comparing two functions:**
@@ -529,6 +539,19 @@ The variable `x` or `y` (matching the range axis) represents the current value. 
   title: Altitude vs Temperature;
   y=range(0, 10000, 1000);
   x[Temperature (°C)]=15 - y * 0.0065
+}
+```
+
+**Dynamic chart — range and formula using wizard fields:**
+
+```
+@chart{
+  type: line;
+  title: Payment Schedule;
+  ystart: 0;
+  x=range(0, loan_term_months, 1);
+  y[Balance]=loan_amount * (1 - x / loan_term_months);
+  y[Interest]=loan_amount * 0.05 / 12 * (loan_term_months - x)
 }
 ```
 

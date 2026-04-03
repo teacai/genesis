@@ -186,12 +186,25 @@ function generateRange(def, fieldValues) {
     return { values, labels: values.map(formatTick) };
   }
 
-  // Numeric range
+  // Numeric range — resolve start/end/step which may be field references or expressions
+  const start = resolveNumeric(def.start, fieldValues);
+  const end = resolveNumeric(def.end, fieldValues);
+  const step = resolveNumeric(def.step, fieldValues);
+  if (isNaN(start) || isNaN(end) || isNaN(step) || step <= 0) return { values: [], labels: [] };
+
   const values = [];
-  for (let v = def.start; v <= def.end + def.step * 0.001; v += def.step) {
+  const maxPoints = 5000;
+  for (let v = start; v <= end + step * 0.001 && values.length < maxPoints; v += step) {
     values.push(Number(v.toFixed(10)));
   }
   return { values, labels: values.map(formatTick) };
+}
+
+/** Resolve a numeric range argument: literal number, field name, or expression. */
+function resolveNumeric(raw, fieldValues) {
+  const num = Number(raw);
+  if (!isNaN(num)) return num;
+  return evaluateFormula(raw, fieldValues);
 }
 
 function generateDateRange(def, fieldValues) {

@@ -378,7 +378,7 @@ function parseRange(rawStart, rawEnd, rawStep) {
   if (dateStep && ['days', 'months', 'years'].includes(dateStep[1])) {
     return { type: 'date', start: rawStart.trim().replace(/^['"]|['"]$/g, ''), end: rawEnd.trim().replace(/^['"]|['"]$/g, ''), step: dateStep[1] };
   }
-  return { start: parseFloat(rawStart), end: parseFloat(rawEnd), step: parseFloat(step) };
+  return { start: rawStart.trim(), end: rawEnd.trim(), step: rawStep.trim() };
 }
 
 function parseChart(text) {
