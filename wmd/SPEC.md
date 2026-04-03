@@ -532,6 +532,64 @@ The variable `x` or `y` (matching the range axis) represents the current value. 
 }
 ```
 
+### Date Ranges
+
+Instead of a numeric step, use a quoted time unit to create date-based ranges:
+
+```
+x=range("2024-01-01", "2024-12-01", "months")
+```
+
+| Step Unit | Description | Label Format |
+|-----------|-------------|--------------|
+| `"days"` | Every day between two dates | `Jan 15` |
+| `"months"` | Every month between two dates | `Jan 2024` |
+| `"years"` | Every year between two dates | `2024` |
+
+Date arguments can be:
+- **String literals:** `"2024-01-01"`, `"2024-06"`, `"2025"`
+- **Field references:** a date field name from the wizard (e.g., `start_date`)
+
+Date formats: `YYYY`, `YYYY-MM`, or `YYYY-MM-DD`. Partial dates resolve to the first day of the period.
+
+In formulas, the variable (`x` or `y`) is a 0-based index representing the period offset from the start date.
+
+**Example — monthly growth from a wizard-selected start date:**
+
+```
+@chart{
+  type: line;
+  title: Projected Growth;
+  ystart: 0;
+  x=range(start_date, "2026-12", "months");
+  y[Revenue]=1000 * (1.05 ^ x)
+}
+```
+
+A safety cap of 5,000 data points prevents runaway date ranges.
+
+### Array Axes
+
+Instead of a range, you can define an axis as an explicit array of values:
+
+```
+x=[5, 10, 25, 50, 100]
+```
+
+Array values are used as-is for both axis labels and as the variable in series formulas. This is useful when data points are irregular or non-sequential.
+
+**Example — pricing tiers:**
+
+```
+@chart{
+  type: bar;
+  title: Cost per Unit;
+  ystart: 0;
+  x=[1, 5, 10, 50, 100];
+  y[Unit Cost]=round(500 / x + 2, 2)
+}
+```
+
 Properties are separated by `;` (the last series may omit the trailing semicolon). The block can span multiple lines. All chart elements (axes, grid, legend) are auto-generated.
 
 Charts are display-only — they do not produce form values in the JSON output.

@@ -372,6 +372,15 @@ export function parse(source) {
   return ast;
 }
 
+function parseRange(rawStart, rawEnd, rawStep) {
+  const step = rawStep.trim();
+  const dateStep = step.match(/^['"](\w+)['"]$/);
+  if (dateStep && ['days', 'months', 'years'].includes(dateStep[1])) {
+    return { type: 'date', start: rawStart.trim().replace(/^['"]|['"]$/g, ''), end: rawEnd.trim().replace(/^['"]|['"]$/g, ''), step: dateStep[1] };
+  }
+  return { start: parseFloat(rawStart), end: parseFloat(rawEnd), step: parseFloat(step) };
+}
+
 function parseChart(text) {
   const match = text.match(/@chart\s*\{([\s\S]*)\}/);
   if (!match) return null;
@@ -386,12 +395,22 @@ function parseChart(text) {
     if ((m = prop.match(/^xstart\s*:\s*(\w+)/))) { chart.xstart = m[1]; continue; }
     if ((m = prop.match(/^ystart\s*:\s*(\w+)/))) { chart.ystart = m[1]; continue; }
     if ((m = prop.match(/^x\s*=\s*range\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^)]+)\s*\)/))) {
-      chart.x = { start: parseFloat(m[1]), end: parseFloat(m[2]), step: parseFloat(m[3]) };
+      chart.x = parseRange(m[1], m[2], m[3]);
       chart.rangeAxis = 'x';
       continue;
     }
     if ((m = prop.match(/^y\s*=\s*range\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^)]+)\s*\)/))) {
-      chart.y = { start: parseFloat(m[1]), end: parseFloat(m[2]), step: parseFloat(m[3]) };
+      chart.y = parseRange(m[1], m[2], m[3]);
+      chart.rangeAxis = 'y';
+      continue;
+    }
+    if ((m = prop.match(/^x\s*=\s*\[([^\]]+)\]/))) {
+      chart.x = { type: 'array', values: m[1].split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n)) };
+      chart.rangeAxis = 'x';
+      continue;
+    }
+    if ((m = prop.match(/^y\s*=\s*\[([^\]]+)\]/))) {
+      chart.y = { type: 'array', values: m[1].split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n)) };
       chart.rangeAxis = 'y';
       continue;
     }

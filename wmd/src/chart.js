@@ -5,34 +5,33 @@
  * Supports two modes:
  *   x=range + y[]=formula(x)  — standard (independent variable on x-axis)
  *   y=range + x[]=formula(y)  — swapped  (independent variable on y-axis)
+ *
+ * Range types:
+ *   range(start, end, step)                — numeric
+ *   range(date1, date2, 'days'|'months'|'years') — date
  */
 
 import { evaluateFormula } from './formula.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const COLORS = ['#3b82f6', '#ef4444', '#22c55e', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16'];
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 /**
  * Render a chart AST node into an SVG element.
- * @param {object} node - Chart AST node (_chart type)
- * @param {object} fieldValues - Current wizard field values (for formula references)
- * @returns {SVGSVGElement}
  */
 export function renderChart(node, fieldValues = {}) {
   const rangeAxis = node.rangeAxis || 'x';
   const rangeDef = rangeAxis === 'x' ? node.x : node.y;
 
-  // Generate independent-variable values from range
-  const rangeValues = [];
-  if (rangeDef) {
-    for (let v = rangeDef.start; v <= rangeDef.end + rangeDef.step * 0.001; v += rangeDef.step) {
-      rangeValues.push(Number(v.toFixed(10)));
-    }
-  }
-  if (!rangeValues.length) return svgEl('svg', {});
+  // Generate range points: { values: number[], labels: string[] }
+  const range = generateRange(rangeDef, fieldValues);
+  if (!range.values.length) return svgEl('svg', {});
+
+  const { values: rangeValues, labels: rangeLabels } = range;
 
   // Evaluate each series formula — variable name matches the range axis
-  const varName = rangeAxis; // 'x' or 'y'
+  const varName = rangeAxis;
   const seriesData = node.series.map((s, idx) => ({
     label: s.label,
     color: COLORS[idx % COLORS.length],
@@ -40,7 +39,6 @@ export function renderChart(node, fieldValues = {}) {
   }));
 
   // Determine axis bounds
-  // rangeValues go on the range axis; formula results go on the other axis
   const computedVals = seriesData.flatMap(s => s.values);
 
   let xMin, xMax, yMin, yMax;
@@ -79,11 +77,9 @@ export function renderChart(node, fieldValues = {}) {
 
   const isBar = node.chartType === 'bar';
 
-  // Scale helpers (always map data value → pixel)
+  // Scale helpers
   const sxContinuous = (val) => PAD.left + ((val - xMin) / (xMax - xMin || 1)) * cw;
   const syContinuous = (val) => PAD.top + ch - ((val - yMin) / (yMax - yMin || 1)) * ch;
-
-  // For bar charts, the range axis uses index-based positioning
   const sxBar = (_val, idx) => PAD.left + (idx + 0.5) * (cw / rangeValues.length);
   const syBar = (_val, idx) => PAD.top + ch - (idx + 0.5) * (ch / rangeValues.length);
 
@@ -96,15 +92,21 @@ export function renderChart(node, fieldValues = {}) {
 
   // Y-axis grid + labels
   if (rangeAxis === 'y' && isBar) {
-    // Range on y-axis with bars: use range values as labels
     const step = Math.max(1, Math.ceil(rangeValues.length / 12));
     for (let idx = 0; idx < rangeValues.length; idx += step) {
       const y = syBar(rangeValues[idx], idx);
       root.appendChild(svgEl('line', { x1: PAD.left, y1: y, x2: W - PAD.right, y2: y, class: 'wmd-chart-grid' }));
-      root.appendChild(svgText(PAD.left - 10, y + 4, formatTick(rangeValues[idx]), 'wmd-chart-axis-label', 'end'));
+      root.appendChild(svgText(PAD.left - 10, y + 4, rangeLabels[idx], 'wmd-chart-axis-label', 'end'));
+    }
+  } else if (rangeAxis === 'y') {
+    const ticks = pickRangeTicks(rangeValues, rangeLabels, 12);
+    for (const { value, label } of ticks) {
+      const y = syContinuous(value);
+      root.appendChild(svgEl('line', { x1: PAD.left, y1: y, x2: W - PAD.right, y2: y, class: 'wmd-chart-grid' }));
+      root.appendChild(svgText(PAD.left - 10, y + 4, label, 'wmd-chart-axis-label', 'end'));
     }
   } else {
-    const yTicks = rangeAxis === 'y' ? niceScaleFromRange(rangeValues) : niceScale(yMin, yMax, 6);
+    const yTicks = niceScale(yMin, yMax, 6);
     for (const tick of yTicks) {
       const y = syContinuous(tick);
       root.appendChild(svgEl('line', { x1: PAD.left, y1: y, x2: W - PAD.right, y2: y, class: 'wmd-chart-grid' }));
@@ -118,10 +120,17 @@ export function renderChart(node, fieldValues = {}) {
     for (let idx = 0; idx < rangeValues.length; idx += step) {
       const x = sxBar(rangeValues[idx], idx);
       root.appendChild(svgEl('line', { x1: x, y1: PAD.top + ch, x2: x, y2: PAD.top + ch + 5, class: 'wmd-chart-tick' }));
-      root.appendChild(svgText(x, PAD.top + ch + 20, formatTick(rangeValues[idx]), 'wmd-chart-axis-label', 'middle'));
+      root.appendChild(svgText(x, PAD.top + ch + 20, rangeLabels[idx], 'wmd-chart-axis-label', 'middle'));
+    }
+  } else if (rangeAxis === 'x') {
+    const ticks = pickRangeTicks(rangeValues, rangeLabels, 12);
+    for (const { value, label } of ticks) {
+      const x = sxContinuous(value);
+      root.appendChild(svgEl('line', { x1: x, y1: PAD.top + ch, x2: x, y2: PAD.top + ch + 5, class: 'wmd-chart-tick' }));
+      root.appendChild(svgText(x, PAD.top + ch + 20, label, 'wmd-chart-axis-label', 'middle'));
     }
   } else {
-    const xTicks = rangeAxis === 'x' ? niceScaleFromRange(rangeValues) : niceScale(xMin, xMax, 8);
+    const xTicks = niceScale(xMin, xMax, 8);
     const maxLabels = 12;
     const tickStep = Math.max(1, Math.ceil(xTicks.length / maxLabels));
     for (let ti = 0; ti < xTicks.length; ti += tickStep) {
@@ -146,11 +155,8 @@ export function renderChart(node, fieldValues = {}) {
 
   // Draw data
   if (isBar) {
-    if (rangeAxis === 'x') {
-      drawBarsX(root, rangeValues, seriesData, sxBar, syContinuous, PAD, cw, ch);
-    } else {
-      drawBarsY(root, rangeValues, seriesData, sxContinuous, syBar, PAD, cw, ch);
-    }
+    if (rangeAxis === 'x') drawBarsX(root, rangeValues, seriesData, sxBar, syContinuous, PAD, cw, ch);
+    else drawBarsY(root, rangeValues, seriesData, sxContinuous, syBar, PAD, cw, ch);
   } else {
     drawLines(root, rangeValues, seriesData, rangeAxis, sxContinuous, syContinuous);
   }
@@ -160,11 +166,91 @@ export function renderChart(node, fieldValues = {}) {
   return root;
 }
 
+// ── Range generation ────────────────────────────────────────────────
+
 /**
- * Draw line series.
- * rangeAxis='x': points are (rangeVal, formulaVal)
- * rangeAxis='y': points are (formulaVal, rangeVal)
+ * Generate range values and labels from a range definition.
+ * Returns { values: number[], labels: string[] }.
+ * For numeric ranges, values are the actual numbers.
+ * For date ranges, values are 0-based indexes (period offsets from start).
  */
+function generateRange(def, fieldValues) {
+  if (!def) return { values: [], labels: [] };
+
+  if (def.type === 'date') {
+    return generateDateRange(def, fieldValues);
+  }
+
+  if (def.type === 'array') {
+    const values = def.values;
+    return { values, labels: values.map(formatTick) };
+  }
+
+  // Numeric range
+  const values = [];
+  for (let v = def.start; v <= def.end + def.step * 0.001; v += def.step) {
+    values.push(Number(v.toFixed(10)));
+  }
+  return { values, labels: values.map(formatTick) };
+}
+
+function generateDateRange(def, fieldValues) {
+  const startStr = resolveDate(def.start, fieldValues);
+  const endStr = resolveDate(def.end, fieldValues);
+  if (!startStr || !endStr) return { values: [], labels: [] };
+
+  const start = parseDate(startStr);
+  const end = parseDate(endStr);
+  if (!start || !end || start > end) return { values: [], labels: [] };
+
+  const values = [];
+  const labels = [];
+  const current = new Date(start);
+  let index = 0;
+
+  // Safety cap to prevent infinite loops
+  const maxPoints = 5000;
+
+  while (current <= end && index < maxPoints) {
+    values.push(index);
+    labels.push(formatDateLabel(current, def.step));
+
+    if (def.step === 'days') current.setDate(current.getDate() + 1);
+    else if (def.step === 'months') current.setMonth(current.getMonth() + 1);
+    else if (def.step === 'years') current.setFullYear(current.getFullYear() + 1);
+    index++;
+  }
+
+  return { values, labels };
+}
+
+/** Resolve a date argument: could be literal date string or a field name. */
+function resolveDate(value, fieldValues) {
+  const stripped = value.replace(/^['"]|['"]$/g, '');
+  if (/^\d{4}(-\d{2}(-\d{2})?)?$/.test(stripped)) return stripped;
+  const fieldVal = fieldValues[stripped];
+  if (fieldVal && /^\d{4}(-\d{2}(-\d{2})?)?$/.test(String(fieldVal))) return String(fieldVal);
+  return null;
+}
+
+/** Parse a date string (YYYY, YYYY-MM, or YYYY-MM-DD) into a Date object. */
+function parseDate(str) {
+  const parts = str.split('-').map(Number);
+  if (parts.length === 1) return new Date(parts[0], 0, 1);
+  if (parts.length === 2) return new Date(parts[0], parts[1] - 1, 1);
+  return new Date(parts[0], parts[1] - 1, parts[2]);
+}
+
+/** Format a date for axis labels based on the step granularity. */
+function formatDateLabel(date, step) {
+  if (step === 'years') return String(date.getFullYear());
+  if (step === 'months') return `${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+  // days
+  return `${MONTHS[date.getMonth()]} ${date.getDate()}`;
+}
+
+// ── Drawing helpers ─────────────────────────────────────────────────
+
 function drawLines(root, rangeValues, seriesData, rangeAxis, sx, sy) {
   for (const s of seriesData) {
     const points = rangeValues.map((rv, i) => {
@@ -183,7 +269,6 @@ function drawLines(root, rangeValues, seriesData, rangeAxis, sx, sy) {
   }
 }
 
-/** Vertical bars: range on x-axis, formula values on y-axis. */
 function drawBarsX(root, rangeValues, seriesData, sx, sy, PAD, cw, ch) {
   const n = rangeValues.length;
   const numSeries = seriesData.length;
@@ -209,7 +294,6 @@ function drawBarsX(root, rangeValues, seriesData, sx, sy, PAD, cw, ch) {
   }
 }
 
-/** Horizontal bars: range on y-axis, formula values on x-axis. */
 function drawBarsY(root, rangeValues, seriesData, sx, sy, PAD, cw, ch) {
   const n = rangeValues.length;
   const numSeries = seriesData.length;
@@ -249,6 +333,8 @@ function drawLegend(root, seriesData, W, H) {
   }
 }
 
+// ── Axis tick helpers ───────────────────────────────────────────────
+
 /** Generate nice axis tick values from a computed data range. */
 function niceScale(min, max, targetTicks) {
   const range = max - min || 1;
@@ -265,13 +351,16 @@ function niceScale(min, max, targetTicks) {
   return ticks;
 }
 
-/** Pick a subset of range values as ticks (for the range axis). */
-function niceScaleFromRange(values) {
-  const maxTicks = 12;
-  if (values.length <= maxTicks) return values;
+/** Pick evenly-spaced ticks from range values with their labels. */
+function pickRangeTicks(values, labels, maxTicks) {
+  if (values.length <= maxTicks) {
+    return values.map((v, i) => ({ value: v, label: labels[i] }));
+  }
   const step = Math.max(1, Math.ceil(values.length / maxTicks));
   const ticks = [];
-  for (let i = 0; i < values.length; i += step) ticks.push(values[i]);
+  for (let i = 0; i < values.length; i += step) {
+    ticks.push({ value: values[i], label: labels[i] });
+  }
   return ticks;
 }
 
@@ -280,6 +369,8 @@ function formatTick(val) {
   const s = val.toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
   return s || '0';
 }
+
+// ── SVG helpers ─────────────────────────────────────────────────────
 
 function svgEl(tag, attrs) {
   const el = document.createElementNS(SVG_NS, tag);
