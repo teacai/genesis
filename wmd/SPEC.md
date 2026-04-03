@@ -189,6 +189,8 @@ With formatting attributes:
 | `asin(x)` | Arc sine | `asin(1)` → π/2 |
 | `acos(x)` | Arc cosine | `acos(1)` → 0 |
 | `atan(x)` | Arc tangent | `atan(1)` → π/4 |
+| `log(x)` | Base-10 logarithm | `log(1000)` → 3 |
+| `ln(x)` | Natural logarithm (base e) | `ln(E)` → 1 |
 
 #### Constants
 
