@@ -158,6 +158,59 @@
   margin: 1.25rem 0;
 }
 
+/* Charts */
+.wmd-chart {
+  margin-bottom: 1.25rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: #fff;
+}
+
+.wmd-chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.wmd-chart-title {
+  font-size: 14px;
+  font-weight: 600;
+  fill: #1a1a2e;
+}
+
+.wmd-chart-axis {
+  stroke: #94a3b8;
+  stroke-width: 1;
+}
+
+.wmd-chart-grid {
+  stroke: #f1f5f9;
+  stroke-width: 1;
+}
+
+.wmd-chart-zero {
+  stroke: #cbd5e1;
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+
+.wmd-chart-tick {
+  stroke: #94a3b8;
+  stroke-width: 1;
+}
+
+.wmd-chart-axis-label {
+  font-size: 11px;
+  fill: #64748b;
+}
+
+.wmd-chart-legend-label {
+  font-size: 12px;
+  fill: #334155;
+}
+
 /* Fields */
 .wmd-field {
   margin-bottom: 1.25rem;

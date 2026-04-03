@@ -113,7 +113,14 @@ success_message: Thank you! Your loan application has been submitted for review.
 
 < How much would you like to borrow and for what purpose?
 
-![Loan rate comparison chart](https://placehold.co/560x120/f0f7ff/334155?text=Loan+Rate+Comparison+Chart)
+@chart{
+  type: line;
+  title: Monthly Payment by Loan Amount;
+  ystart: 0;
+  x=range(5000, 50000, 5000);
+  y[36-month term]=round(x * (6.99 / 100 / 12) * (1 + 6.99 / 100 / 12) ^ 36 / ((1 + 6.99 / 100 / 12) ^ 36 - 1), 2);
+  y[60-month term]=round(x * (7.99 / 100 / 12) * (1 + 7.99 / 100 / 12) ^ 60 / ((1 + 7.99 / 100 / 12) ^ 60 - 1), 2)
+}
 
 | Term | APR | Monthly Payment (per $10,000) |
 |------|:---:|------------------------------:|

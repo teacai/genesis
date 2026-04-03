@@ -5,6 +5,7 @@
 import { validateStep } from './validator.js';
 import { t, mergeLocale, DEFAULT_LOCALE } from './i18n.js';
 import { evaluateFormula } from './formula.js';
+import { renderChart } from './chart.js';
 
 export class WizardRenderer {
   constructor(ast, container, options = {}) {
@@ -217,6 +218,12 @@ export class WizardRenderer {
     }
     if (field.type === '_table') {
       return this._renderTable(field);
+    }
+    if (field.type === '_chart') {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'wmd-chart';
+      wrapper.appendChild(renderChart(field, this.values));
+      return wrapper;
     }
     if (field.type === '_toggle') {
       return this._renderToggle(field);

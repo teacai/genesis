@@ -418,6 +418,73 @@ The code block renders with:
 
 Code blocks are display-only — they do not produce form values in the JSON output.
 
+## Charts
+
+Use `@chart{...}` to embed SVG line or bar charts. Charts are rendered as pure SVG with no external libraries.
+
+### Syntax
+
+```
+@chart{
+  type: line;
+  title: Revenue Over Time;
+  xstart: 0;
+  ystart: 0;
+  x=range(0, 100, 10);
+  y[Revenue]=x * 150 + 2000;
+  y[Costs]=x * 80 + 5000
+}
+```
+
+### Properties
+
+| Property | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `type` | no | `line` | Chart type: `line` or `bar` |
+| `title` | no | (none) | Chart title displayed above the chart |
+| `xstart` | no | `0` | X-axis start: `0` (include zero) or `min` (auto from data) |
+| `ystart` | no | `0` | Y-axis start: `0` (include zero) or `min` (auto from data) |
+| `x=range(start, end, step)` | yes | — | X-axis data points as a numeric range (inclusive) |
+| `y[Label]=formula` | yes (1+) | — | Data series: label shown in legend, formula evaluated for each x |
+
+### Formulas
+
+Chart formulas use the same expression syntax as formula fields — arithmetic operators (`+`, `-`, `*`, `/`, `%`, `^`), parentheses, number literals, and functions (`round`, `floor`, `ceil`, `abs`, `min`, `max`, `pow`).
+
+The variable `x` represents the current x-axis value. Formulas can also reference wizard field values by name (e.g., `loan_amount`).
+
+### Examples
+
+**Line chart — comparing two functions:**
+
+```
+@chart{
+  type: line;
+  title: Growth Comparison;
+  ystart: 0;
+  x=range(1, 10, 1);
+  y[Linear]=x * 100;
+  y[Exponential]=100 * 1.5 ^ x
+}
+```
+
+**Bar chart — quarterly data:**
+
+```
+@chart{
+  type: bar;
+  title: Quarterly Revenue ($K);
+  ystart: 0;
+  x=range(1, 4, 1);
+  y[2024]=x * 25 + 50;
+  y[2025]=x * 30 + 80
+}
+```
+
+Properties are separated by `;` (the last series may omit the trailing semicolon). The block can span multiple lines. All chart elements (axes, grid, legend) are auto-generated.
+
+Charts are display-only — they do not produce form values in the JSON output.
+
 ## Dividers
 
 Use `---` (outside frontmatter) to add a visual divider within a step:

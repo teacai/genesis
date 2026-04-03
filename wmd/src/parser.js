@@ -261,6 +261,28 @@ export function parse(source) {
       continue;
     }
 
+    // Chart block: @chart{ ... }
+    if (/^@chart\s*\{/.test(trimmed) && currentStep) {
+      commitPendingField();
+      let chartText = trimmed;
+      if (!chartText.includes('}')) {
+        i++;
+        while (i < lines.length) {
+          chartText += ' ' + lines[i].trim();
+          if (lines[i].trim().includes('}')) { i++; break; }
+          i++;
+        }
+      } else {
+        i++;
+      }
+      const chart = parseChart(chartText);
+      if (chart) {
+        const target = currentCondition || currentStep;
+        target.fields.push(chart);
+      }
+      continue;
+    }
+
     // Markdown table (lines starting with |)
     if (/^\|.+\|/.test(trimmed) && currentStep) {
       commitPendingField();
@@ -318,6 +340,7 @@ export function parse(source) {
           if (/^\?toggle/.test(t) || /^\?endtoggle/.test(t)) break;
           if (/^\[\w+[\s(].*:\s*\w+\]/.test(t) || /^\[hidden\s*:/.test(t)) break; // field definition (not markdown link)
           if (/^\|.+\|/.test(t)) break; // table
+          if (/^@chart\s*\{/.test(t)) break;
 
           const lineIsUl = /^[-*+] /.test(t);
           const lineOlMatch = t.match(/^(\d+)[.)]\s/);
@@ -347,6 +370,32 @@ export function parse(source) {
 
   commitPendingField();
   return ast;
+}
+
+function parseChart(text) {
+  const match = text.match(/@chart\s*\{([\s\S]*)\}/);
+  if (!match) return null;
+
+  const chart = { type: '_chart', chartType: 'line', title: '', xstart: '0', ystart: '0', x: null, series: [] };
+  const props = match[1].split(';').map(s => s.trim()).filter(Boolean);
+
+  for (const prop of props) {
+    let m;
+    if ((m = prop.match(/^type\s*:\s*(\w+)/))) { chart.chartType = m[1]; continue; }
+    if ((m = prop.match(/^title\s*:\s*(.+)/))) { chart.title = m[1].trim(); continue; }
+    if ((m = prop.match(/^xstart\s*:\s*(\w+)/))) { chart.xstart = m[1]; continue; }
+    if ((m = prop.match(/^ystart\s*:\s*(\w+)/))) { chart.ystart = m[1]; continue; }
+    if ((m = prop.match(/^x\s*=\s*range\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^)]+)\s*\)/))) {
+      chart.x = { start: parseFloat(m[1]), end: parseFloat(m[2]), step: parseFloat(m[3]) };
+      continue;
+    }
+    if ((m = prop.match(/^y\[([^\]]+)\]\s*=\s*(.+)/))) {
+      chart.series.push({ label: m[1].trim(), formula: m[2].trim() });
+      continue;
+    }
+  }
+
+  return chart.x && chart.series.length ? chart : null;
 }
 
 function parseAttributes(str) {
