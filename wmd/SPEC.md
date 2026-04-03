@@ -183,6 +183,19 @@ With formatting attributes:
 | `min(a, b, ...)` | Minimum value | `min(income, cap)` |
 | `max(a, b, ...)` | Maximum value | `max(total, 0)` |
 | `pow(x, n)` | Exponentiation | `pow(1 + rate, years)` |
+| `sin(x)` | Sine (radians) | `sin(PI / 2)` → 1 |
+| `cos(x)` | Cosine (radians) | `cos(0)` → 1 |
+| `tan(x)` | Tangent (radians) | `tan(PI / 4)` → 1 |
+| `asin(x)` | Arc sine | `asin(1)` → π/2 |
+| `acos(x)` | Arc cosine | `acos(1)` → 0 |
+| `atan(x)` | Arc tangent | `atan(1)` → π/4 |
+
+#### Constants
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `PI` | 3.14159... | Circle constant |
+| `E` | 2.71828... | Euler's number |
 
 #### Behavior
 

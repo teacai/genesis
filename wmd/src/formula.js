@@ -3,7 +3,8 @@
  * that reference field values.
  *
  * Supports: +, -, *, /, %, ^, parentheses, unary minus, number literals,
- * field references, and functions (round, floor, ceil, abs, min, max, pow).
+ * field references, constants (PI, E), and functions (round, floor, ceil,
+ * abs, min, max, pow, sin, cos, tan, asin, acos, atan).
  */
 
 export function evaluateFormula(expression, values) {
@@ -80,6 +81,9 @@ export function evaluateFormula(expression, values) {
         if (peek() && peek().value === ')') consume(); // )
         return callFn(tok.value, args);
       }
+      // Constants
+      if (tok.value === 'PI') return Math.PI;
+      if (tok.value === 'E') return Math.E;
       // Field reference
       const val = values[tok.value];
       return val === undefined || val === '' ? 0 : Number(val) || 0;
@@ -109,6 +113,12 @@ export function evaluateFormula(expression, values) {
       case 'min':   return args.length ? Math.min(...args) : 0;
       case 'max':   return args.length ? Math.max(...args) : 0;
       case 'pow':   return Math.pow(args[0] || 0, args[1] || 0);
+      case 'sin':   return Math.sin(args[0] || 0);
+      case 'cos':   return Math.cos(args[0] || 0);
+      case 'tan':   return Math.tan(args[0] || 0);
+      case 'asin':  return Math.asin(args[0] || 0);
+      case 'acos':  return Math.acos(args[0] || 0);
+      case 'atan':  return Math.atan(args[0] || 0);
       default:      return 0;
     }
   }
