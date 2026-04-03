@@ -76,6 +76,7 @@ export function renderChart(node, fieldValues = {}) {
   const ch = H - PAD.top - PAD.bottom;
 
   const isBar = node.chartType === 'bar';
+  const isArea = node.chartType === 'area';
 
   // Scale helpers
   const sxContinuous = (val) => PAD.left + ((val - xMin) / (xMax - xMin || 1)) * cw;
@@ -157,6 +158,8 @@ export function renderChart(node, fieldValues = {}) {
   if (isBar) {
     if (rangeAxis === 'x') drawBarsX(root, rangeValues, seriesData, sxBar, syContinuous, PAD, cw, ch);
     else drawBarsY(root, rangeValues, seriesData, sxContinuous, syBar, PAD, cw, ch);
+  } else if (isArea) {
+    drawAreas(root, rangeValues, seriesData, rangeAxis, sxContinuous, syContinuous, PAD, ch);
   } else {
     drawLines(root, rangeValues, seriesData, rangeAxis, sxContinuous, syContinuous);
   }
@@ -276,6 +279,42 @@ function drawLines(root, rangeValues, seriesData, rangeAxis, sx, sy) {
       fill: 'none',
       stroke: s.color,
       'stroke-width': 2.5,
+      'stroke-linejoin': 'round',
+      'stroke-linecap': 'round',
+    }));
+  }
+}
+
+function drawAreas(root, rangeValues, seriesData, rangeAxis, sx, sy, PAD, ch) {
+  const baseline = PAD.top + ch;
+  for (const s of seriesData) {
+    const linePoints = rangeValues.map((rv, i) => {
+      const px = rangeAxis === 'x' ? sx(rv) : sx(s.values[i]);
+      const py = rangeAxis === 'x' ? sy(s.values[i]) : sy(rv);
+      return { x: px, y: py };
+    });
+
+    // Filled area: line points + close along baseline
+    const first = linePoints[0];
+    const last = linePoints[linePoints.length - 1];
+    const areaPoints = linePoints.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`);
+    areaPoints.push(`${last.x.toFixed(2)},${baseline.toFixed(2)}`);
+    areaPoints.push(`${first.x.toFixed(2)},${baseline.toFixed(2)}`);
+
+    root.appendChild(svgEl('polygon', {
+      points: areaPoints.join(' '),
+      fill: s.color,
+      'fill-opacity': 0.2,
+      class: 'wmd-chart-area',
+    }));
+
+    // Stroke line on top
+    const strokePoints = linePoints.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ');
+    root.appendChild(svgEl('polyline', {
+      points: strokePoints,
+      fill: 'none',
+      stroke: s.color,
+      'stroke-width': 2,
       'stroke-linejoin': 'round',
       'stroke-linecap': 'round',
     }));

@@ -457,7 +457,7 @@ Use `@chart{...}` to embed SVG line or bar charts. Charts are rendered as pure S
 
 | Property | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `type` | no | `line` | Chart type: `line` or `bar` |
+| `type` | no | `line` | Chart type: `line`, `bar`, or `area` |
 | `title` | no | (none) | Chart title displayed above the chart |
 | `xstart` | no | `0` | X-axis start: `0` (include zero) or `min` (auto from data) |
 | `ystart` | no | `0` | Y-axis start: `0` (include zero) or `min` (auto from data) |
@@ -539,6 +539,19 @@ Any range argument that isn't a plain number is evaluated as a formula expressio
   title: Altitude vs Temperature;
   y=range(0, 10000, 1000);
   x[Temperature (°C)]=15 - y * 0.0065
+}
+```
+
+**Area chart — filled regions under lines:**
+
+```
+@chart{
+  type: area;
+  title: Revenue vs Costs;
+  ystart: 0;
+  x=range(1, 12, 1);
+  y[Revenue]=x * 500 + 2000;
+  y[Costs]=x * 200 + 3000
 }
 ```
 
