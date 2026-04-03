@@ -461,14 +461,24 @@ Use `@chart{...}` to embed SVG line or bar charts. Charts are rendered as pure S
 | `title` | no | (none) | Chart title displayed above the chart |
 | `xstart` | no | `0` | X-axis start: `0` (include zero) or `min` (auto from data) |
 | `ystart` | no | `0` | Y-axis start: `0` (include zero) or `min` (auto from data) |
-| `x=range(start, end, step)` | yes | — | X-axis data points as a numeric range (inclusive) |
-| `y[Label]=formula` | yes (1+) | — | Data series: label shown in legend, formula evaluated for each x |
+| `x=range(start, end, step)` | * | — | X-axis range (inclusive). Use with `y[]=` series. |
+| `y=range(start, end, step)` | * | — | Y-axis range (inclusive). Use with `x[]=` series. |
+| `y[Label]=formula` | * | — | Y-axis series: formula evaluated for each `x` value |
+| `x[Label]=formula` | * | — | X-axis series: formula evaluated for each `y` value |
+
+\* Either `x=range` with `y[]=` series, or `y=range` with `x[]=` series is required.
+
+### Axis Modes
+
+**Standard mode** — `x=range` + `y[]=formula(x)`: The x-axis is the independent variable. Formulas compute y-values. This is the most common mode for line and vertical bar charts.
+
+**Swapped mode** — `y=range` + `x[]=formula(y)`: The y-axis is the independent variable. Formulas compute x-values. Useful for horizontal bar charts or parametric-style curves where y drives the computation.
 
 ### Formulas
 
-Chart formulas use the same expression syntax as formula fields — arithmetic operators (`+`, `-`, `*`, `/`, `%`, `^`), parentheses, number literals, and functions (`round`, `floor`, `ceil`, `abs`, `min`, `max`, `pow`).
+Chart formulas use the same expression syntax as formula fields — arithmetic operators (`+`, `-`, `*`, `/`, `%`, `^`), parentheses, number literals, and all built-in functions.
 
-The variable `x` represents the current x-axis value. Formulas can also reference wizard field values by name (e.g., `loan_amount`).
+The variable `x` or `y` (matching the range axis) represents the current value. Formulas can also reference wizard field values by name (e.g., `loan_amount`).
 
 ### Examples
 
@@ -495,6 +505,30 @@ The variable `x` represents the current x-axis value. Formulas can also referenc
   x=range(1, 4, 1);
   y[2024]=x * 25 + 50;
   y[2025]=x * 30 + 80
+}
+```
+
+**Swapped axis — horizontal bars (y-range with x formulas):**
+
+```
+@chart{
+  type: bar;
+  title: Score by Category;
+  xstart: 0;
+  y=range(1, 5, 1);
+  x[Team A]=y * 15 + 20;
+  x[Team B]=y * 12 + 35
+}
+```
+
+**Swapped axis — line chart (y-range with x formulas):**
+
+```
+@chart{
+  type: line;
+  title: Altitude vs Temperature;
+  y=range(0, 10000, 1000);
+  x[Temperature (°C)]=15 - y * 0.0065
 }
 ```
 

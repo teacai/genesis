@@ -376,7 +376,7 @@ function parseChart(text) {
   const match = text.match(/@chart\s*\{([\s\S]*)\}/);
   if (!match) return null;
 
-  const chart = { type: '_chart', chartType: 'line', title: '', xstart: '0', ystart: '0', x: null, series: [] };
+  const chart = { type: '_chart', chartType: 'line', title: '', xstart: '0', ystart: '0', x: null, y: null, rangeAxis: 'x', series: [] };
   const props = match[1].split(';').map(s => s.trim()).filter(Boolean);
 
   for (const prop of props) {
@@ -387,15 +387,26 @@ function parseChart(text) {
     if ((m = prop.match(/^ystart\s*:\s*(\w+)/))) { chart.ystart = m[1]; continue; }
     if ((m = prop.match(/^x\s*=\s*range\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^)]+)\s*\)/))) {
       chart.x = { start: parseFloat(m[1]), end: parseFloat(m[2]), step: parseFloat(m[3]) };
+      chart.rangeAxis = 'x';
+      continue;
+    }
+    if ((m = prop.match(/^y\s*=\s*range\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^)]+)\s*\)/))) {
+      chart.y = { start: parseFloat(m[1]), end: parseFloat(m[2]), step: parseFloat(m[3]) };
+      chart.rangeAxis = 'y';
       continue;
     }
     if ((m = prop.match(/^y\[([^\]]+)\]\s*=\s*(.+)/))) {
       chart.series.push({ label: m[1].trim(), formula: m[2].trim() });
       continue;
     }
+    if ((m = prop.match(/^x\[([^\]]+)\]\s*=\s*(.+)/))) {
+      chart.series.push({ label: m[1].trim(), formula: m[2].trim() });
+      continue;
+    }
   }
 
-  return chart.x && chart.series.length ? chart : null;
+  const hasRange = chart.rangeAxis === 'x' ? chart.x : chart.y;
+  return hasRange && chart.series.length ? chart : null;
 }
 
 function parseAttributes(str) {
