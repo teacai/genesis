@@ -385,7 +385,7 @@ function parseChart(text) {
   const match = text.match(/@chart\s*\{([\s\S]*)\}/);
   if (!match) return null;
 
-  const chart = { type: '_chart', chartType: 'line', title: '', xstart: '0', ystart: '0', x: null, y: null, rangeAxis: 'x', series: [] };
+  const chart = { type: '_chart', chartType: 'line', title: '', xstart: '0', ystart: '0', smooth: false, x: null, y: null, rangeAxis: 'x', series: [] };
   const props = match[1].split(';').map(s => s.trim()).filter(Boolean);
 
   for (const prop of props) {
@@ -394,6 +394,7 @@ function parseChart(text) {
     if ((m = prop.match(/^title\s*:\s*(.+)/))) { chart.title = m[1].trim(); continue; }
     if ((m = prop.match(/^xstart\s*:\s*(\w+)/))) { chart.xstart = m[1]; continue; }
     if ((m = prop.match(/^ystart\s*:\s*(\w+)/))) { chart.ystart = m[1]; continue; }
+    if ((m = prop.match(/^smooth\s*:\s*(true|false)/))) { chart.smooth = m[1] === 'true'; continue; }
     if ((m = prop.match(/^x\s*=\s*range\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^)]+)\s*\)/))) {
       chart.x = parseRange(m[1], m[2], m[3]);
       chart.rangeAxis = 'x';

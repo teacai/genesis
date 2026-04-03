@@ -459,6 +459,7 @@ Use `@chart{...}` to embed SVG line or bar charts. Charts are rendered as pure S
 |----------|----------|---------|-------------|
 | `type` | no | `line` | Chart type: `line`, `bar`, or `area` |
 | `title` | no | (none) | Chart title displayed above the chart |
+| `smooth` | no | `false` | Smooth curves for `line` and `area` charts (`true`/`false`) |
 | `xstart` | no | `0` | X-axis start: `0` (include zero) or `min` (auto from data) |
 | `ystart` | no | `0` | Y-axis start: `0` (include zero) or `min` (auto from data) |
 | `x=range(start, end, step)` | * | — | X-axis range (inclusive). Use with `y[]=` series. |

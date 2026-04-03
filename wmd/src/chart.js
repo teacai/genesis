@@ -155,13 +155,14 @@ export function renderChart(node, fieldValues = {}) {
   }
 
   // Draw data
+  const smooth = !!node.smooth;
   if (isBar) {
     if (rangeAxis === 'x') drawBarsX(root, rangeValues, seriesData, sxBar, syContinuous, PAD, cw, ch);
     else drawBarsY(root, rangeValues, seriesData, sxContinuous, syBar, PAD, cw, ch);
   } else if (isArea) {
-    drawAreas(root, rangeValues, seriesData, rangeAxis, sxContinuous, syContinuous, PAD, ch);
+    drawAreas(root, rangeValues, seriesData, rangeAxis, sxContinuous, syContinuous, PAD, ch, smooth);
   } else {
-    drawLines(root, rangeValues, seriesData, rangeAxis, sxContinuous, syContinuous);
+    drawLines(root, rangeValues, seriesData, rangeAxis, sxContinuous, syContinuous, smooth);
   }
 
   if (hasLegend) drawLegend(root, seriesData, W, H);
@@ -267,58 +268,114 @@ function formatDateLabel(date, step) {
 
 // ── Drawing helpers ─────────────────────────────────────────────────
 
-function drawLines(root, rangeValues, seriesData, rangeAxis, sx, sy) {
+function drawLines(root, rangeValues, seriesData, rangeAxis, sx, sy, smooth) {
   for (const s of seriesData) {
-    const points = rangeValues.map((rv, i) => {
-      const px = rangeAxis === 'x' ? sx(rv) : sx(s.values[i]);
-      const py = rangeAxis === 'x' ? sy(s.values[i]) : sy(rv);
-      return `${px.toFixed(2)},${py.toFixed(2)}`;
-    }).join(' ');
-    root.appendChild(svgEl('polyline', {
-      points,
-      fill: 'none',
-      stroke: s.color,
-      'stroke-width': 2.5,
-      'stroke-linejoin': 'round',
-      'stroke-linecap': 'round',
-    }));
+    const pts = toScreenPoints(rangeValues, s.values, rangeAxis, sx, sy);
+    if (smooth && pts.length > 1) {
+      root.appendChild(svgEl('path', {
+        d: smoothPath(pts),
+        fill: 'none',
+        stroke: s.color,
+        'stroke-width': 2.5,
+        'stroke-linejoin': 'round',
+        'stroke-linecap': 'round',
+      }));
+    } else {
+      root.appendChild(svgEl('polyline', {
+        points: pts.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' '),
+        fill: 'none',
+        stroke: s.color,
+        'stroke-width': 2.5,
+        'stroke-linejoin': 'round',
+        'stroke-linecap': 'round',
+      }));
+    }
   }
 }
 
-function drawAreas(root, rangeValues, seriesData, rangeAxis, sx, sy, PAD, ch) {
+function drawAreas(root, rangeValues, seriesData, rangeAxis, sx, sy, PAD, ch, smooth) {
   const baseline = PAD.top + ch;
   for (const s of seriesData) {
-    const linePoints = rangeValues.map((rv, i) => {
-      const px = rangeAxis === 'x' ? sx(rv) : sx(s.values[i]);
-      const py = rangeAxis === 'x' ? sy(s.values[i]) : sy(rv);
-      return { x: px, y: py };
-    });
+    const pts = toScreenPoints(rangeValues, s.values, rangeAxis, sx, sy);
+    const first = pts[0];
+    const last = pts[pts.length - 1];
 
-    // Filled area: line points + close along baseline
-    const first = linePoints[0];
-    const last = linePoints[linePoints.length - 1];
-    const areaPoints = linePoints.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`);
-    areaPoints.push(`${last.x.toFixed(2)},${baseline.toFixed(2)}`);
-    areaPoints.push(`${first.x.toFixed(2)},${baseline.toFixed(2)}`);
-
-    root.appendChild(svgEl('polygon', {
-      points: areaPoints.join(' '),
-      fill: s.color,
-      'fill-opacity': 0.2,
-      class: 'wmd-chart-area',
-    }));
-
-    // Stroke line on top
-    const strokePoints = linePoints.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ');
-    root.appendChild(svgEl('polyline', {
-      points: strokePoints,
-      fill: 'none',
-      stroke: s.color,
-      'stroke-width': 2,
-      'stroke-linejoin': 'round',
-      'stroke-linecap': 'round',
-    }));
+    if (smooth && pts.length > 1) {
+      const linePath = smoothPath(pts);
+      const areaD = `${linePath} L ${last.x.toFixed(2)},${baseline.toFixed(2)} L ${first.x.toFixed(2)},${baseline.toFixed(2)} Z`;
+      root.appendChild(svgEl('path', {
+        d: areaD,
+        fill: s.color,
+        'fill-opacity': 0.2,
+        class: 'wmd-chart-area',
+      }));
+      root.appendChild(svgEl('path', {
+        d: linePath,
+        fill: 'none',
+        stroke: s.color,
+        'stroke-width': 2,
+        'stroke-linejoin': 'round',
+        'stroke-linecap': 'round',
+      }));
+    } else {
+      const areaPoints = pts.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`);
+      areaPoints.push(`${last.x.toFixed(2)},${baseline.toFixed(2)}`);
+      areaPoints.push(`${first.x.toFixed(2)},${baseline.toFixed(2)}`);
+      root.appendChild(svgEl('polygon', {
+        points: areaPoints.join(' '),
+        fill: s.color,
+        'fill-opacity': 0.2,
+        class: 'wmd-chart-area',
+      }));
+      root.appendChild(svgEl('polyline', {
+        points: pts.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' '),
+        fill: 'none',
+        stroke: s.color,
+        'stroke-width': 2,
+        'stroke-linejoin': 'round',
+        'stroke-linecap': 'round',
+      }));
+    }
   }
+}
+
+/** Convert range + series values to screen-space {x, y} points. */
+function toScreenPoints(rangeValues, seriesValues, rangeAxis, sx, sy) {
+  return rangeValues.map((rv, i) => ({
+    x: rangeAxis === 'x' ? sx(rv) : sx(seriesValues[i]),
+    y: rangeAxis === 'x' ? sy(seriesValues[i]) : sy(rv),
+  }));
+}
+
+/**
+ * Build a smooth SVG path string from points using Catmull-Rom → cubic Bezier conversion.
+ * Tension = 0.5 (standard Catmull-Rom). Result passes through all original points.
+ */
+function smoothPath(pts) {
+  if (pts.length < 2) return '';
+  if (pts.length === 2) {
+    return `M ${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)} L ${pts[1].x.toFixed(2)},${pts[1].y.toFixed(2)}`;
+  }
+
+  const t = 0.5; // tension — 0.5 is standard Catmull-Rom
+  let d = `M ${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)}`;
+
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i === 0 ? 0 : i - 1];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2 < pts.length ? i + 2 : pts.length - 1];
+
+    // Catmull-Rom tangents → cubic Bezier control points
+    const cp1x = p1.x + (p2.x - p0.x) * t / 3;
+    const cp1y = p1.y + (p2.y - p0.y) * t / 3;
+    const cp2x = p2.x - (p3.x - p1.x) * t / 3;
+    const cp2y = p2.y - (p3.y - p1.y) * t / 3;
+
+    d += ` C ${cp1x.toFixed(2)},${cp1y.toFixed(2)} ${cp2x.toFixed(2)},${cp2y.toFixed(2)} ${p2.x.toFixed(2)},${p2.y.toFixed(2)}`;
+  }
+
+  return d;
 }
 
 function drawBarsX(root, rangeValues, seriesData, sx, sy, PAD, cw, ch) {
