@@ -191,6 +191,8 @@ With formatting attributes:
 | `atan(x)` | Arc tangent | `atan(1)` → π/4 |
 | `log(x)` | Base-10 logarithm | `log(1000)` → 3 |
 | `ln(x)` | Natural logarithm (base e) | `ln(E)` → 1 |
+| `lg(x)` | Base-2 logarithm | `lg(8)` → 3 |
+| `sqrt(x)` | Square root | `sqrt(144)` → 12 |
 
 #### Constants
 

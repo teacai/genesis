@@ -4,7 +4,7 @@
  *
  * Supports: +, -, *, /, %, ^, parentheses, unary minus, number literals,
  * field references, constants (PI, E), and functions (round, floor, ceil,
- * abs, min, max, pow, sin, cos, tan, asin, acos, atan, log, ln).
+ * abs, min, max, pow, sqrt, sin, cos, tan, asin, acos, atan, log, ln, lg).
  */
 
 export function evaluateFormula(expression, values) {
@@ -121,6 +121,8 @@ export function evaluateFormula(expression, values) {
       case 'atan':  return Math.atan(args[0] || 0);
       case 'log':   return Math.log10(args[0] || 0);
       case 'ln':    return Math.log(args[0] || 0);
+      case 'lg':    return Math.log2(args[0] || 0);
+      case 'sqrt':  return Math.sqrt(args[0] || 0);
       default:      return 0;
     }
   }
