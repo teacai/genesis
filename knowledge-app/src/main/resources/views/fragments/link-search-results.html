@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div>
+    <div th:if="${entries.isEmpty()}" style="color: var(--pico-muted-color); font-size:0.9em; padding: 0.5em 0;">
+        No matching entries found.
+    </div>
+    <div th:each="entry : ${entries}" class="link-search-result"
+         th:onclick="'createLink(\'' + ${sourceId} + '\', \'' + ${entry.id} + '\')'">
+        <span th:text="${entry.title}">Entry Title</span>
+        <small class="tag" th:if="${entry.tags != null and !entry.tags.isEmpty()}"
+               th:text="${entry.tags}">tags</small>
+    </div>
+</div>
+</body>
+</html>

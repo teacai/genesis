@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div>
+    <div th:if="${entries.isEmpty()}" class="empty-state">
+        <p th:if="${query != null and !query.isEmpty()}" th:text="'No results for: ' + ${query}">No results</p>
+        <p th:if="${query == null or query.isEmpty()}">No entries yet.</p>
+    </div>
+    <div th:each="entry : ${entries}" class="entry-card">
+        <h4><a th:href="'/entries/' + ${entry.id}" th:text="${entry.title}">Title</a></h4>
+        <p th:if="${entry.content != null and !entry.content.isEmpty()}"
+           th:text="${entry.content.length() > 200 ? entry.content.substring(0, 200) + '...' : entry.content}">
+            Preview...
+        </p>
+        <div>
+            <span th:each="tag : ${entry.tagList}" class="tag" th:text="${tag}">tag</span>
+        </div>
+        <div class="entry-meta">
+            <span th:text="${#temporals.format(entry.updatedAt, 'yyyy-MM-dd HH:mm')}">2025-01-01</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

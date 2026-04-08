@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+    <div th:if="${linkedEntries != null and !linkedEntries.isEmpty()}">
+        <div th:each="linked : ${linkedEntries}" class="linked-entry">
+            <div>
+                <span class="link-direction" th:classappend="${linked.direction}" th:text="${linked.direction}">outgoing</span>
+                <a th:href="'/entries/' + ${linked.entry.id}" th:text="${linked.entry.title}">Linked Entry</a>
+                <span th:if="${linked.label != null}" class="link-label" th:text="'(' + ${linked.label} + ')'"></span>
+            </div>
+            <form th:action="'/links/' + ${linked.linkId} + '/delete?entryId=' + ${entryId != null ? entryId : entry.id}"
+                  method="post"
+                  hx-post th:hx-post="'/links/' + ${linked.linkId} + '/delete?entryId=' + ${entryId != null ? entryId : entry.id}"
+                  hx-target="#link-section"
+                  hx-swap="innerHTML">
+                <button type="submit" class="secondary outline" style="padding:0.2em 0.5em; font-size:0.8em; margin:0;">unlink</button>
+            </form>
+        </div>
+    </div>
+    <div th:if="${linkedEntries == null or linkedEntries.isEmpty()}" style="color: var(--pico-muted-color); font-size:0.9em;">
+        No linked entries yet.
+    </div>
+</div>
+</body>
+</html>

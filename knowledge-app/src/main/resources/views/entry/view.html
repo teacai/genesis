@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${entry.title}">Entry</title>
+    <link rel="stylesheet" href="/static/pico.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/htmx.min.js"></script>
+</head>
+<body>
+<header class="container">
+    <nav>
+        <ul>
+            <li><a href="/" class="brand">Knowledge Base</a></li>
+        </ul>
+        <ul>
+            <li><a href="/entries">All Entries</a></li>
+            <li><a href="/entries/new" role="button">+ New Entry</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    <article>
+        <header>
+            <div class="actions" style="float: right;">
+                <a th:href="'/entries/' + ${entry.id} + '/edit'" role="button" class="outline">Edit</a>
+                <form th:action="'/entries/' + ${entry.id} + '/delete'" method="post" style="display:inline;">
+                    <button type="submit" class="secondary outline"
+                            onclick="return confirm('Delete this entry and all its links?')">Delete</button>
+                </form>
+            </div>
+            <h2 th:text="${entry.title}">Title</h2>
+            <div>
+                <span th:each="tag : ${entry.tagList}" class="tag" th:text="${tag}">tag</span>
+            </div>
+            <div class="entry-meta">
+                Created: <span th:text="${#temporals.format(entry.createdAt, 'yyyy-MM-dd HH:mm')}">date</span>
+                | Updated: <span th:text="${#temporals.format(entry.updatedAt, 'yyyy-MM-dd HH:mm')}">date</span>
+            </div>
+        </header>
+
+        <div class="content-body" th:text="${entry.content}">Content goes here...</div>
+    </article>
+
+    <!-- Links Section -->
+    <section>
+        <h3>Linked Entries</h3>
+
+        <div id="link-section">
+            <div th:replace="~{fragments/link-section :: content}"></div>
+        </div>
+
+        <!-- Add Link UI -->
+        <details>
+            <summary>Link to another entry</summary>
+            <div style="margin-top: 0.5em;">
+                <input type="text"
+                       placeholder="Search for an entry to link..."
+                       hx-get th:hx-get="'/entries/' + ${entry.id} + '/links/search'"
+                       hx-trigger="keyup changed delay:300ms"
+                       hx-target="#link-candidates"
+                       name="q"
+                       autocomplete="off">
+                <input type="text" id="link-label" placeholder="Link label (optional)" style="margin-top: 0.3em;">
+                <div id="link-candidates"></div>
+            </div>
+        </details>
+    </section>
+</main>
+
+<script th:inline="javascript">
+    function createLink(sourceId, targetId) {
+        var label = document.getElementById('link-label').value;
+        htmx.ajax('POST', '/entries/' + sourceId + '/links', {
+            target: '#link-section',
+            values: { targetId: targetId, label: label },
+            swap: 'innerHTML'
+        });
+    }
+</script>
+</body>
+</html>

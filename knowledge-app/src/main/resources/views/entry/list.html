@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Entries - Knowledge Base</title>
+    <link rel="stylesheet" href="/static/pico.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/htmx.min.js"></script>
+</head>
+<body>
+<header class="container">
+    <nav>
+        <ul>
+            <li><a href="/" class="brand">Knowledge Base</a></li>
+        </ul>
+        <ul>
+            <li><a href="/entries">All Entries</a></li>
+            <li><a href="/entries/new" role="button">+ New Entry</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    <h2>All Entries</h2>
+
+    <div th:if="${entries.isEmpty()}" class="empty-state">
+        <p>No entries yet. Create your first one!</p>
+        <a href="/entries/new" role="button">Create Entry</a>
+    </div>
+    <div th:each="entry : ${entries}" class="entry-card">
+        <h4><a th:href="'/entries/' + ${entry.id}" th:text="${entry.title}">Title</a></h4>
+        <p th:if="${entry.content != null and !entry.content.isEmpty()}"
+           th:text="${entry.content.length() > 200 ? entry.content.substring(0, 200) + '...' : entry.content}">
+            Preview...
+        </p>
+        <div>
+            <span th:each="tag : ${entry.tagList}" class="tag" th:text="${tag}">tag</span>
+        </div>
+        <div class="entry-meta">
+            <span th:text="${#temporals.format(entry.updatedAt, 'yyyy-MM-dd HH:mm')}">2025-01-01</span>
+        </div>
+    </div>
+</main>
+</body>
+</html>

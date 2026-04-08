@@ -1,0 +1,148 @@
+.tag {
+    display: inline-block;
+    padding: 0.15em 0.5em;
+    margin: 0.1em 0.2em;
+    border-radius: 1em;
+    background-color: var(--pico-secondary-background);
+    color: var(--pico-secondary-inverse);
+    font-size: 0.8em;
+}
+
+.entry-card {
+    padding: 1em;
+    margin-bottom: 0.5em;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    transition: border-color 0.2s;
+}
+
+.entry-card:hover {
+    border-color: var(--pico-primary);
+}
+
+.entry-card h4 {
+    margin-bottom: 0.3em;
+}
+
+.entry-card p {
+    margin-bottom: 0.3em;
+    color: var(--pico-muted-color);
+    font-size: 0.9em;
+}
+
+.entry-card a {
+    text-decoration: none;
+}
+
+.entry-meta {
+    font-size: 0.8em;
+    color: var(--pico-muted-color);
+}
+
+.linked-entry {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5em 0.75em;
+    margin-bottom: 0.3em;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+}
+
+.linked-entry a {
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link-label {
+    font-size: 0.8em;
+    color: var(--pico-muted-color);
+    margin-left: 0.5em;
+}
+
+.link-direction {
+    font-size: 0.75em;
+    padding: 0.1em 0.4em;
+    border-radius: 0.5em;
+    margin-right: 0.5em;
+}
+
+.link-direction.outgoing {
+    background-color: var(--pico-primary-background);
+    color: var(--pico-primary-inverse);
+}
+
+.link-direction.incoming {
+    background-color: var(--pico-secondary-background);
+    color: var(--pico-secondary-inverse);
+}
+
+.link-search-result {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.4em 0.6em;
+    margin-bottom: 0.2em;
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    cursor: pointer;
+}
+
+.link-search-result:hover {
+    background-color: var(--pico-card-background-color);
+}
+
+.actions {
+    display: flex;
+    gap: 0.5em;
+    align-items: center;
+}
+
+.actions form {
+    margin: 0;
+    padding: 0;
+}
+
+.actions button {
+    margin: 0;
+    padding: 0.3em 0.7em;
+    font-size: 0.85em;
+}
+
+.content-body {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.7;
+}
+
+.stats {
+    display: flex;
+    gap: 2em;
+    margin-bottom: 1em;
+    color: var(--pico-muted-color);
+    font-size: 0.9em;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3em 1em;
+    color: var(--pico-muted-color);
+}
+
+.htmx-indicator {
+    display: none;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline;
+}
+
+.htmx-request.htmx-indicator {
+    display: inline;
+}
+
+nav .brand {
+    font-weight: 700;
+    font-size: 1.2em;
+    text-decoration: none;
+}
