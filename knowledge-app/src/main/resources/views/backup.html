@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backup &amp; Restore - Knowledge Base</title>
+    <link rel="stylesheet" href="/static/pico.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/htmx.min.js"></script>
+</head>
+<body>
+<header class="container">
+    <nav>
+        <ul>
+            <li><a href="/" class="brand">Knowledge Base</a></li>
+        </ul>
+        <ul>
+            <li><a href="/entries">All Entries</a></li>
+            <li><a href="/entries/new" role="button">+ New Entry</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    <h2>Backup &amp; Restore</h2>
+
+    <div th:if="${success}" role="alert" style="padding:1em; margin-bottom:1em; border:1px solid var(--pico-ins-color); border-radius:var(--pico-border-radius); background-color:var(--pico-card-background-color);">
+        <strong th:text="${success}">Success message</strong>
+    </div>
+    <div th:if="${error}" role="alert" style="padding:1em; margin-bottom:1em; border:1px solid var(--pico-del-color); border-radius:var(--pico-border-radius); background-color:var(--pico-card-background-color);">
+        <strong th:text="${error}">Error message</strong>
+    </div>
+
+    <section>
+        <h3>Export Backup</h3>
+        <p>Download all entries and links as a JSON file.</p>
+        <a href="/backup/export" role="button">Download Backup</a>
+    </section>
+
+    <hr>
+
+    <section>
+        <h3>Restore from Backup</h3>
+        <p><strong>Warning:</strong> This will replace all current data with the contents of the backup file.</p>
+        <form action="/backup/restore" method="post" enctype="multipart/form-data"
+              onsubmit="return confirm('This will replace ALL current entries and links. Continue?')">
+            <label for="file">Select backup file (.json)</label>
+            <input type="file" id="file" name="file" accept=".json" required>
+            <button type="submit" class="secondary">Restore from File</button>
+        </form>
+    </section>
+</main>
+</body>
+</html>
