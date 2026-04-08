@@ -8,8 +8,8 @@
     </div>
     <div th:each="entry : ${entries}" class="entry-card">
         <h4><a th:href="'/entries/' + ${entry.id}" th:text="${entry.title}">Title</a></h4>
-        <p th:if="${entry.content != null and !entry.content.isEmpty()}"
-           th:text="${entry.content.length() > 200 ? entry.content.substring(0, 200) + '...' : entry.content}">
+        <p th:if="${previews.get(entry.id) != null and !previews.get(entry.id).isEmpty()}"
+           th:text="${previews.get(entry.id)}">
             Preview...
         </p>
         <div>

@@ -110,9 +110,51 @@
 }
 
 .content-body {
-    white-space: pre-wrap;
-    word-wrap: break-word;
     line-height: 1.7;
+}
+
+.content-body pre {
+    background-color: var(--pico-card-background-color);
+    border: 1px solid var(--pico-muted-border-color);
+    border-radius: var(--pico-border-radius);
+    padding: 1em;
+    overflow-x: auto;
+}
+
+.content-body code {
+    font-size: 0.9em;
+}
+
+.content-body :not(pre) > code {
+    background-color: var(--pico-card-background-color);
+    padding: 0.15em 0.35em;
+    border-radius: 3px;
+}
+
+.content-body blockquote {
+    border-left: 3px solid var(--pico-primary);
+    padding-left: 1em;
+    margin-left: 0;
+    color: var(--pico-muted-color);
+}
+
+.content-body img {
+    max-width: 100%;
+    height: auto;
+}
+
+.content-body table {
+    width: 100%;
+}
+
+.content-body hr {
+    border: none;
+    border-top: 1px solid var(--pico-muted-border-color);
+    margin: 1.5em 0;
+}
+
+.content-body input[type="checkbox"] {
+    margin-right: 0.4em;
 }
 
 .stats {

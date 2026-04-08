@@ -20,6 +20,7 @@ dependencies {
     implementation("io.micronaut.views:micronaut-views-thymeleaf")
     implementation("io.micronaut.serde:micronaut-serde-jackson")
     implementation("ch.qos.logback:logback-classic")
+    implementation("com.vladsch.flexmark:flexmark-all:0.64.8")
 
     runtimeOnly("com.h2database:h2")
     runtimeOnly("org.yaml:snakeyaml")

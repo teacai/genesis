@@ -42,7 +42,7 @@
             </div>
         </header>
 
-        <div class="content-body" th:text="${entry.content}">Content goes here...</div>
+        <div class="content-body" th:utext="${contentHtml}">Content goes here...</div>
     </article>
 
     <!-- Links Section -->
