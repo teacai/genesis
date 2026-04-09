@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Knowledge Base</title>
+    <link rel="stylesheet" href="/static/pico.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/htmx.min.js"></script>
+</head>
+<body>
+<header class="container">
+    <nav>
+        <ul>
+            <li><a href="/" class="brand">Knowledge Base</a></li>
+        </ul>
+        <ul>
+            <li><a href="/entries">All Entries</a></li>
+            <li><a href="/entries/new" role="button">+ New Entry</a></li>
+            <li><a href="/settings" class="settings-link" title="Settings">&#9881;</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main class="container">
+    <h2>Settings</h2>
+
+    <!-- Flash messages -->
+    <div th:if="${success != null}" class="alert-success">
+        <strong th:switch="${success}">
+            <span th:case="'password_changed'">Password changed successfully.</span>
+            <span th:case="'password_removed'">Password removed. UI lock is disabled.</span>
+            <span th:case="'timeout_saved'">Lock timeout updated.</span>
+            <span th:case="*" th:if="${success.startsWith('restored_')}"
+                  th:text="'Backup restored: ' + ${success.replace('restored_', '').replace('_', ' entries and ') + ' links.'}">
+                Restored.</span>
+            <span th:case="*">Settings saved.</span>
+        </strong>
+    </div>
+    <div th:if="${error != null}" class="alert-error">
+        <strong th:switch="${error}">
+            <span th:case="'wrong_password'">Current password is incorrect.</span>
+            <span th:case="'mismatch'">New passwords do not match.</span>
+            <span th:case="'restore_failed'">Backup restore failed. Check the file format.</span>
+            <span th:case="*">An error occurred.</span>
+        </strong>
+    </div>
+
+    <!-- Password Section -->
+    <section>
+        <h3>Password</h3>
+        <form action="/settings/password" method="post">
+            <div th:if="${hasPassword}">
+                <label for="currentPassword">Current Password</label>
+                <input type="password" id="currentPassword" name="currentPassword"
+                       placeholder="Enter current password" required autocomplete="current-password">
+            </div>
+
+            <label for="newPassword" th:text="${hasPassword} ? 'New Password' : 'Set Password'">New Password</label>
+            <input type="password" id="newPassword" name="newPassword"
+                   placeholder="Enter new password (leave empty to remove)" autocomplete="new-password">
+
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword"
+                   placeholder="Confirm new password" autocomplete="new-password">
+
+            <div class="actions">
+                <button type="submit" th:text="${hasPassword} ? 'Change Password' : 'Set Password'">Set Password</button>
+                <span th:if="${!hasPassword}" style="color: var(--pico-muted-color); font-size: 0.9em;">
+                    No password set. UI lock is disabled.
+                </span>
+            </div>
+        </form>
+
+        <div th:if="${hasPassword}" style="margin-top: 1em;">
+            <form action="/settings/lock" method="post" style="display:inline;">
+                <button type="submit" class="secondary outline">Lock Now</button>
+            </form>
+        </div>
+    </section>
+
+    <hr>
+
+    <!-- Lock Timeout Section -->
+    <section>
+        <h3>Lock Timeout</h3>
+        <p style="color: var(--pico-muted-color); font-size: 0.9em;">
+            Lock the UI after a period of inactivity. Set to 0 to disable auto-lock.
+        </p>
+        <form action="/settings/timeout" method="post">
+            <div style="display:flex; gap:0.5em; align-items:center;">
+                <input type="number" name="timeout" th:value="${lockTimeout}"
+                       min="0" max="1440" style="max-width:120px;">
+                <span>minutes</span>
+                <button type="submit">Save</button>
+            </div>
+        </form>
+    </section>
+
+    <hr>
+
+    <!-- Backup & Restore Section -->
+    <section>
+        <h3>Backup &amp; Restore</h3>
+
+        <div style="margin-bottom: 1.5em;">
+            <p>Download all entries and links as a JSON file.</p>
+            <a href="/settings/backup/export" role="button" class="outline">Download Backup</a>
+        </div>
+
+        <div>
+            <p><strong>Warning:</strong> Restoring will replace all current data.</p>
+            <form action="/settings/backup/restore" method="post" enctype="multipart/form-data"
+                  onsubmit="return confirm('This will replace ALL current entries and links. Continue?')">
+                <label for="file">Select backup file (.json)</label>
+                <input type="file" id="file" name="file" accept=".json" required>
+                <button type="submit" class="secondary">Restore from File</button>
+            </form>
+        </div>
+    </section>
+</main>
+
+<script th:inline="javascript" th:if="${hasPassword}">
+    (function() { window.__lockTimeout = [[${lockTimeout}]]; })();
+</script>
+<script src="/static/lock-timer.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Locked - Knowledge Base</title>
+    <link rel="stylesheet" href="/static/pico.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<main class="container" style="max-width: 400px; margin-top: 15vh;">
+    <article style="text-align: center;">
+        <header>
+            <h2>Knowledge Base</h2>
+            <p style="font-size: 2em; margin: 0;">&#128274;</p>
+        </header>
+
+        <div th:if="${error != null}"
+             style="padding:0.5em; margin-bottom:1em; border:1px solid var(--pico-del-color); border-radius:var(--pico-border-radius); color: var(--pico-del-color);">
+            Incorrect password
+        </div>
+
+        <form action="/unlock" method="post">
+            <input type="password" name="password" placeholder="Enter password"
+                   required autofocus autocomplete="current-password">
+            <button type="submit">Unlock</button>
+        </form>
+    </article>
+</main>
+</body>
+</html>

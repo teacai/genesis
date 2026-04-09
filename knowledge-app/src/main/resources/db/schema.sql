@@ -21,3 +21,8 @@ CREATE TABLE IF NOT EXISTS entry_link (
 CREATE INDEX IF NOT EXISTS idx_link_source ON entry_link(source_id);
 CREATE INDEX IF NOT EXISTS idx_link_target ON entry_link(target_id);
 CREATE INDEX IF NOT EXISTS idx_entry_updated ON entry(updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS app_settings (
+    setting_key VARCHAR(100) PRIMARY KEY,
+    setting_value VARCHAR(500)
+);
