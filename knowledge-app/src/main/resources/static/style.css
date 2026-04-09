@@ -157,6 +157,16 @@
     margin-right: 0.4em;
 }
 
+.broken-link {
+    color: var(--pico-del-color);
+    text-decoration: underline dashed;
+    cursor: pointer;
+}
+
+.broken-link:hover {
+    text-decoration: underline solid;
+}
+
 .stats {
     display: flex;
     gap: 2em;

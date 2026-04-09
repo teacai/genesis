@@ -52,10 +52,11 @@ public class EntryController {
 
     @Get("/entries/new")
     @View("entry/form")
-    public Map<String, Object> newEntry() {
+    public Map<String, Object> newEntry(@QueryValue(defaultValue = "") String title) {
         Map<String, Object> model = new HashMap<>();
         model.put("entry", null);
         model.put("editing", false);
+        model.put("prefillTitle", title);
         return model;
     }
 

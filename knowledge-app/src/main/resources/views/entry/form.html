@@ -28,7 +28,7 @@
     <form th:action="${editing} ? '/entries/' + ${entry.id} : '/entries'" method="post">
         <label for="title">Title</label>
         <input type="text" id="title" name="title"
-               th:value="${entry != null} ? ${entry.title} : ''"
+               th:value="${entry != null} ? ${entry.title} : (${prefillTitle} ?: '')"
                placeholder="Entry title" required autofocus>
 
         <label for="content">Content</label>

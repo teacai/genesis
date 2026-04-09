@@ -13,6 +13,8 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 import com.vladsch.flexmark.util.misc.Extension;
 import jakarta.inject.Singleton;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -99,7 +101,9 @@ public class MarkdownService {
             if (entry.isPresent()) {
                 replacement = "[" + title + "](/entries/" + entry.get().getId() + ")";
             } else {
-                replacement = "*" + title + "* (broken link)";
+                String encoded = URLEncoder.encode(title, StandardCharsets.UTF_8);
+                replacement = "<a href=\"/entries/new?title=" + encoded
+                        + "\" class=\"broken-link\">" + escapeHtml(title) + "</a>";
             }
             matcher.appendReplacement(sb, Matcher.quoteReplacement(replacement));
         }
@@ -112,5 +116,12 @@ public class MarkdownService {
         return entryRepository.findAllOrderByUpdatedAtDesc().stream()
                 .filter(e -> e.getTitle().toLowerCase().equals(term))
                 .findFirst();
+    }
+
+    private static String escapeHtml(String text) {
+        return text.replace("&", "&amp;")
+                   .replace("<", "&lt;")
+                   .replace(">", "&gt;")
+                   .replace("\"", "&quot;");
     }
 }
